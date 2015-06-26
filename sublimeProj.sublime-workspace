@@ -1,0 +1,357 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "TODO.txt",
+			"settings":
+			{
+				"buffer_size": 281,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 199.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Talha/Desktop/DOTween/readme.txt",
+		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/SuitConfigurations.cs",
+		"/C/Program Files (x86)/Flex SDK/bin/jvm.config",
+		"/C/Users/Talha/Documents/Projects/Android/WorkoutProgress/app/src/main/java/com/projects/talha/workoutprogress/ListItem.java",
+		"/C/Users/Talha/Documents/Projects/Android/WorkoutProgress/app/src/main/res/layout/list_view_item.xml",
+		"/C/Users/Talha/Desktop/FumeFX_and_FumeFX_SLv3.5.4_3ds_Max_2015/License/Info.txt",
+		"/C/Users/Talha/Desktop/Sitni_Sati_FumeFX_3.5.1_x32_64_for_Max_2012_2014_Win/Sitni Sati FumeFX 3.5.1 x32x64 for Max 2012-2014 Win/Install Info!!.txt",
+		"/C/Users/Talha/Desktop/Sitni_Sati_FumeFX_3.5.1_x32_64_for_Max_2012_2014_Win/Sitni Sati FumeFX 3.5.1 x32x64 for Max 2012-2014 Win/info.txt",
+		"/C/Users/Talha/Documents/Projects/Android/WorkoutProgress/temp.sublime-project",
+		"/C/Users/Talha/Documents/Projects/Android/WorkoutProgress/app/src/main/AndroidManifest.xml",
+		"/C/Users/Talha/Documents/Projects/Android/WorkoutProgress/app/src/androidTest/java/com/projects/talha/workoutprogress/ApplicationTest.java",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/.gitignore",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/proj.win32/Presidenttemp.vcxproj.filters",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/.gitattributes",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/v1eb5s30.em5.txt",
+		"/C/Users/Talha/Desktop/Backup/PlayScene.cpp",
+		"/C/Users/Talha/Desktop/Backup/PlayScene.h",
+		"/C/Users/Talha/Desktop/Backup/LoadScene.cpp",
+		"/C/Users/Talha/Desktop/Backup/Debug.cpp",
+		"/C/Users/Talha/Desktop/Backup/Debug.h",
+		"/C/Users/Talha/Desktop/Backup/Card.cpp",
+		"/C/Users/Talha/Desktop/Backup/Card.h",
+		"/C/Users/Talha/Desktop/Backup/Hand.cpp",
+		"/C/Users/Talha/Desktop/Backup/Hand.h",
+		"/C/Users/Talha/AppData/Local/GitHub/TheLog.txt",
+		"/C/Users/Talha/AppData/Local/GitHub/Profiling.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/CMakeLists.txt",
+		"/C/Users/Talha/Documents/Projects/nodejs/gameserver.js",
+		"/C/Users/Talha/Documents/Projects/nodejs/package.json",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/Classes/PlayScene.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/proj.win32/resource.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/cocos2d/CMakeLists.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/.cocos-project.json",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/President/proj.win32/build-cfg.json",
+		"/C/Users/Talha/Documents/Projects/HTML/index.html",
+		"/C/Users/Talha/Documents/Projects/HTML/style.css",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/Classes/PlayScene.h",
+		"/C/Users/Talha/Documents/Projects/HTML/fonts/License - READ THIS.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/res/values/strings.xml",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/AndroidManifest.xml",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/project.properties",
+		"/C/Users/Talha/Documents/Projects/Unity/Game_Dev/1uv1bao2.4qo.txt",
+		"/C/Users/Talha/Documents/Projects/Unity/Game_Dev/.gitignore",
+		"/K/Applications/Adobe Photoshop CS6 13.0 Final (English Japanese)  Mac Os X [ChingLiu]/How to install.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/ant.properties",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/local.properties",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/build-cfg.json",
+		"/C/Users/Talha/AppData/Local/Android/sdk/tools/ant/build.xml",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/build.xml",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/src/org/cocos2dx/cpp/AppActivity.java",
+		"/C/Users/Talha/Documents/Projects/Unity/Game_Dev/edddhhjt.pyw.txt",
+		"/C/Users/Talha/Downloads/Fraps v3.4.0 (Full Registered Version) [RH]/Fraps v3.4.0 (Full Registered Version)/!Read.First.Or.Fail.Later!.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/Character.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/proj.android/jni/Android.mk",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/Character.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/BLayer.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/Background.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/Background.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/PlayScene.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/Classes/AppDelegate.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/PlayScene.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/AppDelegate.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/AppDelegate.cpp",
+		"/C/Users/Talha/Desktop/New Laser Sound/Installation.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/DarkMatter/Classes/BulletHandler.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/proj.win32/build-cfg.json",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/proj.win32/resource.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.android/jni/Android.mk",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.win32/resource.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.win32/main.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/CMakeLists.txt",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/BackgroundLayer.cpp",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Resources/button.png",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/Background2.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/Classes/BackgroundLayer.h",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.android/AndroidManifest.xml",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.android/src/org/cocos2dx/cpp/AppActivity.java",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/AsteroidBlaster/proj.android/jni/hellocpp/main.cpp",
+		"/C/cocos/android-sdk/tools/ant/build.xml",
+		"/C/cocos/Cocos2d-x3.4/tests/cpp-tests/proj.android/build.xml",
+		"/C/cocos/Cocos2d-x3.4/tests/cpp-tests/proj.android/AndroidManifest.xml",
+		"/C/Users/Talha/AppData/Local/Temp/Rar$DIa0.096/functions.c",
+		"/C/Users/Talha/AppData/Local/Temp/Rar$DIa0.482/functions.c",
+		"/C/Users/Talha/Desktop/sint.h",
+		"/C/Users/Talha/Desktop/intseq.h",
+		"/C/Users/Talha/Desktop/sudoku.c",
+		"/C/Users/Talha/Desktop/query.c",
+		"/C/Users/Talha/Desktop/score.c",
+		"/C/Users/Talha/Desktop/intseq.c",
+		"/C/Users/Talha/Desktop/test-sint.c",
+		"/C/Users/Talha/Desktop/sint.c",
+		"/C/Users/Talha/Desktop/cycle.c",
+		"/C/Users/Talha/Desktop/test-string-map.c",
+		"/C/Users/Talha/Desktop/string-map.c",
+		"/C/Users/Talha/Desktop/test-case-catcher.c",
+		"/C/Users/Talha/Documents/Projects/cocos2dx/Learning/cocos2d/cocos/platform/winrt/CCGLViewImpl.h",
+		"/C/Users/Talha/Desktop/case-catcher.c",
+		"/C/Users/Talha/Desktop/cocos2d-x-3.4/cocos/cocos2d.h",
+		"/C/Users/Talha/Desktop/cocos2d-x-3.4/cocos/2d/CCActionCamera.h",
+		"/C/Users/Talha/Desktop/cocos2d-x-3.4/tests/cpp-empty-test/proj.win32/main.h",
+		"/C/Users/Talha/Desktop/cocos2d-x-3.4/cocos/2d/CCCamera.h",
+		"/C/Users/Talha/Desktop/cocos2d-x-3.4/cocos/2d/CCCamera.cpp",
+		"/C/MinGW/mingw32/lib/gcc/mingw32/4.8.1/include/quadmath.h",
+		"/C/MinGW/mingw32/lib/gcc/mingw32/4.8.1/include/stdbool.h",
+		"/C/Users/Talha/currentworkdir.bat",
+		"/C/Users/Talha/Documents/Projects/HTML/test.css",
+		"/C/Users/Talha/Documents/Projects/HTML/test.html",
+		"/C/Qt/workspace/TestApp/CustomDelegate.cpp",
+		"/C/Qt/workspace/TestApp/Window.cpp",
+		"/C/Qt/workspace/TestApp/main.cpp",
+		"/C/Qt/workspace/TestApp/TestApp.pro",
+		"/C/Qt/workspace/TestApp/run.bat",
+		"/C/Qt/workspace/TestApp/CustomDelegate.h",
+		"/C/Qt/workspace/TestApp/Window.h",
+		"/C/Qt/workspace/TestApp/Simple.cpp",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/farminacci.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/run.bat",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/roots.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/avg.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/char_offset.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/lcm.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/P3/robot_arena.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/robot_arena.c",
+		"/C/Users/Talha/Desktop/robot.h",
+		"/C/Users/Talha/Desktop/get-input.h",
+		"/C/Users/Talha/Desktop/get-input.c",
+		"/C/Users/Talha/Desktop/farminacci.c",
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/common_bits.c"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"CCLOG",
+			"CCLGO",
+			"adjustfl",
+			"floater",
+			"HEAD",
+			"head",
+			"suitconfigu",
+			"stateHidden",
+			"android",
+			"android-10",
+			"target",
+			"android",
+			"printf",
+			"(\"%\","
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "TODO.txt",
+					"settings":
+					{
+						"buffer_size": 281,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								245,
+								245
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"customlist",
+				"app/src/main/java/com/projects/talha/workoutprogress/CustomListAdapter.java"
+			],
+			[
+				"listit",
+				"app/src/main/java/com/projects/talha/workoutprogress/ListItem.java"
+			],
+			[
+				"list",
+				"app/src/main/res/layout/list_view_item.xml"
+			],
+			[
+				"list_view",
+				"app/src/main/res/layout/list_view_item.xml"
+			],
+			[
+				"styles",
+				"app/src/main/res/values/styles.xml"
+			],
+			[
+				"an",
+				"app/src/main/AndroidManifest.xml"
+			],
+			[
+				"strings",
+				"app/src/main/res/values/strings.xml"
+			],
+			[
+				"activi",
+				"app/src/main/res/layout/activity_home.xml"
+			],
+			[
+				"home",
+				"app/src/main/java/com/projects/talha/workoutprogress/HomeActivity.java"
+			],
+			[
+				"application",
+				"app/src/androidTest/java/com/projects/talha/workoutprogress/ApplicationTest.java"
+			],
+			[
+				"anroidm",
+				"app/src/main/AndroidManifest.xml"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 209.0,
+	"status_bar_visible": true
+}

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CardScript : MonoBehaviour {
+public class SCCard : MonoBehaviour {
 
 	public GameObject suitSpade;
 	public GameObject suitClub;
@@ -19,7 +19,18 @@ public class CardScript : MonoBehaviour {
 
 	private bool isSelected = false;
 
-	//private bool isSelected = false;
+	/*
+	void Start(){
+		createCard();
+	}
+
+	void Update(){
+		if(Input.GetKeyDown("space")){
+			SCAnimator anim = GetComponent<SCAnimator>();
+			anim.moveTo(new Vector3(0, 12, 0), 1);
+		}
+	}
+	*/
 
 	public void createCard(){
 		addSuit();
@@ -40,10 +51,10 @@ public class CardScript : MonoBehaviour {
 		}
 		//SuitConfigurations suitConfigurations = obj.GetComponent<SuitConfigurations>();
 		suits = new GameObject[number];
-		for(int i = 0; i < SuitConfigurationsScript.ALL[number - 2].Length; ++i){
+		for(int i = 0; i < SCSuitConfigurations.ALL[number - 2].Length; ++i){
 			GameObject inst = Instantiate(obj) as GameObject;
 			inst.transform.parent = transform;
-			Vector3 pos = SuitConfigurationsScript.ALL[number - 2][i];
+			Vector3 pos = SCSuitConfigurations.ALL[number - 2][i];
 			inst.transform.localPosition = new Vector3(pos.x, pos.y, -0.01f);
 			suits[i] = inst;
 		}

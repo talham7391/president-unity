@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SuitConfigurationsScript : MonoBehaviour{
+public class SCSuitConfigurations : MonoBehaviour{
 
 	public static Vector3[] TWO = {new Vector3(0, 6.5f),
 								   new Vector3(0, -6.5f)};

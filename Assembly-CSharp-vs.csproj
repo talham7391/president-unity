@@ -46,9 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CardScript.cs" />
-     <Compile Include="Assets\Scripts\HandScript.cs" />
-     <Compile Include="Assets\Scripts\SuitConfigurationsScript.cs" />
+     <Compile Include="Assets\Scripts\SCAnimator.cs" />
+     <Compile Include="Assets\Scripts\SCCard.cs" />
+     <Compile Include="Assets\Scripts\SCHand.cs" />
+     <Compile Include="Assets\Scripts\SCSuitConfigurations.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
