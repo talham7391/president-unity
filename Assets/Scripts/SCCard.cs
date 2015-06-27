@@ -74,6 +74,16 @@ public class SCCard : MonoBehaviour {
 		}
 	}
 
+	public void addSelected(){
+		selected = Instantiate(selected);
+		selected.transform.Translate(0, 0, -0.01f);
+		selected.transform.parent = transform;
+		SpriteRenderer sp = selected.GetComponent<SpriteRenderer>();
+		Color temp = sp.color;
+		temp.a = 0;
+		sp.color = temp;
+	}
+
 	public void setOpacity(float alpha){
 		Color mColor = gameObject.GetComponent<SpriteRenderer>().color;
 		mColor.a = alpha;
@@ -91,16 +101,6 @@ public class SCCard : MonoBehaviour {
 		bottomNumber.GetComponent<SpriteRenderer>().color = bColor;
 	}
 
-	public void addSelected(){
-		selected = Instantiate(selected);
-		selected.transform.Translate(0, 0, -0.01f);
-		selected.transform.parent = transform;
-		SpriteRenderer sp = selected.GetComponent<SpriteRenderer>();
-		Color temp = sp.color;
-		temp.a = 0;
-		sp.color = temp;
-	}
-	
 	public void setSelected(bool x){
 		if(isSelected == x){
 			return;
