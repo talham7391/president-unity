@@ -67,7 +67,7 @@ public class SCAnimator : MonoBehaviour {
 			return;
 		}
 		AnimationData data = new AnimationData();
-		data.startValue = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+		data.startValue = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
 		data.endValue = new Vector3(target.x, target.y, target.z);
 		data.time = time;
 		data.progress = 0;
@@ -85,7 +85,7 @@ public class SCAnimator : MonoBehaviour {
 			return;
 		}
 		AnimationData data = new AnimationData();
-		data.startValue = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+		data.startValue = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
 		data.endValue = new Vector3(data.startValue.x + distance.x, data.startValue.y + distance.y, data.startValue.z + distance.z);
 		data.time = time;
 		data.progress = 0;
@@ -178,9 +178,9 @@ public class SCAnimator : MonoBehaviour {
 	private string moveAnimation(ref AnimationData data){
 		Vector3 diff = getDifference(data.startValue, data.endValue);
 		data.progress += getProgress(data.time);
-		transform.position = getValue(diff, data.startValue, data.progress, data.ease);
+		transform.localPosition = getValue(diff, data.startValue, data.progress, data.ease);
 		if(data.progress >= 1){
-			transform.position = getValue(diff, data.startValue, 1, data.ease);
+			transform.localPosition = getValue(diff, data.startValue, 1, data.ease);
 			return COMPLETE;
 		}else{
 			return INCOMPLETE;

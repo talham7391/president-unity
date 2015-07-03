@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SCLocalServer.cs">
+    <Files>
+      <File FileName="Assets\Scripts\SCLocalServer.cs" Line="174" Column="2" />
+      <File FileName="Assets\Scripts\SCNetworkGame.cs" Line="12" Column="34" />
+      <File FileName="Assets\Scripts\SCNetworkUtil.cs" Line="71" Column="3" />
+      <File FileName="Assets\Scripts\SCMessageInfo.cs" Line="34" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

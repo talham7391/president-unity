@@ -1,3 +1,5 @@
 // 1. In "SCAnimator" script, need to change "rotateTo" so the the user can control whether to rotation happens clockwise or counter clockwise
 // 2. Rename all scripts with the prefix "SC" and remove the suffix. Same with prefabs and sprites.
-3. Redo the soon to be "SCHand" script
+// 3. Redo the soon to be "SCHand" script
+4. Finish the "auto sort" in SCHand script
+5. Test the hand script, there are still bugs

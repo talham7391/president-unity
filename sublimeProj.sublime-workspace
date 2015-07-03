@@ -8,10 +8,21 @@
 	"buffers":
 	[
 		{
+			"contents": "// 1. In \"SCAnimator\" script, need to change \"rotateTo\" so the the user can control whether to rotation happens clockwise or counter clockwise\n// 2. Rename all scripts with the prefix \"SC\" and remove the suffix. Same with prefabs and sprites.\n// 3. Redo the soon to be \"SCHand\" script\n4. Finish the \"auto sort\" in SCHand script\n5. Test the hand script, there are still bugs",
 			"file": "TODO.txt",
+			"file_size": 377,
+			"file_write_time": 130799053769313118,
 			"settings":
 			{
-				"buffer_size": 281,
+				"buffer_size": 373,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "\npublic class Main{\n	\n	public static void main(String[] args){\n\n		int x = 5;\n		int y = 8;\n\n		System.out.println(\"5 + 8 is: \" + x + y);\n		Boom de clap boom de clap snap clap\n	}\n}",
+			"settings":
+			{
+				"buffer_size": 177,
 				"line_ending": "Windows"
 			}
 		}
@@ -40,6 +51,8 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Talha/Documents/GitHub/MCDS/server/build/DebugRun",
+		"/C/Users/Talha/Documents/GitHub/MCDS/server/build/scripts/runscript",
 		"/C/Users/Talha/Desktop/DOTween/readme.txt",
 		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/SuitConfigurations.cs",
 		"/C/Program Files (x86)/Flex SDK/bin/jvm.config",
@@ -165,9 +178,7 @@
 		"/C/Users/Talha/Documents/School Work/CS 136/A3/robot_arena.c",
 		"/C/Users/Talha/Desktop/robot.h",
 		"/C/Users/Talha/Desktop/get-input.h",
-		"/C/Users/Talha/Desktop/get-input.c",
-		"/C/Users/Talha/Desktop/farminacci.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/common_bits.c"
+		"/C/Users/Talha/Desktop/get-input.c"
 	],
 	"find":
 	{
@@ -216,7 +227,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -224,19 +235,45 @@
 					"file": "TODO.txt",
 					"settings":
 					{
-						"buffer_size": 281,
+						"buffer_size": 373,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								245,
-								245
+								373,
+								373
 							]
 						],
 						"settings":
 						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 177,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								172,
+								172
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
