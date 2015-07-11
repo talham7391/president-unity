@@ -46,16 +46,21 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\SCAnimator.cs" />
-     <Compile Include="Assets\Scripts\SCCard.cs" />
-     <Compile Include="Assets\Scripts\SCClient.cs" />
-     <Compile Include="Assets\Scripts\SCHand.cs" />
-     <Compile Include="Assets\Scripts\SCLocalServer.cs" />
-     <Compile Include="Assets\Scripts\SCMessageInfo.cs" />
-     <Compile Include="Assets\Scripts\SCNetworkGame.cs" />
-     <Compile Include="Assets\Scripts\SCNetworkUtil.cs" />
-     <Compile Include="Assets\Scripts\SCSource.cs" />
-     <Compile Include="Assets\Scripts\SCSuitConfigurations.cs" />
+     <Compile Include="Assets\Scripts\Deck\SCAnimator.cs" />
+     <Compile Include="Assets\Scripts\Deck\SCCard.cs" />
+     <Compile Include="Assets\Scripts\Deck\SCHand.cs" />
+     <Compile Include="Assets\Scripts\Deck\SCSuitConfigurations.cs" />
+     <Compile Include="Assets\Scripts\Network\Client\SCClient.cs" />
+     <Compile Include="Assets\Scripts\Network\Client\SCClientCommunicator.cs" />
+     <Compile Include="Assets\Scripts\Network\SCConnectionInfo.cs" />
+     <Compile Include="Assets\Scripts\Network\SCMessageInfo.cs" />
+     <Compile Include="Assets\Scripts\Network\SCNetworkUtil.cs" />
+     <Compile Include="Assets\Scripts\Network\Server\SCServer.cs" />
+     <Compile Include="Assets\Scripts\Network\Server\SCServerCommunicator.cs" />
+     <Compile Include="Assets\Scripts\SCLogic.cs" />
+     <Compile Include="Assets\Scripts\SCTable.cs" />
+     <Compile Include="Assets\Scripts\Temp\SCLocalServer2.cs" />
+     <Compile Include="Assets\Scripts\Temp\SCSource.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

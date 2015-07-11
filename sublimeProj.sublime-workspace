@@ -8,22 +8,11 @@
 	"buffers":
 	[
 		{
-			"contents": "// 1. In \"SCAnimator\" script, need to change \"rotateTo\" so the the user can control whether to rotation happens clockwise or counter clockwise\n// 2. Rename all scripts with the prefix \"SC\" and remove the suffix. Same with prefabs and sprites.\n// 3. Redo the soon to be \"SCHand\" script\n4. Finish the \"auto sort\" in SCHand script\n5. Test the hand script, there are still bugs",
-			"file": "TODO.txt",
-			"file_size": 377,
-			"file_write_time": 130799053769313118,
+			"file": "/C/Users/Talha/Documents/Projects/Unity/President - Copy/Assets/Scripts/Network/Client/SCClient.cs",
 			"settings":
 			{
-				"buffer_size": 373,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "\npublic class Main{\n	\n	public static void main(String[] args){\n\n		int x = 5;\n		int y = 8;\n\n		System.out.println(\"5 + 8 is: \" + x + y);\n		Boom de clap boom de clap snap clap\n	}\n}",
-			"settings":
-			{
-				"buffer_size": 177,
-				"line_ending": "Windows"
+				"buffer_size": 3007,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -51,6 +40,16 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Talha/Documents/Projects/Unity/President - Copy/Assets/Scripts/Network/SCNetworkUtil.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/Network/Client/SCClientCommunicator.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President - Copy/Assets/Scripts/Network/Client/SCClientCommunicator.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/Network/Client/SCClient.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/SCClientCommunicator.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President - Copy/Assets/Scripts/SCClientCommunicator.cs",
+		"/C/Program Files (x86)/Flex SDK/frameworks/libs/player/11.4/playerglobal.swc",
+		"/C/Users/Talha/Documents/Projects/Unity/President - Copy - Copy/Assets/Scripts/SCClientCommunicator.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President/Assets/Scripts/SCServerCommunicator.cs",
+		"/C/Users/Talha/Documents/Projects/Unity/President/TODO.txt",
 		"/C/Users/Talha/Documents/GitHub/MCDS/server/build/DebugRun",
 		"/C/Users/Talha/Documents/GitHub/MCDS/server/build/scripts/runscript",
 		"/C/Users/Talha/Desktop/DOTween/readme.txt",
@@ -168,17 +167,7 @@
 		"/C/Qt/workspace/TestApp/CustomDelegate.h",
 		"/C/Qt/workspace/TestApp/Window.h",
 		"/C/Qt/workspace/TestApp/Simple.cpp",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/farminacci.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/run.bat",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/roots.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/avg.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/char_offset.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/lcm.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/P3/robot_arena.c",
-		"/C/Users/Talha/Documents/School Work/CS 136/A3/robot_arena.c",
-		"/C/Users/Talha/Desktop/robot.h",
-		"/C/Users/Talha/Desktop/get-input.h",
-		"/C/Users/Talha/Desktop/get-input.c"
+		"/C/Users/Talha/Documents/School Work/CS 136/A3/farminacci.c"
 	],
 	"find":
 	{
@@ -227,57 +216,32 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "TODO.txt",
+					"file": "/C/Users/Talha/Documents/Projects/Unity/President - Copy/Assets/Scripts/Network/Client/SCClient.cs",
 					"settings":
 					{
-						"buffer_size": 373,
+						"buffer_size": 3007,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								373,
-								373
+								1782,
+								1700
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"settings":
-					{
-						"buffer_size": 177,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								172,
-								172
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 328.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -330,6 +294,30 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"clientcom",
+				"Assets/Scripts/Network/Client/SCClientCommunicator.cs"
+			],
+			[
+				"client",
+				"Assets/Scripts/Network/Client/SCClient.cs"
+			],
+			[
+				"sclei",
+				"Assets/Scripts/SCClientCommunicator.cs"
+			],
+			[
+				"scserver",
+				"Assets/Scripts/SCServerCommunicator.cs"
+			],
+			[
+				"sccliei",
+				"Assets/Scripts/SCClientCommunicator.cs"
+			],
+			[
+				"scclient",
+				"Assets/Scripts/SCClientCommunicator.cs"
+			],
 			[
 				"customlist",
 				"app/src/main/java/com/projects/talha/workoutprogress/CustomListAdapter.java"
