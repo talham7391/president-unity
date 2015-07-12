@@ -34,7 +34,7 @@ public class SCLogic{
 		}else{
 			suit = "club";
 		}
-		number = Random.Range(2, 10);
+		number = Random.Range(1, 14);
 		if(cardAlreadyExists(suit, number)){
 			if(regenCount == 52){
 				Debug.Log("No more possible cards");

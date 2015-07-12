@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 197e67c62d441c748bf6b02b61b0b549
-timeCreated: 1434761985
+timeCreated: 1436737246
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -12,6 +12,12 @@ TextureImporter:
     21300010: numbers_5
     21300012: numbers_6
     21300014: numbers_7
+    21300016: numbers_8
+    21300018: numbers_9
+    21300020: numbers_10
+    21300022: numbers_11
+    21300024: numbers_12
+    21300026: numbers_13
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -131,6 +137,66 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 140
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_8
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_9
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_10
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_11
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_12
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: numbers_13
+      rect:
+        serializedVersion: 2
+        x: 260
         y: 0
         width: 20
         height: 20

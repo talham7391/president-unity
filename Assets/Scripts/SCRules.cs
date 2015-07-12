@@ -23,6 +23,10 @@ public class SCRules{
 	}
 
 	public bool allowedToPlay(string suit, int number){
+		return checkGeneral(suit, number);
+	}
+
+	private bool checkGeneral(string suit, int number){
 		if(topCard.suit == null || topCard.number == -1){
 			return true;
 		}else if(topCard.suit == suit || topCard.number == number){

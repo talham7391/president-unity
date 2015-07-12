@@ -7,6 +7,13 @@ public class SCCard : MonoBehaviour {
 	public GameObject suitClub;
 	public GameObject suitHeart;
 	public GameObject suitDiamond;
+	public GameObject specialAce;
+	public GameObject redJack;
+	public GameObject redQueen;
+	public GameObject redKing;
+	public GameObject blackJack;
+	public GameObject blackQueen;
+	public GameObject blackKing;
 	public GameObject numbers;
 	public GameObject selected;
 
@@ -20,11 +27,12 @@ public class SCCard : MonoBehaviour {
 	private bool isSelectable = true;
 	private bool isSelected = false;
 
-	/*
+
 	void Start(){
 		createCard();
 	}
 
+	/*
 	void Update(){
 		if(Input.GetKeyDown("space")){
 			SCAnimator anim = GetComponent<SCAnimator>();
@@ -50,28 +58,70 @@ public class SCCard : MonoBehaviour {
 		}else{
 			obj = suitDiamond;
 		}
-		//SuitConfigurations suitConfigurations = obj.GetComponent<SuitConfigurations>();
-		suits = new GameObject[number];
-		for(int i = 0; i < SCSuitConfigurations.ALL[number - 2].Length; ++i){
-			GameObject inst = Instantiate(obj) as GameObject;
-			inst.transform.parent = transform;
-			Vector3 pos = SCSuitConfigurations.ALL[number - 2][i];
-			inst.transform.localPosition = new Vector3(pos.x, pos.y, -0.01f);
-			suits[i] = inst;
+
+		if(number == 1){
+			if(suit == "spade"){
+				addSingle(specialAce);
+			}else{
+				addSingle(obj);
+			}
+		}else if(number == 11){
+			if(suit == "spade" || suit == "club"){
+				addSingle(blackJack);
+			}else{
+				addSingle(redJack);
+			}
+		}else if(number == 12){
+			if(suit == "spade" || suit == "club"){
+				addSingle(blackQueen);
+			}else{
+				addSingle(redQueen);
+			}
+		}else if(number == 13){
+			if(suit == "spade" || suit == "club"){
+				addSingle(blackKing);
+			}else{
+				addSingle(redKing);
+			}
+		}else{
+			suits = new GameObject[number];
+			for(int i = 0; i < SCSuitConfigurations.ALL[number - 2].Length; ++i){
+				GameObject inst = Instantiate(obj) as GameObject;
+				inst.transform.parent = transform;
+				Vector3 pos = SCSuitConfigurations.ALL[number - 2][i];
+				inst.transform.localPosition = new Vector3(pos.x, pos.y, -0.01f);
+				suits[i] = inst;
+			}
 		}
 	}
 
+	private void addSingle(GameObject obj){
+		GameObject inst = Instantiate(obj);
+		inst.transform.SetParent(transform);
+		Vector3 pos = new Vector3(0, 0, -0.01f);
+		inst.transform.localPosition = pos;
+		suits = new GameObject[1];
+		suits[0] = inst;
+	}
+
 	public void addNumbers(){
-		topNumber = Instantiate(numbers.transform.GetChild(number - 2).gameObject);
+		topNumber = Instantiate(numbers.transform.GetChild(number - 1).gameObject);
 		topNumber.transform.Translate(-8, 11.5f, -0.01f);
 		topNumber.transform.parent = transform;
-		bottomNumber = Instantiate(numbers.transform.GetChild(number - 2).gameObject);
+		bottomNumber = Instantiate(numbers.transform.GetChild(number - 1).gameObject);
 		bottomNumber.transform.Translate(8, -11.5f, -0.01f);
 		bottomNumber.transform.parent = transform;
 		bottomNumber.transform.Rotate(0, 0, 180);
 		if(suit == "spade" || suit == "club"){
-			topNumber.GetComponent<SpriteRenderer>().color = Color.black;
-			bottomNumber.GetComponent<SpriteRenderer>().color = Color.black;
+			if(number == 10){
+				topNumber.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.black;
+				topNumber.transform.GetChild(1).GetComponent<SpriteRenderer>().color = Color.black;
+				bottomNumber.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.black;
+				bottomNumber.transform.GetChild(1).GetComponent<SpriteRenderer>().color = Color.black;
+			}else{
+				topNumber.GetComponent<SpriteRenderer>().color = Color.black;
+				bottomNumber.GetComponent<SpriteRenderer>().color = Color.black;
+			}
 		}
 	}
 
