@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SCHand : MonoBehaviour {
-
+	
 	private struct CardConfig{
 		public string suit;
 		public int number;
 		public bool original;
 	};
-
+	
 	public int count = 12;
 	public float spacing = 6;
 	public float animationSpeed = 0.4f;
@@ -18,12 +18,12 @@ public class SCHand : MonoBehaviour {
 	public Vector3 newCardPosition = new Vector3(0, 0, 0);
 	public Vector3 floaterPosition = new Vector3(0, 32, 0);
 	public GameObject cardObject;
-
+	
 	[HideInInspector]
 	public SCTable table;
 	[HideInInspector]
 	public bool cardAllowed;
-
+	
 	private GameObject[] cards;
 	private GameObject floater;
 	private GameObject ghostCard;
@@ -31,7 +31,7 @@ public class SCHand : MonoBehaviour {
 	private Vector3 previousMousePosition;
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
-
+	
 	void Start(){
 		cards = new GameObject[count];
 		floater = null;
@@ -41,12 +41,13 @@ public class SCHand : MonoBehaviour {
 		inputRecentlyChanged = false;
 		cardAllowed = false;
 	}
-
+	
 	void Update(){
 		processMouse();
 		//processKeys();
+		processKeys2();
 	}
-
+	
 	private void processMouse(){
 		if(!inputAllowed){
 			return;
@@ -87,19 +88,19 @@ public class SCHand : MonoBehaviour {
 		}
 		previousMousePosition = Input.mousePosition;
 	}
-
+	
 	private void processKeys(){
 		if(!inputAllowed){
 			return;
 		}
-		if(Input.GetKeyDown("a")){
+		if(Input.GetKeyDown("a")){ // adding a card
 			CardConfig config = generateCard();
 			if(config.original){
 				addCard(config.suit, config.number, validIndex);
 			}
-		}else if(Input.GetKeyDown("r")){
+		}else if(Input.GetKeyDown("r")){ // removing a card
 			removeCard(validIndex/2, true);
-		}else if(Input.GetKeyDown("f")){
+		}else if(Input.GetKeyDown("f")){ // floating a card
 			if(floater == null){
 				setFloater();
 			}else{
@@ -108,24 +109,32 @@ public class SCHand : MonoBehaviour {
 					insertFloater(getInsertIndex());
 				}
 			}
-		}else if(Input.GetKeyDown("s")){
+		}else if(Input.GetKeyDown("s")){ // sorting the hand
 			autoSort();
-		}else if(Input.GetKeyDown("p")){
+		}else if(Input.GetKeyDown("p")){ // playing a card
 			playCard();
+		}else if(Input.GetKeyDown("c")){
+			createHand(6);
 		}
 	}
 
+	private void processKeys2(){
+		if(Input.GetKeyDown("p")){
+			pickUpCard();
+		}
+	}
+	
 	public void addCard(){
 		CardConfig config = generateCard();
 		if(config.original){
 			addCard(config.suit, config.number, validIndex);
 		}
 	}
-
+	
 	public void addCard(string suit, int number){
 		addCard(suit, number, validIndex);
 	}
-
+	
 	public void playCard(){
 		if(!cardAllowed){
 			Debug.Log("Its not your turn");
@@ -136,8 +145,9 @@ public class SCHand : MonoBehaviour {
 			return;
 		}
 		int selectedIndex = -1;
+		SCCard prop = null;
 		for(int i = 0; i < cards.Length; ++i){
-			SCCard prop = cards[i].GetComponent<SCCard>();
+			prop = cards[i].GetComponent<SCCard>();
 			if(prop.getSelected()){
 				selectedIndex = i;
 				break;
@@ -149,15 +159,75 @@ public class SCHand : MonoBehaviour {
 		}
 		if(table.playExistingCard(cards[selectedIndex])){
 			removeCard(selectedIndex, false);
+			gameObject.SendMessageUpwards("sendMessageToServer", "play_card:suit=" + prop.suit + ",number=" + prop.number);
+			cardAllowed = false;
+		}else{
+			Debug.Log("Can't play that card");
 		}
+	}
+
+	public void createHand(int numOfCards){
+		List<GameObject> premade = new List<GameObject>();
+		for(int i = 0; i < numOfCards; ++i){
+			GameObject card = createCard(generateCard());
+			premade.Add(card);
+		}
+		createHand(premade);
+	}
+
+	public void createHand(List<GameObject> premade){
+		seizeInput();
+		for(int i = 0; i < premade.Count; ++i){
+			premade[i].transform.SetParent(transform);
+			premade[i].transform.localPosition = newCardPosition;
+			Vector3 currentPosition = new Vector3(i * spacing - premade.Count * spacing / 2, 0, 0);
+			Vector3 targetPosition = fixYPosition(currentPosition, false);
+			targetPosition = fixZPosition(targetPosition, i);
+			Vector3 targetRotation = fixRotation(targetPosition);
+
+			cards[validIndex++] = premade[i];
+			
+			float factor = 1;
+			SCAnimator anim = premade[i].GetComponent<SCAnimator>();
+			anim.moveTo(targetPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
+			anim.rotateToTarget(targetRotation, animationSpeed * factor, SCAnimator.EASE_OUT);
+			
+			if(i == premade.Count - 1){
+				anim.callBack = () => {
+					allowInput();
+				};
+			}
+		}
+	}
+
+	public void pickUpCard(){
+		if(!cardAllowed){
+			Debug.Log("Its not your turn!");
+			return;
+		}
+		gameObject.SendMessageUpwards("sendMessageToServer", "request_pick_up");
 		cardAllowed = false;
+	}
+
+	private GameObject createCard(CardConfig config){
+		return createCard(config.suit, config.number);
+	}
+
+	public GameObject createCard(string suit, int number){
+		GameObject card = Instantiate(cardObject);
+		SCCard prop = card.GetComponent<SCCard>();
+		prop.suit = suit;
+		prop.number = number;
+		prop.createCard();
+		card.transform.localPosition = newCardPosition;
+		return card;
 	}
 
 	private CardConfig generateCard(){
 		CardConfig config = new CardConfig();
 		int regenCount = 0;
 	regen:
-		int suitGen = Random.Range(0, 4);
+			int suitGen = Random.Range(0, 4);
 		if(suitGen == 0){
 			config.suit = "heart";
 		}else if(suitGen == 1){
@@ -180,11 +250,11 @@ public class SCHand : MonoBehaviour {
 		config.original = true;
 		return config;
 	}
-
+	
 	private void addCard(CardConfig config, int index){
 		addCard(config.suit, config.number, index);
 	}
-
+	
 	private void addCard(string suit, int number, int index, bool addingFloater = false){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Not a valid index for adding object: " + index);
@@ -204,7 +274,7 @@ public class SCHand : MonoBehaviour {
 		obj.transform.localPosition = fixZPosition(obj.transform.localPosition, index);
 		addCard(obj, index);
 	}
-
+	
 	private void addCard(GameObject obj, int index, bool addingFloater = false){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Not a valid index for adding object: " + index);
@@ -214,16 +284,16 @@ public class SCHand : MonoBehaviour {
 			Debug.Log("Hand is already full.");
 			return;
 		}
-
+		
 		seizeInput();
-
+		
 		for(int i = validIndex; i > index; --i){
 			cards[i] = cards[i - 1];
 		}
-
+		
 		cards[index] = obj;
 		cards[index].transform.SetParent(transform);
-
+		
 		float factor = 1;
 		SCAnimator anim = cards[index].GetComponent<SCAnimator>();
 		SCCard prop = cards[index].GetComponent<SCCard>();
@@ -268,15 +338,15 @@ public class SCHand : MonoBehaviour {
 		
 		++validIndex;
 	}
-
+	
 	private GameObject removeCard(int index, bool destroy){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Invalid remove index: " + index);
 			return null;
 		}
-
+		
 		seizeInput();
-
+		
 		float factor = 1;
 		bool inputAssigned = false;
 		for(int i = 0; i < validIndex; ++i){
@@ -306,7 +376,7 @@ public class SCHand : MonoBehaviour {
 			adjustGhostCard();
 			allowInput();
 		}
-
+		
 		GameObject val = null;
 		if(destroy){
 			Destroy(cards[index]);
@@ -316,12 +386,12 @@ public class SCHand : MonoBehaviour {
 		for(int i = index; i < validIndex - 1; ++i){
 			cards[i] = cards[i + 1];
 		}
-
+		
 		--validIndex;
 		adjustGhostCard();
 		return val;
 	}
-
+	
 	private void setFloater(){
 		for(int i = 0; i < validIndex; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
@@ -332,7 +402,7 @@ public class SCHand : MonoBehaviour {
 		}
 		Debug.Log("No card selected.");
 	}
-
+	
 	private void setFloater(int index){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Invalid index for setting floater: " + index);
@@ -343,12 +413,12 @@ public class SCHand : MonoBehaviour {
 			return;
 		}
 		seizeInput();
-
+		
 		floater = removeCard(index, false);
-
+		
 		SCCard prop = floater.GetComponent<SCCard>();
 		prop.setSelected(false);
-	
+		
 		float factor = 1;
 		SCAnimator anim = floater.GetComponent<SCAnimator>();
 		anim.moveTo(floaterPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
@@ -357,7 +427,7 @@ public class SCHand : MonoBehaviour {
 			adjustGhostCard();
 			allowInput();
 		};
-
+		
 		ghostCard = Instantiate(cardObject);
 		SCCard ghostProp = ghostCard.GetComponent<SCCard>();
 		ghostProp.suit = prop.suit;
@@ -367,20 +437,20 @@ public class SCHand : MonoBehaviour {
 		ghostProp.transform.SetParent(transform);
 		ghostProp.transform.localPosition = new Vector3(0, 0, 0);
 	}
-
+	
 	private void insertFloater(int index){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Not a valid index for inserting floater: " + index);
 			return;
 		}
-
+		
 		Destroy(ghostCard);
 		ghostCard = null;
 		addCard(floater, index, true);
-
+		
 		floater = null;
 	}
-
+	
 	private int getInsertIndex(){
 		if(ghostCard == null){
 			Debug.Log("Theres no ghost card for reference");
@@ -402,7 +472,7 @@ public class SCHand : MonoBehaviour {
 		}
 		return 0;
 	}
-
+	
 	private void adjustGhostCard(){
 		if(ghostCard == null){
 			//Debug.Log("thres no ghost card");
@@ -416,7 +486,7 @@ public class SCHand : MonoBehaviour {
 		}
 		ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, validIndex);
 	}
-
+	
 	private void autoSort(){
 		seizeInput();
 		bool inputWasAllowed = false;
@@ -439,7 +509,7 @@ public class SCHand : MonoBehaviour {
 			GameObject temp = cards[minIndex];
 			cards[minIndex] = cards[i];
 			cards[i] = temp;
-
+			
 			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
 			anim.moveTo(originalPositions[i], animationSpeed, SCAnimator.EASE_OUT);
 			anim.rotateToTarget(originalRotations[i], animationSpeed);
@@ -452,15 +522,15 @@ public class SCHand : MonoBehaviour {
 			allowInput();
 		}
 	}
-
+	
 	private Vector3 cloneVector3(Vector3 original){
 		return new Vector3(original.x, original.y, original.z);
 	}
-
+	
 	private float getAverage(int index){
 		return (cards[index - 1].transform.localPosition.x + cards[index + 1].transform.localPosition.x) / 2;
 	}
-
+	
 	private Vector3 fixYPosition(Vector3 position, bool selected){
 		if(selected){
 			return new Vector3(position.x, 12 * Mathf.Cos(graphStretch * position.x) - 6, position.z);
@@ -468,11 +538,11 @@ public class SCHand : MonoBehaviour {
 			return new Vector3(position.x, 12 * Mathf.Cos(graphStretch * position.x) - 12, position.z);
 		}
 	}
-
+	
 	private Vector3 fixZPosition(Vector3 position, float index){
 		return new Vector3(position.x, position.y, -0.05f * index);
 	}
-
+	
 	private Vector3 fixRotation(Vector3 position){
 		Vector3 rot;
 		if(position.x > 0){
@@ -482,7 +552,7 @@ public class SCHand : MonoBehaviour {
 		}
 		return rot;
 	}
-
+	
 	private bool cardAlreadyExists(string suit, int number){
 		for(int i = 0; i < validIndex; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
@@ -492,15 +562,15 @@ public class SCHand : MonoBehaviour {
 		}
 		return false;
 	}
-
+	
 	private void seizeInput(){
 		inputAllowed = false;
 		inputRecentlyChanged = true;
 	}
-
+	
 	private void allowInput(){
 		inputAllowed = true;
 		inputRecentlyChanged = true;
 	}
-
+	
 }

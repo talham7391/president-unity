@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class SCClientCommunicator : MonoBehaviour {
-
+	
 	private struct ReceivedData{
 		public int hostId;
 		public int connectionId;
@@ -24,27 +24,25 @@ public class SCClientCommunicator : MonoBehaviour {
 			this.command = command;
 		}
 	};
-
-	private const int PORT = 2460;
-	private const int SERVERPORT = 2462;
+	
+	private const int PORT = 2462;
+	private const int SERVERPORT = 2463;
 	private const string SERVERIP = "127.0.0.1";
-	private const int MASTERPORT = 2463;
+	private const int MASTERPORT = 2464;
 	private const string MASTERIP = "127.0.0.1";
-
+	
 	private bool clientCreated;
 	private int mHostId;
 	private int mReliableChannelId;
 	private int mConnectionId;
-	private float timeSinceLastMessage;
-
+	
 	SCClient client;
-
+	
 	void Start(){
 		clientCreated = false;
-		timeSinceLastMessage = 0;
 		init();
 	}
-
+	
 	public void createClient(bool createServer){
 		client = new SCClient(this, createServer);
 		if(!createServer){
@@ -52,7 +50,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		}
 		clientCreated = true;
 	}
-
+	
 	private void init(){
 		NetworkTransport.Init();
 		
@@ -62,16 +60,14 @@ public class SCClientCommunicator : MonoBehaviour {
 		HostTopology topology = new HostTopology(config, 1);
 		mHostId = NetworkTransport.AddHost(topology, PORT);
 	}
-
+	
 	private void connectToServer(){
 		byte error;
 		mConnectionId = NetworkTransport.Connect(mHostId, SERVERIP, SERVERPORT, 0, out error);
 		Debug.Log("Client: Trying to connect to the server...");
 	}
-
+	
 	void Update(){
-		timeSinceLastMessage += Time.deltaTime;
-
 		if(Input.GetKeyDown("c")){
 			createClient(false);
 		}else if(Input.GetKeyDown("s")){
@@ -89,17 +85,18 @@ public class SCClientCommunicator : MonoBehaviour {
 		int bufferSize = 1024;
 		int recBufferSize;
 		byte error;
+		
 		NetworkEventType rec = NetworkTransport.Receive(out hostId, out connectionId, out channelId, buffer, bufferSize, out recBufferSize, out error);
-
+		
 		ReceivedData data = new ReceivedData(hostId, connectionId, channelId, buffer, recBufferSize, error, null, null);
-
+		
 		switch(rec){
 		case NetworkEventType.Nothing: break;
 		case NetworkEventType.ConnectEvent: onConnectEvent(ref data); break;
 		case NetworkEventType.DataEvent: onDataEvent(ref data); break;
 		}
 	}
-
+	
 	private void onConnectEvent(ref ReceivedData data){
 		Debug.Log("Someone is trying to connect");
 		if(client.hasServer()){
@@ -110,12 +107,10 @@ public class SCClientCommunicator : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	private void onDataEvent(ref ReceivedData data){
 		if(!(mHostId == data.hostId)){
 			return;
-		}else if(timeSinceLastMessage < 0.1f){
-			Debug.Log("Message too fast");
 		}else{
 			string message = SCNetworkUtil.getStringFromBuffer(data.buffer);
 			string command = SCNetworkUtil.getCommand(message);
@@ -123,9 +118,8 @@ public class SCClientCommunicator : MonoBehaviour {
 			Debug.Log(command);
 			client.processMessage(command, info);
 		}
-		timeSinceLastMessage = 0;
 	}
-
+	
 	public void sendMessageToServer(string message){
 		if(client.getServer() == null){
 			SCNetworkUtil.sendMessage(mHostId, mConnectionId, mReliableChannelId, message);
@@ -135,7 +129,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			client.processMessage(command, info);
 		}
 	}
-
+	
 	public void sendMessageTo(int connectionId, string message){
 		SCNetworkUtil.sendMessage(mHostId, connectionId, mReliableChannelId, message);
 		Debug.Log("Sent message: " + message);

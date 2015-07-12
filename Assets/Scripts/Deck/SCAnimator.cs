@@ -18,6 +18,7 @@ public class SCAnimator : MonoBehaviour {
 		public Vector3 startValue;
 		public Vector3 endValue;
 		public float time;
+		public float delay;
 		public float progress; // 0 - 1
 		public string type;
 		public string ease;

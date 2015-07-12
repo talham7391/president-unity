@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\Network\Server\SCServer.cs" />
      <Compile Include="Assets\Scripts\Network\Server\SCServerCommunicator.cs" />
      <Compile Include="Assets\Scripts\SCLogic.cs" />
+     <Compile Include="Assets\Scripts\SCRules.cs" />
      <Compile Include="Assets\Scripts\SCTable.cs" />
      <Compile Include="Assets\Scripts\Temp\SCLocalServer2.cs" />
      <Compile Include="Assets\Scripts\Temp\SCSource.cs" />

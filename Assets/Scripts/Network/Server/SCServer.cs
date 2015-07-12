@@ -5,12 +5,14 @@ using System.Collections.Generic;
 public class SCServer{
 
 	private SCClient owner;
+	private SCLogic logic;
 
 	private List<int> connectedPlayers;
 	private int turnIndex;
 
 	public SCServer(SCClient owner){
 		this.owner = owner;
+		this.logic = new SCLogic();
 		connectedPlayers = new List<int>();
 		Debug.Log("Server created.");
 
@@ -23,17 +25,22 @@ public class SCServer{
 	}
 
 	public void startGame(){
-		turnIndex = 0;//Random.Range(0, connectedPlayers.Count + 1);
-		for(int i = 0; i < 5; ++i){
-			sendMessageToAll("add_card:suit=club,number=3");
+		turnIndex = Random.Range(0, connectedPlayers.Count + 1);
+		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
+			sendMessageTo(i, "create_hand:" + logic.generateCards(6));
 		}
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
 	public void userPlayed(string suit, int number){
-		Debug.Log("2");
+		Debug.Log("turn index: " + turnIndex);
 		sendMessageToAllAccept(turnIndex, "spawn_card:suit=" + suit + ",number=" + number);
-		Debug.Log("3");
+		advanceTurn();
+	}
+
+	public void userRequestedCard(){
+		string card = logic.generateCard("");
+		sendMessageTo(turnIndex, "add_card:" + card);
 		advanceTurn();
 	}
 
@@ -42,7 +49,6 @@ public class SCServer{
 		if(turnIndex >= connectedPlayers.Count + 1){
 			turnIndex = 0;
 		}
-		Debug.Log("4");
 		sendMessageTo(turnIndex, "allow_card");
 	}
 

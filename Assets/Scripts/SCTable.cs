@@ -3,53 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SCTable : MonoBehaviour {
-
+	
 	public Vector3 tableCenter;
 	//public float spacing;
 	public GameObject hand;
 	public GameObject cardObj;
-
-	private SCLogic logic;
+	
+	private SCRules rules;
 	private List<GameObject> cards;
 	private List<GameObject> pile;
-
+	
 	void Start(){
 		cards = new List<GameObject>();
-		logic = new SCLogic();
+		rules = new SCRules();
 		hand = Instantiate(hand);
 		hand.transform.SetParent(transform.parent);
 		hand.transform.localPosition = new Vector3(0, -40, 0);
 		SCHand cont = hand.GetComponent<SCHand>();
 		cont.table = this;
 	}
-
+	
 	void Update(){
 		//processKeys();
 	}
-
+	
 	private void processKeys(){
 		if(Input.GetKeyDown("n")){
 			playNewCard("heart", 7, new Vector3(0, 30, 0));
 		}
 	}
-
-	public bool playExistingCard(GameObject card){
+	
+	public bool playExistingCard(GameObject card, bool strict = true){
 		SCCard prop = card.GetComponent<SCCard>();
-		if(!logic.allowedToPlay(prop.suit, prop.number)){
+		if(!rules.allowedToPlay(prop.suit, prop.number) && strict){
 			return false;
 		}
-
+		
 		SCAnimator anim;
 		Vector3 targetPosition;
 		Vector3 targetRotation;
-
+		
 		for(int i = 0; i < cards.Count; ++i){
 			anim = cards[i].GetComponent<SCAnimator>();
 			targetPosition = cloneVector3(cards[i].transform.localPosition);
 			//targetPosition.x += spacing;
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
-
+		
 		cards.Add(card);
 		card.transform.SetParent(transform);
 		prop.setSelectable(false);
@@ -61,11 +61,11 @@ public class SCTable : MonoBehaviour {
 		anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
 		anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
 
-		gameObject.SendMessageUpwards("sendMessageToServer", "play_card:suit=" + prop.suit + ",number=" + prop.number);
-	
+		rules.updateTopCard(prop.suit, prop.number);
+		
 		return true;
 	}
-
+	
 	public void playNewCard(string suit, int number, Vector3 origin){
 		GameObject card = Instantiate(cardObj);
 		SCCard prop = card.GetComponent<SCCard>();
@@ -74,13 +74,13 @@ public class SCTable : MonoBehaviour {
 		prop.createCard();
 		card.transform.SetParent(transform);
 		card.transform.localPosition = origin;
-		playExistingCard(card);
+		playExistingCard(card, false);
 	}
-
+	
 	private Vector3 cloneVector3(Vector3 x){
 		return new Vector3(x.x, x.y, x.z);
 	}
-
+	
 	private Vector3 fixZPosition(Vector3 position, int index){
 		return new Vector3(position.x, position.y, 0.05f * (cards.Count - index));
 	}

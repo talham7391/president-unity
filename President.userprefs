@@ -1,25 +1,25 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Network\Server\SCServer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
-      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="102" Column="2" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="81" Column="15" />
-      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="45" Column="15" />
-      <File FileName="Assets\Scripts\Network\Server\SCServerCommunicator.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Network\SCNetworkUtil.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="71" Column="39" />
-      <File FileName="Assets\Scripts\SCTable.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="112" Column="19" />
+      <File FileName="Assets\Scripts\SCLogic.cs" Line="25" Column="14" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="44" Column="17" />
+      <File FileName="Assets\Scripts\Network\SCMessageInfo.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="189" Column="4" />
+      <File FileName="Assets\Scripts\SCRules.cs" Line="28" Column="39" />
+      <File FileName="Assets\Scripts\SCTable.cs" Line="60" Column="60" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
+              <Node name="Deck" expanded="True">
+                <Node name="SCHand.cs" selected="True" />
+              </Node>
               <Node name="Network" expanded="True">
-                <Node name="Client" expanded="True" />
-                <Node name="Server" expanded="True">
-                  <Node name="SCServer.cs" selected="True" />
-                </Node>
+                <Node name="Server" expanded="True" />
               </Node>
             </Node>
           </Node>
