@@ -98,7 +98,7 @@ public class SCClient{
 	private void onAllowCardCommand(SCMessageInfo info){
 		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
 		if(info == null){
-			hand.setLimits(null);
+			hand.removeLimits();
 		}else{
 			int index = 1;
 			while(true){
@@ -115,7 +115,6 @@ public class SCClient{
 				}
 				++index;
 			}
-			hand.setLimits(info.getValue("limits"));
 		}
 		hand.cardAllowed = true;
 	}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class SCHand : MonoBehaviour {
 	
@@ -8,6 +9,11 @@ public class SCHand : MonoBehaviour {
 		public string suit;
 		public int number;
 		public bool original;
+		public CardConfig(string suit, int number, bool original = true){
+			this.suit = suit;
+			this.number = number;
+			this.original = original;
+		}
 	};
 	
 	public int count = 52;
@@ -33,7 +39,7 @@ public class SCHand : MonoBehaviour {
 	private bool inputRecentlyChanged;
 
 	// limits
-	private CardConfig nothingBut;
+	private CardConfig? nothingBut;
 	private int minimumCards;
 	private int minimumNumber;
 	
@@ -143,7 +149,7 @@ public class SCHand : MonoBehaviour {
 		addCard(suit, number, validIndex);
 	}
 
-	public void setLimits(string allowance, int suit, int number){
+	public void setLimits(string allowance, string suit, int number){
 		if(allowance == "nothing_but"){
 			nothingBut = new CardConfig(suit, number);
 		}
@@ -185,8 +191,8 @@ public class SCHand : MonoBehaviour {
 		if(selectedIndex == -1){
 			Debug.Log("No cards selected.");
 			return;
-		}else if(nothingBut != null && (prop.suit != nothingBut.suit || prop.number != nothingBut.number)){
-			Debug.Log("Only allowed to play:" + nothingBut.number + " of " + nothingBut.suit + "s");
+		}else if(nothingBut.HasValue && (prop.suit != nothingBut.Value.suit || prop.number != nothingBut.Value.number)){
+			Debug.Log("Only allowed to play:" + nothingBut.Value.number + " of " + nothingBut.Value.suit + "s");
 			return;
 		}
 
@@ -270,7 +276,7 @@ public class SCHand : MonoBehaviour {
 	private CardConfig generateCard(){
 		CardConfig config = new CardConfig();
 	regen:
-			int suitGen = Random.Range(0, 4);
+			int suitGen = UnityEngine.Random.Range(0, 4);
 		if(suitGen == 0){
 			config.suit = "heart";
 		}else if(suitGen == 1){
@@ -280,7 +286,7 @@ public class SCHand : MonoBehaviour {
 		}else{
 			config.suit = "club";
 		}
-		config.number = Random.Range(1, 14);
+		config.number = UnityEngine.Random.Range(1, 14);
 		if(cardAlreadyExists(config.suit, config.number)){
 			if(cards.Length == 52){
 				Debug.Log("No more possible cards");

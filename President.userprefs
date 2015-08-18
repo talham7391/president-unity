@@ -3,10 +3,12 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
       <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="83" Column="17" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="44" Column="54" />
-      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="26" Column="62" />
-      <File FileName="Assets\Scripts\SCLogic.cs" Line="22" Column="50" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="299" Column="5" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="124" Column="93" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="48" Column="86" />
+      <File FileName="Assets\Scripts\SCLogic.cs" Line="40" Column="27" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="191" Column="4" />
+      <File FileName="Assets\Scripts\Network\SCMessageInfo.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\Network\SCNetworkUtil.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

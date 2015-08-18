@@ -62,7 +62,6 @@ public class SCTable : MonoBehaviour {
 		anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
 
 		SCHand cont = hand.GetComponent<SCHand>();
-		rules.updateTopCard(prop.suit, prop.number, cont.localTargetSuit);
 		
 		return true;
 	}
