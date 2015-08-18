@@ -10,7 +10,7 @@ public class SCHand : MonoBehaviour {
 		public bool original;
 	};
 	
-	public int count = 12;
+	public int count = 52;
 	public float spacing = 6;
 	public float animationSpeed = 0.4f;
 	public float movementSpeed = 0.1f;
@@ -31,6 +31,11 @@ public class SCHand : MonoBehaviour {
 	private Vector3 previousMousePosition;
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
+
+	// limits
+	private CardConfig nothingBut;
+	private int minimumCards;
+	private int minimumNumber;
 	
 	void Start(){
 		cards = new GameObject[count];
@@ -40,11 +45,14 @@ public class SCHand : MonoBehaviour {
 		inputAllowed = true;
 		inputRecentlyChanged = false;
 		cardAllowed = false;
+		nothingBut = null;
+		minimumCards = 0;
+		minimumNumber = 0;
 	}
 	
 	void Update(){
 		processMouse();
-		//processKeys();
+		processKeys();
 		processKeys2();
 	}
 	
@@ -119,8 +127,8 @@ public class SCHand : MonoBehaviour {
 	}
 
 	private void processKeys2(){
-		if(Input.GetKeyDown("p")){
-			pickUpCard();
+		if(Input.GetKeyDown("t")){
+			skipTurn();
 		}
 	}
 	
@@ -133,6 +141,26 @@ public class SCHand : MonoBehaviour {
 	
 	public void addCard(string suit, int number){
 		addCard(suit, number, validIndex);
+	}
+
+	public void setLimits(string allowance, int suit, int number){
+		if(allowance == "nothing_but"){
+			nothingBut = new CardConfig(suit, number);
+		}
+	}
+
+	public void setLimits(string allowance, int value){
+		if(allowance == "minimum_cards"){
+			minimumCards = value;
+		}else if(allowance == "minimum_number"){
+			minimumNumber = value;
+		}
+	}
+
+	public void removeLimits(){
+		nothingBut = null;
+		minimumCards = 0;
+		minimumNumber = 0;
 	}
 	
 	public void playCard(){
@@ -153,10 +181,15 @@ public class SCHand : MonoBehaviour {
 				break;
 			}
 		}
+
 		if(selectedIndex == -1){
 			Debug.Log("No cards selected.");
 			return;
+		}else if(nothingBut != null && (prop.suit != nothingBut.suit || prop.number != nothingBut.number)){
+			Debug.Log("Only allowed to play:" + nothingBut.number + " of " + nothingBut.suit + "s");
+			return;
 		}
+
 		if(table.playExistingCard(cards[selectedIndex])){
 			removeCard(selectedIndex, false);
 			gameObject.SendMessageUpwards("sendMessageToServer", "play_card:suit=" + prop.suit + ",number=" + prop.number);
@@ -206,6 +239,17 @@ public class SCHand : MonoBehaviour {
 			return;
 		}
 		gameObject.SendMessageUpwards("sendMessageToServer", "request_pick_up");
+		Debug.Log("pickup up card");
+		cardAllowed = false;
+	}
+
+	public void skipTurn(){
+		if(!cardAllowed){
+			Debug.Log("Its not your turn");
+			return;
+		}
+		gameObject.SendMessageUpwards("sendMessageToServer", "skip_turn");
+		Debug.Log("Skipped turn");
 		cardAllowed = false;
 	}
 
@@ -225,7 +269,6 @@ public class SCHand : MonoBehaviour {
 
 	private CardConfig generateCard(){
 		CardConfig config = new CardConfig();
-		int regenCount = 0;
 	regen:
 			int suitGen = Random.Range(0, 4);
 		if(suitGen == 0){
@@ -237,14 +280,12 @@ public class SCHand : MonoBehaviour {
 		}else{
 			config.suit = "club";
 		}
-		config.number = Random.Range(2, 10);
+		config.number = Random.Range(1, 14);
 		if(cardAlreadyExists(config.suit, config.number)){
-			if(regenCount == 52){
+			if(cards.Length == 52){
 				Debug.Log("No more possible cards");
-				config.original = false;
 				return config;
 			}
-			++regenCount;
 			goto regen;
 		}
 		config.original = true;

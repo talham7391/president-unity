@@ -1,27 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCCard.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
-      <File FileName="Assets\Scripts\Deck\SCCard.cs" Line="132" Column="59" />
-      <File FileName="Assets\Scripts\SCLogic.cs" Line="37" Column="30" />
+      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="83" Column="17" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="44" Column="54" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="26" Column="62" />
+      <File FileName="Assets\Scripts\SCLogic.cs" Line="22" Column="50" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="299" Column="5" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Scripts" expanded="True">
-              <Node name="Deck" expanded="True">
-                <Node name="SCCard.cs" selected="True" />
-              </Node>
-              <Node name="Network" expanded="True">
-                <Node name="Client" expanded="True" />
-                <Node name="Server" expanded="True" />
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

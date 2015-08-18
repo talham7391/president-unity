@@ -12,15 +12,14 @@ public class SCLogic{
 			this.number = number;
 		}
 	};
-	
+
 	private List<Card> generatedCards;
 
 	public SCLogic(){
 		generatedCards = new List<Card>();
 	}
 
-	public string generateCard(string suffix = "1"){
-		int regenCount = 0;
+	public string generateCard(string suffix, out bool firstTurnCard){
 		string suit;
 		int number;
 	regen:
@@ -36,25 +35,39 @@ public class SCLogic{
 		}
 		number = Random.Range(1, 14);
 		if(cardAlreadyExists(suit, number)){
-			if(regenCount == 52){
+			if(generatedCards.Count == 52){
 				Debug.Log("No more possible cards");
+				firstTurnCard = false;
 				return null;
 			}
-			++regenCount;
 			goto regen;
+		}
+		if(suit == "club" && number == 3){
+			firstTurnCard = true;
+		}else{
+			firstTurnCard = false;
 		}
 		generatedCards.Add(new Card(suit, number));
 		return "suit" + suffix + "=" + suit + ",number" + suffix + "=" + number;
 	}
 
-	public string generateCards(int numOfCards){
+	public string generateCards(int numOfCards, out bool firstTurnCard){
 		string total = "";
+		bool cardFound = false;
 		for(int i = 1; i <= numOfCards; ++i){
 			if(i == numOfCards){
-				total += generateCard("" + i);
+				total += generateCard("" + i, out firstTurnCard);
 			}else{
-				total += generateCard("" + i) + ",";
+				total += generateCard("" + i, out firstTurnCard) + ",";
 			}
+			if(!cardFound && firstTurnCard == true){
+				cardFound = true;
+			}
+		}
+		if(cardFound){
+			firstTurnCard = true;
+		}else{
+			firstTurnCard = false;
 		}
 		return total;
 	}

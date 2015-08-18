@@ -61,7 +61,8 @@ public class SCTable : MonoBehaviour {
 		anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
 		anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
 
-		rules.updateTopCard(prop.suit, prop.number);
+		SCHand cont = hand.GetComponent<SCHand>();
+		rules.updateTopCard(prop.suit, prop.number, cont.localTargetSuit);
 		
 		return true;
 	}
@@ -83,5 +84,9 @@ public class SCTable : MonoBehaviour {
 	
 	private Vector3 fixZPosition(Vector3 position, int index){
 		return new Vector3(position.x, position.y, 0.05f * (cards.Count - index));
+	}
+
+	public SCRules getRules(){
+		return rules;
 	}
 }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class SCServer{
 
+	public static string allowCardExtra = "";
+
 	private SCClient owner;
 	private SCLogic logic;
 
@@ -26,21 +28,36 @@ public class SCServer{
 
 	public void startGame(){
 		turnIndex = Random.Range(0, connectedPlayers.Count + 1);
+		Debug.Log("cp: " + connectedPlayers.Count);
+		int cardsPerPlayer = 52 / (connectedPlayers.Count + 1);
+		int cardsRemaining = 52 - cardsPerPlayer * (connectedPlayers.Count + 1);
+		Debug.Log("cpp: " + cardsPerPlayer + ", cr: " + cardsRemaining);
 		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
-			sendMessageTo(i, "create_hand:" + logic.generateCards(6));
+			bool turnFound;
+			sendMessageTo(i, "create_hand:" + logic.generateCards(cardsPerPlayer + (cardsRemaining > 0 ? 1 : 0), out turnFound));
+			if(turnFound){
+				turnIndex = i;
+				Debug.Log("First turn: " + turnIndex);
+			}
+			--cardsRemaining;
 		}
-		sendMessageTo(turnIndex, "allow_card");
+		sendMessageTo(turnIndex, "allow_card:allowance1=nothing_but,suit1=club,number1=3");
 	}
 
 	public void userPlayed(string suit, int number){
-		Debug.Log("turn index: " + turnIndex);
 		sendMessageToAllAccept(turnIndex, "spawn_card:suit=" + suit + ",number=" + number);
 		advanceTurn();
 	}
 
 	public void userRequestedCard(){
-		string card = logic.generateCard("");
+		bool n;
+		string card = logic.generateCard("", out n);
 		sendMessageTo(turnIndex, "add_card:" + card);
+		advanceTurn();
+	}
+
+	public void userSkippedTurn(){
+		sendMessageToAll("reset_limits");
 		advanceTurn();
 	}
 
@@ -49,7 +66,7 @@ public class SCServer{
 		if(turnIndex >= connectedPlayers.Count + 1){
 			turnIndex = 0;
 		}
-		sendMessageTo(turnIndex, "allow_card");
+		sendMessageTo(turnIndex, "allow_card" + allowCardExtra);
 	}
 
 	// 0 is local user

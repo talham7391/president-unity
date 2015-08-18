@@ -27,12 +27,11 @@ public class SCCard : MonoBehaviour {
 	private bool isSelectable = true;
 	private bool isSelected = false;
 
-
+	/*
 	void Start(){
 		createCard();
 	}
 
-	/*
 	void Update(){
 		if(Input.GetKeyDown("space")){
 			SCAnimator anim = GetComponent<SCAnimator>();
