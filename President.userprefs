@@ -1,9 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SCRules.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SCTable.cs">
     <Files>
-      <File FileName="Assets\Scripts\SCRules.cs" Line="6" Column="14" />
-      <File FileName="Assets\Scripts\SCTable.cs" Line="45" Column="3" />
+      <File FileName="Assets\Scripts\SCRules.cs" Line="43" Column="16" />
+      <File FileName="Assets\Scripts\SCTable.cs" Line="76" Column="72" />
+      <File FileName="Assets\Scripts\Deck\SCCardInfo.cs" Line="28" Column="20" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="36" Column="37" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="222" Column="5" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="114" Column="54" />
+      <File FileName="Assets\Scripts\SCLogic.cs" Line="82" Column="3" />
+      <File FileName="Assets\Scripts\Deck\SCAnimator.cs" Line="48" Column="31" />
+      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="31" Column="40" />
+      <File FileName="Assets\Scripts\Network\SCNetworkUtil.cs" Line="85" Column="12" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

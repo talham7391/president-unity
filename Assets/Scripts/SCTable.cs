@@ -72,16 +72,19 @@ public class SCTable : MonoBehaviour {
 			targetPosition.x += Random.Range(-5.0f, 5.0f);
 			targetPosition = fixZPosition(targetPosition, this.cards.Count);
 			targetRotation = new Vector3(0, 0, (Random.Range(0, 2) == 0) ? Random.Range(0.0f, 12.0f) : Random.Range(348.0f, 359.0f));
-			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
-			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
+			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT, 1 * i);
+			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT, 1 * i);
 		}
 		
 		return true;
 	}
 	
 	public void playNewCard(SCCardInfo[] cards, Vector3 origin){
-		GameObject[] cardsToPlay = new GameObject[4];
+		GameObject[] cardsToPlay = new GameObject[cards.Length];
 		for(int i = 0; i < cardsToPlay.Length; ++i){
+			if(cards[i] == null){
+				continue;
+			}
 			GameObject card = Instantiate(cardObj);
 			SCCard prop = card.GetComponent<SCCard>();
 			prop.suit = cards[i].suit;

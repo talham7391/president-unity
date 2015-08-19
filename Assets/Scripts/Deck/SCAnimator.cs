@@ -22,6 +22,8 @@ public class SCAnimator : MonoBehaviour {
 		public float progress; // 0 - 1
 		public string type;
 		public string ease;
+		public float timeAtStart;
+		public float currentTime;
 	};
 
 	public Action callBack;
@@ -42,11 +44,19 @@ public class SCAnimator : MonoBehaviour {
 		}
 		for(int i = 0; i < currentAnimations.Count; ++i){
 			AnimationData tempData = currentAnimations[i];
-			string result = null;
+			tempData.currentTime = Time.realtimeSinceStartup;
+			string result = INCOMPLETE;
+
+			if(tempData.currentTime - tempData.timeAtStart < tempData.delay){
+				goto skip;
+			}
+
 			switch(currentAnimations[i].type){
 			case MOVE: result = moveAnimation(ref tempData); break;
 			case ROTATE: result = rotateAnimation(ref tempData); break;
 			}
+
+		skip:
 			currentAnimations[i] = tempData;
 			if(result == COMPLETE){
 				currentAnimations.RemoveAt(i);
@@ -59,7 +69,7 @@ public class SCAnimator : MonoBehaviour {
 		}
 	}
 
-	public void moveTo(Vector3 target, float time, string ease = LINEAR){
+	public void moveTo(Vector3 target, float time, string ease = LINEAR, float delay = 0){
 		if(currentAnimations == null){
 			init();
 		}
@@ -74,10 +84,12 @@ public class SCAnimator : MonoBehaviour {
 		data.progress = 0;
 		data.type = MOVE;
 		data.ease = ease;
+		data.delay = delay;
+		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
 	}
 
-	public void moveBy(Vector3 distance, float time, string ease = LINEAR){ // factor will be used when easeIn and stuff like that want to be customized
+	public void moveBy(Vector3 distance, float time, string ease = LINEAR, float delay = 0){ // factor will be used when easeIn and stuff like that want to be customized
 		if(currentAnimations == null){
 			init();
 		}
@@ -92,10 +104,12 @@ public class SCAnimator : MonoBehaviour {
 		data.progress = 0;
 		data.type = MOVE;
 		data.ease = ease;
+		data.delay = delay;
+		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
 	}
 
-	public void rotateToTarget(Vector3 target, float time, string ease = LINEAR){
+	public void rotateToTarget(Vector3 target, float time, string ease = LINEAR, float delay = 0){
 		if(currentAnimations == null){
 			init();
 		}
@@ -110,6 +124,8 @@ public class SCAnimator : MonoBehaviour {
 		data.progress = 0;
 		data.type = ROTATE;
 		data.ease = ease;
+		data.delay = delay;
+		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
 	}
 	

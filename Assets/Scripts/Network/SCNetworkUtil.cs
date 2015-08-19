@@ -100,6 +100,10 @@ public class SCNetworkUtil{
 	}
 
 	public static int toInt(string str){
+		if(str == null){
+			Debug.Log("Cannot convert to int, string is null");
+			return -1;
+		}
 		int num = 0;
 		for(int i = 0; i < str.Length; ++i){
 			if('0' <= str[i] && str[i] <= '9'){

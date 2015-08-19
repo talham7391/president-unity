@@ -58,8 +58,8 @@ public class SCHand : MonoBehaviour {
 	
 	void Update(){
 		processMouse();
-		processKeys();
-		//processKeys2();
+		//processKeys();
+		processKeys2();
 	}
 	
 	private void processMouse(){
@@ -203,12 +203,24 @@ public class SCHand : MonoBehaviour {
 		}
 
 		GameObject[] selectedCards = new GameObject[4];
+		n = 0;
 		for(int i = 0; i < selectedCards.Length; ++i){
-			selectedCards[i] = cards[selectedIndexes[i]];
+			if(selectedIndexes[i] == -1){
+				continue;
+			}
+			selectedCards[n++] = cards[selectedIndexes[i]];
 		}
 		if(table.playExistingCard(selectedCards)){
 			removeCards(selectedIndexes, false);
-			gameObject.SendMessageUpwards("sendMessageToServer", "play_card:suit=" + prop.suit + ",number=" + prop.number);
+			string message = "play_card:";
+			for(int i = 1; i <= selectedCards.Length; ++i){
+				if(selectedCards[i - 1] == null){
+					continue;
+				}
+				prop = selectedCards[i - 1].GetComponent<SCCard>();
+				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
+			}
+			gameObject.SendMessageUpwards("sendMessageToServer", message);
 			cardAllowed = false;
 		}else{
 			Debug.Log("Can't play that card");
@@ -404,8 +416,6 @@ public class SCHand : MonoBehaviour {
 			sum += cards[i].transform.localPosition.x;
 		}
 		float average = sum / validIndex;
-		Debug.Log("d: " + spacing * validIndex);
-		Debug.Log("a: " + average);
 
 		// remove cards
 		for(int i = 0; i < selectedIndexes.Length; ++i){

@@ -26,10 +26,8 @@ public class SCServer{
 
 	public void startGame(){
 		turnIndex = Random.Range(0, connectedPlayers.Count + 1);
-		Debug.Log("cp: " + connectedPlayers.Count);
 		int cardsPerPlayer = 52 / (connectedPlayers.Count + 1);
 		int cardsRemaining = 52 - cardsPerPlayer * (connectedPlayers.Count + 1);
-		Debug.Log("cpp: " + cardsPerPlayer + ", cr: " + cardsRemaining);
 		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
 			bool turnFound;
 			sendMessageTo(i, "create_hand:" + logic.generateCards(cardsPerPlayer + (cardsRemaining > 0 ? 1 : 0), out turnFound));
@@ -42,8 +40,12 @@ public class SCServer{
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
-	public void userPlayed(string suit, int number){
-		sendMessageToAllAccept(turnIndex, "spawn_card:suit=" + suit + ",number=" + number);
+	public void userPlayed(SCCardInfo[] playedCards){
+		string message = "spawn_card:";
+		for(int i = 1; i <= playedCards.Length && playedCards[i - 1] != null; ++i){
+			message += (i == 1 ? "" : ",") + "suit" + i + "=" + playedCards[i - 1].suit + ",number" + i + "=" + playedCards[i - 1].number;
+		}
+		sendMessageToAllAccept(turnIndex, message);
 		advanceTurn();
 	}
 

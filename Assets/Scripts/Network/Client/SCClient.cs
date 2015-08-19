@@ -99,17 +99,28 @@ public class SCClient{
 	}
 
 	private void onPlayCardCommand(SCMessageInfo info){
-		localServer.userPlayed(info.getValue("suit"), SCNetworkUtil.toInt(info.getValue("number")));
+		SCCardInfo[] playedCards = new SCCardInfo[4];
+		for(int i = 0; i < playedCards.Length; ++i){
+			string suit = info.getValue("suit" + (i + 1));
+			string number = info.getValue("number" + (i + 1));
+			if(suit == null || number == null){
+				break;
+			}
+			playedCards[i] = new SCCardInfo(suit, SCNetworkUtil.toInt(number));
+		}
+		localServer.userPlayed(playedCards);
 	}
 
 	private void onSpawnCardCommand(SCMessageInfo info){
-		Debug.Log("Spawned card");
 		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
 		SCCardInfo[] cardsToSpawn = new SCCardInfo[4];
-		for(int i = 1; i <= 4; ++i){
+		for(int i = 1; i <= cardsToSpawn.Length; ++i){
 			string suit = info.getValue("suit" + i);
-			int number = SCNetworkUtil.toInt(info.getValue("number" + i));
-			cardsToSpawn[i] = new SCCardInfo(suit, number);
+			string number = info.getValue("number" + i);
+			if(suit == null || number == null){
+				break;
+			}
+			cardsToSpawn[i - 1] = new SCCardInfo(suit, SCNetworkUtil.toInt(number));
 		}
 		table.playNewCard(cardsToSpawn, new Vector3(0, 40, 0));
 	}

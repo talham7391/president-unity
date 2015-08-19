@@ -27,14 +27,43 @@ public class SCRules{
 			return false;
 		}
 
-		if(topCards == null){
+		if(topCards == null || topCards[0] == null){
 			if(cards[0].suit == "club" && cards[0].number == 3 && cards[1] == null){
 				return true;
 			}else{
 				return false;
 			}
 		}
+
+		if(numberOfCards(topCards) != numberOfCards(cards)){
+			return false;
+		}
+
+		if(areCardNumbersSame(cards) && cards[0].number > topCards[0].number){
+			return true;
+		}
+
 		return false;
+	}
+
+	private int numberOfCards(SCCardInfo[] cards){
+		for(int i = 0; i < cards.Length; ++i){
+			if(topCards[i] == null){
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	private bool areCardNumbersSame(SCCardInfo[] cards){
+		int number = cards[0].number;
+		for(int i = 1; i < cards.Length && cards[i] != null; ++i){
+			if(cards[i].number != number){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void updateTopCards(SCCardInfo[] cards){
