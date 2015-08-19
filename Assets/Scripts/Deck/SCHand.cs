@@ -59,7 +59,7 @@ public class SCHand : MonoBehaviour {
 	void Update(){
 		processMouse();
 		processKeys();
-		processKeys2();
+		//processKeys2();
 	}
 	
 	private void processMouse(){
@@ -113,7 +113,15 @@ public class SCHand : MonoBehaviour {
 				addCard(config.suit, config.number, validIndex);
 			}
 		}else if(Input.GetKeyDown("r")){ // removing a card
-			removeCard(validIndex/2, true);
+			int[] selectedIndexes = {-1, -1, -1, -1};
+			int n = 0;
+			for(int i = 0; i < validIndex; ++i){
+				SCCard prop = cards[i].GetComponent<SCCard>();
+				if(prop.getSelected()){
+					selectedIndexes[n++] = i;
+				}
+			}
+			removeCards(selectedIndexes, true);
 		}else if(Input.GetKeyDown("f")){ // floating a card
 			if(floater == null){
 				setFloater();
@@ -178,26 +186,28 @@ public class SCHand : MonoBehaviour {
 			Debug.Log("No access to Table.");
 			return;
 		}
-		int selectedIndex = -1;
+		int[] selectedIndexes = {-1, -1, -1, -1};
+		int n = 0;
 		SCCard prop = null;
 		for(int i = 0; i < cards.Length; ++i){
 			prop = cards[i].GetComponent<SCCard>();
 			if(prop.getSelected()){
-				selectedIndex = i;
+				selectedIndexes[n++] = i;
 				break;
 			}
 		}
 
-		if(selectedIndex == -1){
+		if(selectedIndexes[0] == -1){
 			Debug.Log("No cards selected.");
-			return;
-		}else if(nothingBut.HasValue && (prop.suit != nothingBut.Value.suit || prop.number != nothingBut.Value.number)){
-			Debug.Log("Only allowed to play:" + nothingBut.Value.number + " of " + nothingBut.Value.suit + "s");
 			return;
 		}
 
-		if(table.playExistingCard(cards[selectedIndex])){
-			removeCard(selectedIndex, false);
+		GameObject[] selectedCards = new GameObject[4];
+		for(int i = 0; i < selectedCards.Length; ++i){
+			selectedCards[i] = cards[selectedIndexes[i]];
+		}
+		if(table.playExistingCard(selectedCards)){
+			removeCards(selectedIndexes, false);
 			gameObject.SendMessageUpwards("sendMessageToServer", "play_card:suit=" + prop.suit + ",number=" + prop.number);
 			cardAllowed = false;
 		}else{
@@ -385,13 +395,63 @@ public class SCHand : MonoBehaviour {
 		
 		++validIndex;
 	}
-	
+
+	private void removeCards(int[] selectedIndexes, bool destroy){
+		seizeInput();
+		// get average
+		float sum = 0;
+		for(int i = 0; i < validIndex; ++i){
+			sum += cards[i].transform.localPosition.x;
+		}
+		float average = sum / validIndex;
+		Debug.Log("d: " + spacing * validIndex);
+		Debug.Log("a: " + average);
+
+		// remove cards
+		for(int i = 0; i < selectedIndexes.Length; ++i){
+			if(selectedIndexes[i] >= 0 && selectedIndexes[i] < validIndex){
+				if(destroy){
+					Destroy(cards[selectedIndexes[i]]);
+				}
+				cards[selectedIndexes[i]] = null;
+				for(int j = selectedIndexes[i]; j < validIndex - 1; ++j){
+					cards[j] = cards[j + 1];
+				}
+				for(int j = i; j < selectedIndexes.Length; ++j){
+					selectedIndexes[j] -= 1;
+				}
+				--validIndex;
+			}
+		}
+
+		// animate cards to target positions and rotations to maintain the average
+		float totalDistance = validIndex * spacing;
+		float start = average - totalDistance / 2;
+		float factor = 1;
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
+
+			Vector3 targetPosition = new Vector3(start + spacing * (i + 0.5f), 0, 0);
+			targetPosition = fixZPosition(targetPosition, i);
+			targetPosition = fixYPosition(targetPosition, prop.getSelected());
+			anim.moveTo(targetPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
+			anim.rotateToTarget(fixRotation(targetPosition), animationSpeed * factor);
+
+			if(i == validIndex - 1){
+				cards[i].GetComponent<SCAnimator>().callBack = () => {
+					adjustGhostCard();
+					allowInput();
+				};
+			}
+		}
+	}
+
 	private GameObject removeCard(int index, bool destroy){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Invalid remove index: " + index);
 			return null;
 		}
-		
 		seizeInput();
 		
 		float factor = 1;

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class SCServer{
 
-	public static string allowCardExtra = "";
-
 	private SCClient owner;
 	private SCLogic logic;
 
@@ -41,18 +39,11 @@ public class SCServer{
 			}
 			--cardsRemaining;
 		}
-		sendMessageTo(turnIndex, "allow_card:allowance1=nothing_but,suit1=club,number1=3");
+		sendMessageTo(turnIndex, "allow_card");
 	}
 
 	public void userPlayed(string suit, int number){
 		sendMessageToAllAccept(turnIndex, "spawn_card:suit=" + suit + ",number=" + number);
-		advanceTurn();
-	}
-
-	public void userRequestedCard(){
-		bool n;
-		string card = logic.generateCard("", out n);
-		sendMessageTo(turnIndex, "add_card:" + card);
 		advanceTurn();
 	}
 
@@ -66,7 +57,7 @@ public class SCServer{
 		if(turnIndex >= connectedPlayers.Count + 1){
 			turnIndex = 0;
 		}
-		sendMessageTo(turnIndex, "allow_card" + allowCardExtra);
+		sendMessageTo(turnIndex, "allow_card");
 	}
 
 	// 0 is local user

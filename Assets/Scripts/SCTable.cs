@@ -28,53 +28,70 @@ public class SCTable : MonoBehaviour {
 	}
 	
 	private void processKeys(){
-		if(Input.GetKeyDown("n")){
-			playNewCard("heart", 7, new Vector3(0, 30, 0));
-		}
 	}
 	
-	public bool playExistingCard(GameObject card, bool strict = true){
-		SCCard prop = card.GetComponent<SCCard>();
-		if(!rules.allowedToPlay(prop.suit, prop.number) && strict){
+	public bool playExistingCard(GameObject[] cards, bool strict = true){
+		SCCardInfo[] cardsToCheck = new SCCardInfo[4];
+		for(int i = 0; i < cardsToCheck.Length; ++i){
+			if(cards[i] == null){
+				continue;
+			}
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			cardsToCheck[i] = new SCCardInfo(prop.suit, prop.number);
+		}
+		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
 			return false;
+		}else if(!strict){
+			rules.updateTopCards(cardsToCheck);
 		}
 		
 		SCAnimator anim;
 		Vector3 targetPosition;
 		Vector3 targetRotation;
 		
-		for(int i = 0; i < cards.Count; ++i){
-			anim = cards[i].GetComponent<SCAnimator>();
-			targetPosition = cloneVector3(cards[i].transform.localPosition);
+		for(int i = 0; i < this.cards.Count; ++i){
+			anim = this.cards[i].GetComponent<SCAnimator>();
+			targetPosition = cloneVector3(this.cards[i].transform.localPosition);
 			//targetPosition.x += spacing;
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
 		
-		cards.Add(card);
-		card.transform.SetParent(transform);
-		prop.setSelectable(false);
-		anim = card.GetComponent<SCAnimator>();
-		targetPosition = cloneVector3(tableCenter);
-		targetPosition.x += Random.Range(-5.0f, 5.0f);
-		targetPosition = fixZPosition(targetPosition, cards.Count);
-		targetRotation = new Vector3(0, 0, (Random.Range(0, 2) == 0) ? Random.Range(0.0f, 12.0f) : Random.Range(348.0f, 359.0f));
-		anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
-		anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
+		for(int i = 0; i < cards.Length; ++i){
+			if(cards[i] == null){
+				continue;
+			}
 
-		SCHand cont = hand.GetComponent<SCHand>();
+			this.cards.Add(cards[i]);
+			cards[i].transform.SetParent(transform);
+
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			anim = cards[i].GetComponent<SCAnimator>();
+
+			prop.setSelectable(false);
+			targetPosition = cloneVector3(tableCenter);
+			targetPosition.x += Random.Range(-5.0f, 5.0f);
+			targetPosition = fixZPosition(targetPosition, this.cards.Count);
+			targetRotation = new Vector3(0, 0, (Random.Range(0, 2) == 0) ? Random.Range(0.0f, 12.0f) : Random.Range(348.0f, 359.0f));
+			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
+			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT);
+		}
 		
 		return true;
 	}
 	
-	public void playNewCard(string suit, int number, Vector3 origin){
-		GameObject card = Instantiate(cardObj);
-		SCCard prop = card.GetComponent<SCCard>();
-		prop.suit = suit;
-		prop.number = number;
-		prop.createCard();
-		card.transform.SetParent(transform);
-		card.transform.localPosition = origin;
-		playExistingCard(card, false);
+	public void playNewCard(SCCardInfo[] cards, Vector3 origin){
+		GameObject[] cardsToPlay = new GameObject[4];
+		for(int i = 0; i < cardsToPlay.Length; ++i){
+			GameObject card = Instantiate(cardObj);
+			SCCard prop = card.GetComponent<SCCard>();
+			prop.suit = cards[i].suit;
+			prop.number = cards[i].number;
+			prop.createCard();
+			card.transform.SetParent(transform);
+			card.transform.localPosition = origin;
+			cardsToPlay[i] = card;
+		}
+		playExistingCard(cardsToPlay, false);
 	}
 	
 	private Vector3 cloneVector3(Vector3 x){

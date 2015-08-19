@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Deck\SCAnimator.cs" />
      <Compile Include="Assets\Scripts\Deck\SCCard.cs" />
+     <Compile Include="Assets\Scripts\Deck\SCCardInfo.cs" />
      <Compile Include="Assets\Scripts\Deck\SCHand.cs" />
      <Compile Include="Assets\Scripts\Deck\SCSuitConfigurations.cs" />
      <Compile Include="Assets\Scripts\Network\Client\SCClient.cs" />

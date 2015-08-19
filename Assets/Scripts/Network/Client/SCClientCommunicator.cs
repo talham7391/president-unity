@@ -27,7 +27,8 @@ public class SCClientCommunicator : MonoBehaviour {
 	
 	private const int PORT = 2462;
 	private const int SERVERPORT = 2463;
-	private const string SERVERIP = "127.0.0.1";
+	//private const int SERVERPORT = 2462;
+	private const string SERVERIP = "192.168.1.224";
 	private const int MASTERPORT = 2464;
 	private const string MASTERIP = "127.0.0.1";
 	
