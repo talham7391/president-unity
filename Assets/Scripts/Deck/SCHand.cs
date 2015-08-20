@@ -189,11 +189,10 @@ public class SCHand : MonoBehaviour {
 		int[] selectedIndexes = {-1, -1, -1, -1};
 		int n = 0;
 		SCCard prop = null;
-		for(int i = 0; i < cards.Length; ++i){
+		for(int i = 0; i < validIndex; ++i){
 			prop = cards[i].GetComponent<SCCard>();
 			if(prop.getSelected()){
 				selectedIndexes[n++] = i;
-				break;
 			}
 		}
 
@@ -222,8 +221,6 @@ public class SCHand : MonoBehaviour {
 			}
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
 			cardAllowed = false;
-		}else{
-			Debug.Log("Can't play that card");
 		}
 	}
 

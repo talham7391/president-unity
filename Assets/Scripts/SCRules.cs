@@ -9,18 +9,6 @@ public class SCRules{
 		topCards = null;
 	}
 
-	public void setTopCard(SCCardInfo[] cards){
-		if(cards[0] == null){
-			Debug.Log("Top Cards must not be null");
-			return;
-		}else if(cards.Length > 4){
-			Debug.Log("Top cards exceed maximum limit of 4");
-			return;
-		}
-
-		topCards = cards;
-	}
-
 	public bool allowedToPlay(SCCardInfo[] cards, bool updateIfAllowed){
 		if(cards[0] == null || cards.Length != 4){
 			Debug.Log("Invalid cards; not suitable for checking");
@@ -29,26 +17,42 @@ public class SCRules{
 
 		if(topCards == null || topCards[0] == null){
 			if(cards[0].suit == "club" && cards[0].number == 3 && cards[1] == null){
+				Debug.Log("This is the 3 of clubs");
 				return true;
 			}else{
+				Debug.Log("This card is not the 3 of clubs.");
 				return false;
 			}
 		}
 
 		if(numberOfCards(topCards) != numberOfCards(cards)){
-			return false;
-		}
-
-		if(areCardNumbersSame(cards) && cards[0].number > topCards[0].number){
+			Debug.Log("You must play the same number of cards.");
 			return true;
 		}
 
+		if(areCardNumbersSame(cards) && cards[0].number > topCards[0].number){
+			Debug.Log("Cards are same and the value is greater.");
+			return true;
+		}
+
+		Debug.Log("Other tests failed.");
 		return false;
+	}
+
+	public void updateTopCards(SCCardInfo[] cards){
+		if(cards[0] == null || cards.Length != 4){
+			Debug.Log("Invalid cards; cannot set as top");
+			return;
+		}
+		
+		topCards = cards;
+
+		printTopCards();
 	}
 
 	private int numberOfCards(SCCardInfo[] cards){
 		for(int i = 0; i < cards.Length; ++i){
-			if(topCards[i] == null){
+			if(cards[i] == null){
 				return i;
 			}
 		}
@@ -66,12 +70,14 @@ public class SCRules{
 		return true;
 	}
 
-	public void updateTopCards(SCCardInfo[] cards){
-		if(cards[0] == null || cards.Length != 4){
-			Debug.Log("Invalid cards; cannot set as top");
-			return;
+	private void printTopCards(){
+		string p = "Top Cards: ";
+		for(int i = 0; i < topCards.Length; ++i){
+			if(topCards[i] == null){
+				continue;
+			}
+			p += "" + topCards[i].number + topCards[i].suit + " ";
 		}
-
-		topCards = cards;
+		Debug.Log(p);
 	}
 }

@@ -9,6 +9,7 @@ public class SCServer{
 
 	private List<int> connectedPlayers;
 	private int turnIndex;
+	private int turnsSkipped;
 
 	public SCServer(SCClient owner){
 		this.owner = owner;
@@ -17,6 +18,7 @@ public class SCServer{
 		Debug.Log("Server created.");
 
 		turnIndex = 0;
+		turnsSkipped = 0;
 	}
 
 	public void processIncomingConnection(int connectionId){
@@ -50,7 +52,11 @@ public class SCServer{
 	}
 
 	public void userSkippedTurn(){
-		sendMessageToAll("reset_limits");
+		++turnsSkipped;
+		if(turnsSkipped == (connectedPlayers.Count + 1)){
+			sendMessageToAll("scrap_pile");
+			turnsSkipped = 0;
+		}
 		advanceTurn();
 	}
 

@@ -44,6 +44,8 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("play_card", onPlayCardCommand));
 		commandBehaviours.Add(new CommandBehaviour("spawn_card", onSpawnCardCommand));
 		commandBehaviours.Add(new CommandBehaviour("skip_turn", onSkipTurnCommand));
+		commandBehaviours.Add(new CommandBehaviour("update_top_cards", onUpdateTopCardsCommand));
+		commandBehaviours.Add(new CommandBehaviour("scrap_pile", onScrapPileCommand));
 	}
 
 	public void sendToSelf(string message){
@@ -127,6 +129,29 @@ public class SCClient{
 
 	private void onSkipTurnCommand(SCMessageInfo info){
 		localServer.userSkippedTurn();
+	}
+
+	private void onUpdateTopCardsCommand(SCMessageInfo info){
+		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
+		SCCardInfo[] cards = new SCCardInfo[4];
+		for(int i = 0; i < 4; ++i){
+			string suit = info.getValue("suit" + i);
+			string number = info.getValue("number" + i);
+			if(suit == null || number == null){
+				break;
+			}
+			cards[i] = new SCCardInfo(suit, SCNetworkUtil.toInt(number));
+		}
+		if(cards[0] == null){
+			return;
+		}else{
+			table.getRules().updateTopCards();
+		}
+	}
+
+	private void onScrapPileCommand(SCMessageInfo info){
+		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
+		table.scrapPile();
 	}
 
 	/********************************************************************************************/

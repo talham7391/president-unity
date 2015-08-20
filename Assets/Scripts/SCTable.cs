@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class SCTable : MonoBehaviour {
 	
 	public Vector3 tableCenter;
+	public Vector3 pileLocation;
 	//public float spacing;
 	public GameObject hand;
 	public GameObject cardObj;
@@ -32,12 +33,15 @@ public class SCTable : MonoBehaviour {
 	
 	public bool playExistingCard(GameObject[] cards, bool strict = true){
 		SCCardInfo[] cardsToCheck = new SCCardInfo[4];
+		int cardsAdded = 0;
+
 		for(int i = 0; i < cardsToCheck.Length; ++i){
 			if(cards[i] == null){
 				continue;
 			}
 			SCCard prop = cards[i].GetComponent<SCCard>();
 			cardsToCheck[i] = new SCCardInfo(prop.suit, prop.number);
+			++cardsAdded;
 		}
 		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
 			return false;
@@ -48,19 +52,11 @@ public class SCTable : MonoBehaviour {
 		SCAnimator anim;
 		Vector3 targetPosition;
 		Vector3 targetRotation;
-		
-		for(int i = 0; i < this.cards.Count; ++i){
-			anim = this.cards[i].GetComponent<SCAnimator>();
-			targetPosition = cloneVector3(this.cards[i].transform.localPosition);
-			//targetPosition.x += spacing;
-			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
-		}
-		
+
 		for(int i = 0; i < cards.Length; ++i){
 			if(cards[i] == null){
 				continue;
 			}
-
 			this.cards.Add(cards[i]);
 			cards[i].transform.SetParent(transform);
 
@@ -70,10 +66,17 @@ public class SCTable : MonoBehaviour {
 			prop.setSelectable(false);
 			targetPosition = cloneVector3(tableCenter);
 			targetPosition.x += Random.Range(-5.0f, 5.0f);
-			targetPosition = fixZPosition(targetPosition, this.cards.Count);
+			targetPosition = fixZPosition(targetPosition, this.cards.Count - (cardsAdded - i));
 			targetRotation = new Vector3(0, 0, (Random.Range(0, 2) == 0) ? Random.Range(0.0f, 12.0f) : Random.Range(348.0f, 359.0f));
-			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT, 1 * i);
-			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT, 1 * i);
+			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT, 0.1f * i);
+			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT, 0.1f * i);
+		}
+
+		for(int i = 0; i < this.cards.Count - cardsAdded; ++i){
+			anim = this.cards[i].GetComponent<SCAnimator>();
+			targetPosition = cloneVector3(this.cards[i].transform.localPosition);
+			//targetPosition.x += spacing;
+			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
 		
 		return true;
@@ -95,6 +98,25 @@ public class SCTable : MonoBehaviour {
 			cardsToPlay[i] = card;
 		}
 		playExistingCard(cardsToPlay, false);
+	}
+
+	public void scrapPile(){
+		for(int i = 0; i < pile.Count; ++i){
+			Vector3 targetPosition = cloneVector3(pile[i].transform.localPosition);
+			targetPosition.z = 0.05f * (cards.Count + pile.Count - i);
+			pile[i].transform.localPosition = targetPosition;
+		}
+
+		for(int i = 0; i < cards.Count; ++i){
+			pile.Add(cards[i]);
+
+			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
+			Vector3 targetPosition = cloneVector3(pileLocation);
+			targetPosition.z = 0.05f * (cards.Count - i);
+			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT);
+		}
+
+		cards = new List<GameObject>();
 	}
 	
 	private Vector3 cloneVector3(Vector3 x){
