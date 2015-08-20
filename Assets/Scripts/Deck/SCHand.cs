@@ -197,7 +197,7 @@ public class SCHand : MonoBehaviour {
 				prop = selectedCards[i - 1].GetComponent<SCCard>();
 				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
 			}
-			message += "extra=" + extra;
+			message += ",extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
 		}
 	}
