@@ -3,6 +3,8 @@ using System.Collections;
 
 public class SCRules{
 
+	public static readonly int[] cardValues = {0, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
 	private SCCardInfo[] topCards;
 
 	public SCRules(){
@@ -14,6 +16,7 @@ public class SCRules{
 			Debug.Log("Invalid cards; not suitable for checking");
 			return false;
 		}
+		printTopCards();
 
 		if(topCards == null || topCards[0] == null){
 			if(cards[0].suit == "club" && cards[0].number == 3 && cards[1] == null){
@@ -25,18 +28,37 @@ public class SCRules{
 			}
 		}
 
-		if(numberOfCards(topCards) != numberOfCards(cards)){
-			Debug.Log("You must play the same number of cards.");
+		if(topCards[0].isAnyCard()){
 			return true;
 		}
 
-		if(areCardNumbersSame(cards) && cards[0].number > topCards[0].number){
+		if(numberOfCards(topCards) != numberOfCards(cards)){
+			Debug.Log("You must play the same number of cards.");
+			return false;
+		}
+
+		if(areCardNumbersSame(cards) && cardValues[cards[0].number] > cardValues[topCards[0].number]){
 			Debug.Log("Cards are same and the value is greater.");
 			return true;
 		}
 
 		Debug.Log("Other tests failed.");
 		return false;
+	}
+
+	public bool allowedToSkip(){
+
+		if(topCards == null || topCards[0] == null){
+			Debug.Log("You must play the 3 of clubs.");
+			return false;
+		}
+
+		if(topCards[0].isAnyCard()){
+			Debug.Log("You must play a card.");
+			return false;
+		}
+
+		return true;
 	}
 
 	public void updateTopCards(SCCardInfo[] cards){
@@ -48,6 +70,14 @@ public class SCRules{
 		topCards = cards;
 
 		printTopCards();
+	}
+
+	public bool isAnyOtherCardPossible(){
+		if(topCards != null && topCards[0] != null && topCards[0].number == 2){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	private int numberOfCards(SCCardInfo[] cards){
@@ -71,6 +101,9 @@ public class SCRules{
 	}
 
 	private void printTopCards(){
+		if(topCards == null){
+			return;
+		}
 		string p = "Top Cards: ";
 		for(int i = 0; i < topCards.Length; ++i){
 			if(topCards[i] == null){

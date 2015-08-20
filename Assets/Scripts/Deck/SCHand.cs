@@ -38,11 +38,6 @@ public class SCHand : MonoBehaviour {
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
 
-	// limits
-	private CardConfig? nothingBut;
-	private int minimumCards;
-	private int minimumNumber;
-	
 	void Start(){
 		cards = new GameObject[count];
 		floater = null;
@@ -51,14 +46,11 @@ public class SCHand : MonoBehaviour {
 		inputAllowed = true;
 		inputRecentlyChanged = false;
 		cardAllowed = false;
-		nothingBut = null;
-		minimumCards = 0;
-		minimumNumber = 0;
 	}
 	
 	void Update(){
 		processMouse();
-		//processKeys();
+		processKeys();
 		processKeys2();
 	}
 	
@@ -107,6 +99,7 @@ public class SCHand : MonoBehaviour {
 		if(!inputAllowed){
 			return;
 		}
+		/*
 		if(Input.GetKeyDown("a")){ // adding a card
 			CardConfig config = generateCard();
 			if(config.original){
@@ -122,7 +115,8 @@ public class SCHand : MonoBehaviour {
 				}
 			}
 			removeCards(selectedIndexes, true);
-		}else if(Input.GetKeyDown("f")){ // floating a card
+		}else */
+		if(Input.GetKeyDown("r")){ // floating a card
 			if(floater == null){
 				setFloater();
 			}else{
@@ -131,13 +125,15 @@ public class SCHand : MonoBehaviour {
 					insertFloater(getInsertIndex());
 				}
 			}
-		}else if(Input.GetKeyDown("s")){ // sorting the hand
+		}else if(Input.GetKeyDown("e")){ // sorting the hand
 			autoSort();
-		}else if(Input.GetKeyDown("p")){ // playing a card
+		}
+		/*else if(Input.GetKeyDown("p")){ // playing a card
 			playCard();
 		}else if(Input.GetKeyDown("c")){
 			createHand(6);
 		}
+		*/
 	}
 
 	private void processKeys2(){
@@ -155,26 +151,6 @@ public class SCHand : MonoBehaviour {
 	
 	public void addCard(string suit, int number){
 		addCard(suit, number, validIndex);
-	}
-
-	public void setLimits(string allowance, string suit, int number){
-		if(allowance == "nothing_but"){
-			nothingBut = new CardConfig(suit, number);
-		}
-	}
-
-	public void setLimits(string allowance, int value){
-		if(allowance == "minimum_cards"){
-			minimumCards = value;
-		}else if(allowance == "minimum_number"){
-			minimumNumber = value;
-		}
-	}
-
-	public void removeLimits(){
-		nothingBut = null;
-		minimumCards = 0;
-		minimumNumber = 0;
 	}
 	
 	public void playCard(){
@@ -209,7 +185,9 @@ public class SCHand : MonoBehaviour {
 			}
 			selectedCards[n++] = cards[selectedIndexes[i]];
 		}
-		if(table.playExistingCard(selectedCards)){
+		string extra = "nothing";
+		if(table.playExistingCard(selectedCards, true, ref extra)){
+			cardAllowed = false;
 			removeCards(selectedIndexes, false);
 			string message = "play_card:";
 			for(int i = 1; i <= selectedCards.Length; ++i){
@@ -219,8 +197,8 @@ public class SCHand : MonoBehaviour {
 				prop = selectedCards[i - 1].GetComponent<SCCard>();
 				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
 			}
+			message += "extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
-			cardAllowed = false;
 		}
 	}
 
@@ -273,9 +251,14 @@ public class SCHand : MonoBehaviour {
 			Debug.Log("Its not your turn");
 			return;
 		}
-		gameObject.SendMessageUpwards("sendMessageToServer", "skip_turn");
-		Debug.Log("Skipped turn");
-		cardAllowed = false;
+		if(table == null){
+			Debug.Log("No access to table");
+		}
+		if(table.getRules().allowedToSkip()){
+			gameObject.SendMessageUpwards("sendMessageToServer", "skip_turn");
+			Debug.Log("Skipped turn");
+			cardAllowed = false;
+		}
 	}
 
 	private GameObject createCard(CardConfig config){
@@ -615,7 +598,9 @@ public class SCHand : MonoBehaviour {
 			int minIndex = i;
 			for(int j = i + 1; j < validIndex; ++j){
 				SCCard currentProp = cards[j].GetComponent<SCCard>();
-				if(currentProp.number < minProp.number){
+				int correctedCurrentNum = SCRules.cardValues[currentProp.number];
+				int correctedMinNumber = SCRules.cardValues[minProp.number];
+				if(correctedCurrentNum < correctedMinNumber){
 					minProp = currentProp;
 					minIndex = j;
 				}

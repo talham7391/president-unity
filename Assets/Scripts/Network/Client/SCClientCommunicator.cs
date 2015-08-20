@@ -25,10 +25,8 @@ public class SCClientCommunicator : MonoBehaviour {
 		}
 	};
 	
-	private const int PORT = 2462;
-	private const int SERVERPORT = 2463;
-//	private const int PORT = 2461;
-	//private const int SERVERPORT = 2462;
+	private const int PORT = 2462; private const int SERVERPORT = 2463;
+//	private const int PORT = 2461; private const int SERVERPORT = 2462;
 	private const string SERVERIP = "192.168.1.224";
 	private const int MASTERPORT = 2464;
 	private const string MASTERIP = "127.0.0.1";
@@ -96,6 +94,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		case NetworkEventType.Nothing: break;
 		case NetworkEventType.ConnectEvent: onConnectEvent(ref data); break;
 		case NetworkEventType.DataEvent: onDataEvent(ref data); break;
+		case NetworkEventType.DisconnectEvent: onDisconnectEvent(ref data); break;
 		}
 	}
 	
@@ -120,6 +119,10 @@ public class SCClientCommunicator : MonoBehaviour {
 			Debug.Log(command);
 			client.processMessage(command, info);
 		}
+	}
+
+	private void onDisconnectEvent(ref ReceivedData data){
+		Debug.Log("Someone disconnected!");
 	}
 	
 	public void sendMessageToServer(string message){

@@ -16,6 +16,7 @@ public class SCTable : MonoBehaviour {
 	
 	void Start(){
 		cards = new List<GameObject>();
+		pile = new List<GameObject>();
 		rules = new SCRules();
 		hand = Instantiate(hand);
 		hand.transform.SetParent(transform.parent);
@@ -31,7 +32,7 @@ public class SCTable : MonoBehaviour {
 	private void processKeys(){
 	}
 	
-	public bool playExistingCard(GameObject[] cards, bool strict = true){
+	public bool playExistingCard(GameObject[] cards, bool strict, ref string extra){
 		SCCardInfo[] cardsToCheck = new SCCardInfo[4];
 		int cardsAdded = 0;
 
@@ -45,9 +46,8 @@ public class SCTable : MonoBehaviour {
 		}
 		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
 			return false;
-		}else if(!strict){
-			rules.updateTopCards(cardsToCheck);
 		}
+		rules.updateTopCards(cardsToCheck);
 		
 		SCAnimator anim;
 		Vector3 targetPosition;
@@ -70,6 +70,10 @@ public class SCTable : MonoBehaviour {
 			targetRotation = new Vector3(0, 0, (Random.Range(0, 2) == 0) ? Random.Range(0.0f, 12.0f) : Random.Range(348.0f, 359.0f));
 			anim.moveTo(targetPosition, 0.5f, SCAnimator.EASE_OUT, 0.1f * i);
 			anim.rotateToTarget(targetRotation, 0.5f, SCAnimator.EASE_OUT, 0.1f * i);
+			if(i == cardsAdded - 1 && !rules.isAnyOtherCardPossible()){
+				anim.callBack = scrapPile;
+				extra = "repeat_turn";
+			}
 		}
 
 		for(int i = 0; i < this.cards.Count - cardsAdded; ++i){
@@ -78,7 +82,7 @@ public class SCTable : MonoBehaviour {
 			//targetPosition.x += spacing;
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
-		
+
 		return true;
 	}
 	
@@ -97,7 +101,8 @@ public class SCTable : MonoBehaviour {
 			card.transform.localPosition = origin;
 			cardsToPlay[i] = card;
 		}
-		playExistingCard(cardsToPlay, false);
+		string extra = "";
+		playExistingCard(cardsToPlay, false, ref extra);
 	}
 
 	public void scrapPile(){
@@ -117,6 +122,9 @@ public class SCTable : MonoBehaviour {
 		}
 
 		cards = new List<GameObject>();
+		SCCardInfo[] newTopCards = new SCCardInfo[4];
+		newTopCards[0] = new SCCardInfo(SCCardInfo.ANY_SUIT, SCCardInfo.ANY_NUMBER);
+		rules.updateTopCards(newTopCards);
 	}
 	
 	private Vector3 cloneVector3(Vector3 x){

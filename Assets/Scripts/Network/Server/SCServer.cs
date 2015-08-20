@@ -42,18 +42,23 @@ public class SCServer{
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
-	public void userPlayed(SCCardInfo[] playedCards){
+	public void userPlayed(SCCardInfo[] playedCards, string extra){
+		turnsSkipped = 0;
 		string message = "spawn_card:";
 		for(int i = 1; i <= playedCards.Length && playedCards[i - 1] != null; ++i){
 			message += (i == 1 ? "" : ",") + "suit" + i + "=" + playedCards[i - 1].suit + ",number" + i + "=" + playedCards[i - 1].number;
 		}
 		sendMessageToAllAccept(turnIndex, message);
-		advanceTurn();
+		if(extra == "repeat_turn"){
+			reallowTurn();
+		}else{
+			advanceTurn();
+		}
 	}
 
 	public void userSkippedTurn(){
 		++turnsSkipped;
-		if(turnsSkipped == (connectedPlayers.Count + 1)){
+		if(turnsSkipped == connectedPlayers.Count){
 			sendMessageToAll("scrap_pile");
 			turnsSkipped = 0;
 		}
@@ -65,6 +70,10 @@ public class SCServer{
 		if(turnIndex >= connectedPlayers.Count + 1){
 			turnIndex = 0;
 		}
+		sendMessageTo(turnIndex, "allow_card");
+	}
+
+	private void reallowTurn(){
 		sendMessageTo(turnIndex, "allow_card");
 	}
 

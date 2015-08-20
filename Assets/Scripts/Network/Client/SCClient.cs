@@ -110,7 +110,7 @@ public class SCClient{
 			}
 			playedCards[i] = new SCCardInfo(suit, SCNetworkUtil.toInt(number));
 		}
-		localServer.userPlayed(playedCards);
+		localServer.userPlayed(playedCards, info.getValue("extra"));
 	}
 
 	private void onSpawnCardCommand(SCMessageInfo info){
@@ -145,7 +145,7 @@ public class SCClient{
 		if(cards[0] == null){
 			return;
 		}else{
-			table.getRules().updateTopCards();
+			table.getRules().updateTopCards(cards);
 		}
 	}
 
