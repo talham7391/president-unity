@@ -47,7 +47,7 @@ public class SCTable : MonoBehaviour {
 		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
 			return false;
 		}
-		rules.updateTopCards(cardsToCheck);
+		rules.updateTopCards(cardsToCheck, false);
 		
 		SCAnimator anim;
 		Vector3 targetPosition;
@@ -83,10 +83,7 @@ public class SCTable : MonoBehaviour {
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
 
-		if(this.cards.Count == 2){
-			SCCard prop = this.cards[this.cards.Count - 1].GetComponent<SCCard>();
-			rules.checkConsecutive(new SCCardInfo(prop.suit, prop.number));
-		}
+		rules.checkConsecutive();
 
 		return true;
 	}
@@ -129,7 +126,7 @@ public class SCTable : MonoBehaviour {
 		cards = new List<GameObject>();
 		SCCardInfo[] newTopCards = new SCCardInfo[4];
 		newTopCards[0] = new SCCardInfo(SCCardInfo.ANY_SUIT, SCCardInfo.ANY_NUMBER);
-		rules.updateTopCards(newTopCards);
+		rules.updateTopCards(newTopCards, true);
 	}
 	
 	private Vector3 cloneVector3(Vector3 x){

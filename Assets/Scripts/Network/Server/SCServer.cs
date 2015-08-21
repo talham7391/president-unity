@@ -8,6 +8,7 @@ public class SCServer{
 	private SCLogic logic;
 
 	private List<int> connectedPlayers;
+	private List<bool> outPlayers; // index: 0 is local user and it continues from there
 	private int turnIndex;
 	private int turnsSkipped;
 
@@ -15,6 +16,8 @@ public class SCServer{
 		this.owner = owner;
 		this.logic = new SCLogic();
 		connectedPlayers = new List<int>();
+		outPlayers = new List<bool>();
+		outPlayers.Add(false);
 		Debug.Log("Server created.");
 
 		turnIndex = 0;
@@ -23,6 +26,7 @@ public class SCServer{
 
 	public void processIncomingConnection(int connectionId){
 		connectedPlayers.Add(connectionId);
+		outPlayers.Add(false);
 		owner.getCommunicator().sendMessageTo(connectionId, "Connection Successful.");
 	}
 
@@ -51,6 +55,9 @@ public class SCServer{
 		sendMessageToAllAccept(turnIndex, message);
 		if(extra == "repeat_turn"){
 			reallowTurn();
+		}else if(extra == "out"){
+			outPlayers[turnIndex] = true;
+			sendMessageToAllAccept(turnIndex, "scrap_pile");
 		}else{
 			advanceTurn();
 		}
@@ -66,9 +73,18 @@ public class SCServer{
 	}
 
 	private void advanceTurn(){
+		int count = 0;
+	start:
+		++count;
 		++turnIndex;
 		if(turnIndex >= connectedPlayers.Count + 1){
 			turnIndex = 0;
+		}
+		if(outPlayers[turnIndex]){
+			if(count == connectedPlayers.Count + 2){
+				return;
+			}
+			goto start;
 		}
 		sendMessageTo(turnIndex, "allow_card");
 	}

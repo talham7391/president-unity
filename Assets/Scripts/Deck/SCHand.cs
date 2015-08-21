@@ -142,6 +142,8 @@ public class SCHand : MonoBehaviour {
 	private void processKeys2(){
 		if(Input.GetKeyDown("t")){
 			skipTurn();
+		}else if(Input.GetKeyDown("d")){
+			discard();
 		}
 	}
 	
@@ -200,6 +202,10 @@ public class SCHand : MonoBehaviour {
 				prop = selectedCards[i - 1].GetComponent<SCCard>();
 				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
 			}
+			if(validIndex == 0){
+				extra = "out";
+				table.scrapPile();
+			}
 			message += ",extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
 		}
@@ -207,20 +213,25 @@ public class SCHand : MonoBehaviour {
 
 	public void discardListener(SCMessageInfo info){
 		string value = info.getValue("num");
-		if(value != null){
+		if(value == null){
 			Debug.Log("There is no num property");
 			return;
 		}
-		discardsAllowed = SCNetworkUtil.toInt(value);
-		discard();
+		discardsAllowed += SCNetworkUtil.toInt(value);
+		Debug.Log("You can discard " + discardsAllowed + " cards.");
 	}
 	
 	public void discard(){
+		if(discardsAllowed == 0){
+			Debug.Log("You can't discard right now.");
+			return;
+		}
 		int[] selectedIndexes = new int[discardsAllowed];
 		if(!getSelectedIndexes(selectedIndexes)){
 			return;
 		}
 		removeCards(selectedIndexes, true);
+		discardsAllowed = 0;
 	}
 
 	public void createHand(int numOfCards){

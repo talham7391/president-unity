@@ -8,11 +8,11 @@ public class SCCommunicator : MonoBehaviour {
 	public static List<SCCommandBehaviour> commands = new List<SCCommandBehaviour>();
 
 	public static void addCommand(string command, Action info){
-		commands.Add(new SCCommandBehaviour(command, info));
+		addCommand(new SCCommandBehaviour(command, info));
 	}
 
 	public static void addCommand(string command, Action<SCMessageInfo> info){
-		commands.Add(new SCCommandBehaviour(command, info));
+		addCommand(new SCCommandBehaviour(command, info));
 	}
 
 	public static void addCommand(SCCommandBehaviour commandBehaviour){

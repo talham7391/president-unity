@@ -6,6 +6,7 @@ public class SCRules{
 	public static readonly int[] cardValues = {0, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
 	private SCCardInfo[] topCards;
+	private SCCardInfo[] previousTopCards;
 	private int consecutiveCards;
 
 	public SCRules(){
@@ -18,7 +19,6 @@ public class SCRules{
 			Debug.Log("Invalid cards; not suitable for checking");
 			return false;
 		}
-		printTopCards();
 
 		if(topCards == null || topCards[0] == null){
 			if(cards[0].suit == "club" && cards[0].number == 3 && cards[1] == null){
@@ -30,17 +30,25 @@ public class SCRules{
 			}
 		}
 
+		if(!areCardNumbersSame(cards)){
+			Debug.Log("Cards must be the same.");
+			return false;
+		}
+
 		if(topCards[0].isAnyCard()){
 			return true;
 		}
 
-		if(numberOfCards(topCards) != numberOfCards(cards)){
+		if((cards[0].number != 2 || cards[1].number == null) && numberOfCards(topCards) != numberOfCards(cards)){
 			Debug.Log("You must play the same number of cards.");
+			return false;
+		}else if(cards[0].number == 2 && cards[1].number != null && numberOfCards(topCards) != numberOfCards(cards) + 1){
+			Debug.Log("With 2s, you have to play play one less.");
 			return false;
 		}
 
-		if(areCardNumbersSame(cards) && cardValues[cards[0].number] > cardValues[topCards[0].number]){
-			Debug.Log("Cards are same and the value is greater.");
+		if(cardValues[cards[0].number] > cardValues[topCards[0].number]){
+			Debug.Log("The value is greater.");
 			return true;
 		}
 
@@ -63,15 +71,18 @@ public class SCRules{
 		return true;
 	}
 
-	public void updateTopCards(SCCardInfo[] cards){
+	public void updateTopCards(SCCardInfo[] cards, bool trashPrevious){
 		if(cards[0] == null || cards.Length != 4){
 			Debug.Log("Invalid cards; cannot set as top");
 			return;
 		}
-		
-		topCards = cards;
 
-		printTopCards();
+		if(trashPrevious){
+			previousTopCards = null;
+		}else{
+			previousTopCards = topCards;
+		}
+		topCards = cards;
 	}
 
 	public bool isAnyOtherCardPossible(){
@@ -82,8 +93,8 @@ public class SCRules{
 		}
 	}
 
-	public void checkConsecutive(SCCardInfo previousCard){
-		if(SCRules.cardValues[previousCard.number] + 1 == SCRules.cardValues[topCards[0].number]){
+	public void checkConsecutive(){
+		if(previousTopCards == null || (previousTopCards != null && previousTopCards[0].isAnyCard()) || SCRules.cardValues[previousTopCards[0].number] + 1 == SCRules.cardValues[topCards[0].number]){
 			++consecutiveCards;
 			if(consecutiveCards == 3){
 				SCCommunicator.fireCommand("discard:num=" + numberOfCards(topCards));
@@ -114,16 +125,17 @@ public class SCRules{
 		return true;
 	}
 
-	private void printTopCards(){
-		if(topCards == null){
+	private void printCards(SCCardInfo[] cards){
+		if(cards == null){
+			Debug.Log("There are no cards.");
 			return;
 		}
-		string p = "Top Cards: ";
-		for(int i = 0; i < topCards.Length; ++i){
-			if(topCards[i] == null){
+		string p = "Cards: ";
+		for(int i = 0; i < cards.Length; ++i){
+			if(cards[i] == null){
 				continue;
 			}
-			p += "" + topCards[i].number + topCards[i].suit + " ";
+			p += "" + cards[i].number + cards[i].suit + " ";
 		}
 		Debug.Log(p);
 	}

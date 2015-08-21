@@ -3,6 +3,8 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class SCClientCommunicator : MonoBehaviour {
+
+	public bool hasServer = true;
 	
 	private struct ReceivedData{
 		public int hostId;
@@ -24,8 +26,10 @@ public class SCClientCommunicator : MonoBehaviour {
 			this.command = command;
 		}
 	};
-	
-	private const int PORT = 2462; private const int SERVERPORT = 2463;
+
+	private int PORT;
+	private int SERVERPORT;
+//	private const int PORT = 2462; private const int SERVERPORT = 2463;
 //	private const int PORT = 2461; private const int SERVERPORT = 2462;
 	private const string SERVERIP = "192.168.1.224";
 	private const int MASTERPORT = 2464;
@@ -39,6 +43,12 @@ public class SCClientCommunicator : MonoBehaviour {
 	SCClient client;
 	
 	void Start(){
+		if(hasServer){
+			PORT = 2462; SERVERPORT = 2463;
+		}else{
+			PORT = 2461; SERVERPORT = 2462;
+		}
+
 		clientCreated = false;
 		init();
 	}

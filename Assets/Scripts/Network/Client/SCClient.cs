@@ -145,7 +145,7 @@ public class SCClient{
 		if(cards[0] == null){
 			return;
 		}else{
-			table.getRules().updateTopCards(cards);
+			table.getRules().updateTopCards(cards, false);
 		}
 	}
 
