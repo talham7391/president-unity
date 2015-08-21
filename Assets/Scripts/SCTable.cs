@@ -83,6 +83,11 @@ public class SCTable : MonoBehaviour {
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
 
+		if(this.cards.Count == 2){
+			SCCard prop = this.cards[this.cards.Count - 1].GetComponent<SCCard>();
+			rules.checkConsecutive(new SCCardInfo(prop.suit, prop.number));
+		}
+
 		return true;
 	}
 	

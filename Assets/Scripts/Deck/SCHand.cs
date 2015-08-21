@@ -38,6 +38,8 @@ public class SCHand : MonoBehaviour {
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
 
+	private int discardsAllowed = 0;
+
 	void Start(){
 		cards = new GameObject[count];
 		floater = null;
@@ -46,6 +48,7 @@ public class SCHand : MonoBehaviour {
 		inputAllowed = true;
 		inputRecentlyChanged = false;
 		cardAllowed = false;
+		SCCommunicator.addCommand("discard", discardListener);
 	}
 	
 	void Update(){
@@ -200,6 +203,24 @@ public class SCHand : MonoBehaviour {
 			message += ",extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
 		}
+	}
+
+	public void discardListener(SCMessageInfo info){
+		string value = info.getValue("num");
+		if(value != null){
+			Debug.Log("There is no num property");
+			return;
+		}
+		discardsAllowed = SCNetworkUtil.toInt(value);
+		discard();
+	}
+	
+	public void discard(){
+		int[] selectedIndexes = new int[discardsAllowed];
+		if(!getSelectedIndexes(selectedIndexes)){
+			return;
+		}
+		removeCards(selectedIndexes, true);
 	}
 
 	public void createHand(int numOfCards){
@@ -568,6 +589,25 @@ public class SCHand : MonoBehaviour {
 			}
 		}
 		return 0;
+	}
+
+	private bool getSelectedIndexes(int[] selectedIndexes){
+		if(selectedIndexes == null){
+			Debug.Log("The array is null.");
+			return false;
+		}
+		int n = 0;
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			if(prop.getSelected()){
+				if(n == selectedIndexes.Length){
+					Debug.Log("Too many cards selected");
+					return false;
+				}
+				selectedIndexes[n++] = i;
+			}
+		}
+		return true;
 	}
 	
 	private void adjustGhostCard(){
