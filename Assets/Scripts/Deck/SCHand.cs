@@ -140,6 +140,9 @@ public class SCHand : MonoBehaviour {
 	}
 
 	private void processKeys2(){
+		if(!inputAllowed){
+			return;
+		}
 		if(Input.GetKeyDown("t")){
 			skipTurn();
 		}else if(Input.GetKeyDown("d")){
@@ -161,6 +164,10 @@ public class SCHand : MonoBehaviour {
 	public void playCard(){
 		if(!cardAllowed){
 			Debug.Log("Its not your turn");
+			return;
+		}
+		if(discardsAllowed != 0){
+			Debug.Log("You must discard before playing any card.");
 			return;
 		}
 		if(table == null){
@@ -713,12 +720,12 @@ public class SCHand : MonoBehaviour {
 		return false;
 	}
 	
-	private void seizeInput(){
+	public void seizeInput(){
 		inputAllowed = false;
 		inputRecentlyChanged = true;
 	}
 	
-	private void allowInput(){
+	public void allowInput(){
 		inputAllowed = true;
 		inputRecentlyChanged = true;
 	}

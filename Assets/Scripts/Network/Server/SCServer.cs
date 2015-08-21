@@ -7,34 +7,60 @@ public class SCServer{
 	private SCClient owner;
 	private SCLogic logic;
 
-	private List<int> connectedPlayers;
-	private List<bool> outPlayers; // index: 0 is local user and it continues from there
+	private List<SCPlayerInfo> connectedPlayers;
 	private int turnIndex;
 	private int turnsSkipped;
 
 	public SCServer(SCClient owner){
 		this.owner = owner;
 		this.logic = new SCLogic();
-		connectedPlayers = new List<int>();
-		outPlayers = new List<bool>();
-		outPlayers.Add(false);
+		connectedPlayers = new List<SCPlayerInfo>();
+		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0));
+
 		Debug.Log("Server created.");
 
 		turnIndex = 0;
 		turnsSkipped = 0;
 	}
 
+	// needs to be redone
 	public void processIncomingConnection(int connectionId){
-		connectedPlayers.Add(connectionId);
-		outPlayers.Add(false);
-		owner.getCommunicator().sendMessageTo(connectionId, "Connection Successful.");
+		if(isAnyoneDisconnected()){
+			owner.getCommunicator().sendMessageTo(connectionId, "reconnect");
+		}else{
+			connectedPlayers.Add(new SCPlayerInfo(connectionId, logic.generateUniqueId()));
+			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + logic.generateUniqueId());
+		}
+	}
+
+	public void processDisconnection(int connectionId){
+		for(int i = 1; i < connectedPlayers.Count; ++i){
+			if(connectedPlayers[i].connectionId == connectionId){
+				connectedPlayers[i].connected = false;
+			}
+		}
+		sendMessageToAll("freeze_client");
+	}
+
+	public void processReconnection(int uniqueId, int connectionId){
+		for(int i = 1; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].connected && connectedPlayers[i].uniqueId == uniqueId){
+				connectedPlayers[i].connected = true;
+				connectedPlayers[i].connectionId = connectionId;
+			}
+		}
+		if(!isAnyoneDisconnected()){
+			sendMessageToAll("unfreeze_client");
+		}else{
+			fixTurnOrder();
+		}
 	}
 
 	public void startGame(){
-		turnIndex = Random.Range(0, connectedPlayers.Count + 1);
-		int cardsPerPlayer = 52 / (connectedPlayers.Count + 1);
-		int cardsRemaining = 52 - cardsPerPlayer * (connectedPlayers.Count + 1);
-		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
+		turnIndex = Random.Range(0, connectedPlayers.Count);
+		int cardsPerPlayer = 52 / connectedPlayers.Count;
+		int cardsRemaining = 52 - cardsPerPlayer * connectedPlayers.Count;
+		for(int i = 0; i < connectedPlayers.Count; ++i){
 			bool turnFound;
 			sendMessageTo(i, "create_hand:" + logic.generateCards(cardsPerPlayer + (cardsRemaining > 0 ? 1 : 0), out turnFound));
 			if(turnFound){
@@ -56,7 +82,11 @@ public class SCServer{
 		if(extra == "repeat_turn"){
 			reallowTurn();
 		}else if(extra == "out"){
-			outPlayers[turnIndex] = true;
+			if(turnIndex == 0){
+
+			}else{
+				connectedPlayers[turnIndex - 1].outOfGame = true;
+			}
 			sendMessageToAllAccept(turnIndex, "scrap_pile");
 		}else{
 			advanceTurn();
@@ -65,7 +95,7 @@ public class SCServer{
 
 	public void userSkippedTurn(){
 		++turnsSkipped;
-		if(turnsSkipped == connectedPlayers.Count){
+		if(turnsSkipped == connectedPlayers.Count - 1){
 			sendMessageToAll("scrap_pile");
 			turnsSkipped = 0;
 		}
@@ -77,11 +107,11 @@ public class SCServer{
 	start:
 		++count;
 		++turnIndex;
-		if(turnIndex >= connectedPlayers.Count + 1){
+		if(turnIndex >= connectedPlayers.Count){
 			turnIndex = 0;
 		}
-		if(outPlayers[turnIndex]){
-			if(count == connectedPlayers.Count + 2){
+		if(connectedPlayers[turnIndex].outOfGame){
+			if(count == connectedPlayers.Count + 1){
 				return;
 			}
 			goto start;
@@ -93,27 +123,40 @@ public class SCServer{
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
+	private void fixTurnOrder(){
+
+	}
+
 	// 0 is local user
 	// 1... are connected users
 	private void sendMessageTo(int user, string message){
 		if(user == 0){
 			owner.sendToSelf(message);
 		}else{
-			owner.getCommunicator().sendMessageTo(connectedPlayers[user - 1], message);
+			owner.getCommunicator().sendMessageTo(connectedPlayers[user].connectionId, message);
 		}
 	}
 
 	private void sendMessageToAll(string message){
-		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
+		for(int i = 0; i < connectedPlayers.Count; ++i){
 			sendMessageTo(i, message);
 		}
 	}
 
 	private void sendMessageToAllAccept(int user, string message){
-		for(int i = 0; i < connectedPlayers.Count + 1; ++i){
+		for(int i = 0; i < connectedPlayers.Count; ++i){
 			if(i != user){
 				sendMessageTo(i, message);
 			}
 		}
+	}
+
+	private bool isAnyoneDisconnected(){
+		for(int i = 1; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].connected){
+				return true;
+			}
+		}
+		return false;
 	}
 }

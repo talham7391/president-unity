@@ -65,6 +65,7 @@
      <Compile Include="Assets\Scripts\Util\SCConnectionInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCMessageInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCNetworkUtil.cs" />
+     <Compile Include="Assets\Scripts\Util\SCPlayerInfo.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

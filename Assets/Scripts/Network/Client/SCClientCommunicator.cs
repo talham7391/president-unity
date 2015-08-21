@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
 public class SCClientCommunicator : MonoBehaviour {
 
@@ -39,6 +40,10 @@ public class SCClientCommunicator : MonoBehaviour {
 	private int mHostId;
 	private int mReliableChannelId;
 	private int mConnectionId;
+	private int mUniqueId;
+
+	// for non-local users
+	private Action onConnectCallback;
 	
 	SCClient client;
 	
@@ -114,7 +119,15 @@ public class SCClientCommunicator : MonoBehaviour {
 			client.getServer().processIncomingConnection(data.connectionId);
 		}else{
 			if(data.hostId == mHostId && data.connectionId == mConnectionId){
-				Debug.Log("Client: Conneted to: " + data.connectionId);
+				string message = SCNetworkUtil.getStringFromBuffer(data.buffer);
+				SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
+				info.fromConnectionId = data.connectionId;
+				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
+				Debug.Log("Client: connected with id: " + mUniqueId);
+			}
+			if(onConnectCallback != null){
+				onConnectCallback();
+				onConnectCallback = null;
 			}
 		}
 	}
@@ -126,13 +139,23 @@ public class SCClientCommunicator : MonoBehaviour {
 			string message = SCNetworkUtil.getStringFromBuffer(data.buffer);
 			string command = SCNetworkUtil.getCommand(message);
 			SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
+			info.fromConnectionId = data.connectionId;
 			Debug.Log(command);
 			client.processMessage(command, info);
 		}
 	}
 
 	private void onDisconnectEvent(ref ReceivedData data){
-		Debug.Log("Someone disconnected!");
+		if(client.hasServer()){
+			client.getServer().processDisconnection(data.connectionId);
+		}else{
+			onConnectCallback = sendUniqueId;
+			connectToServer();
+		}
+	}
+
+	private void sendUniqueId(){
+		sendMessageToServer("reconnecting:unique_id=" + mUniqueId);
 	}
 	
 	public void sendMessageToServer(string message){

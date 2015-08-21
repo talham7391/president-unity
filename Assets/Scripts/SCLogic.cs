@@ -14,9 +14,11 @@ public class SCLogic{
 	};
 
 	private List<Card> generatedCards;
+	private List<int> generatedIds;
 
 	public SCLogic(){
 		generatedCards = new List<Card>();
+		generatedIds = new List<int>();
 	}
 
 	public string generateCard(string suffix, out bool firstTurnCard){
@@ -70,6 +72,18 @@ public class SCLogic{
 			firstTurnCard = false;
 		}
 		return total;
+	}
+
+	public int generateUniqueId(){
+	start:
+		int rand = Random.Range(0, 1000);
+		for(int i = 0; i < generatedIds.Count; ++i){
+			if(rand == generatedIds[i]){
+				goto start;
+			}
+		}
+		generatedIds.Add(rand);
+		return rand;
 	}
 
 	private bool cardAlreadyExists(string suit, int number){

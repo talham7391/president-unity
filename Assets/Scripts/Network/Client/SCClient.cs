@@ -46,6 +46,9 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("skip_turn", onSkipTurnCommand));
 		commandBehaviours.Add(new CommandBehaviour("update_top_cards", onUpdateTopCardsCommand));
 		commandBehaviours.Add(new CommandBehaviour("scrap_pile", onScrapPileCommand));
+		commandBehaviours.Add(new CommandBehaviour("freeze_client", onFreezeClientCommand));
+		commandBehaviours.Add(new CommandBehaviour("unfreeze_client", onUnfreezeClientCommand));
+		commandBehaviours.Add(new CommandBehaviour("reconnecting", onReconnectingCommand));
 	}
 
 	public void sendToSelf(string message){
@@ -152,6 +155,24 @@ public class SCClient{
 	private void onScrapPileCommand(SCMessageInfo info){
 		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
 		table.scrapPile();
+	}
+
+	private void onFreezeClientCommand(SCMessageInfo info){
+		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
+		hand.seizeInput();
+	}
+
+	private void onUnfreezeClientCommand(SCMessageInfo info){
+		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
+		hand.allowInput();
+	}
+
+	private void onReconnectingCommand(SCMessageInfo info){
+		string uniqueId = info.getValue("unique_id");
+		if(uniqueId == null){
+			return;
+		}
+		localServer.processReconnection(SCNetworkUtil.toInt(uniqueId), info.fromConnectionId);
 	}
 
 	/********************************************************************************************/
