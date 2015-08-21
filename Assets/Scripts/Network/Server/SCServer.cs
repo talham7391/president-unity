@@ -45,9 +45,7 @@ public class SCServer{
 	}
 
 	public void processReconnection(int uniqueId, int connectionId){
-		Debug.Log("uid: " + uniqueId + ", cid: " + connectionId);
 		for(int i = 1; i < connectedPlayers.Count; ++i){
-			Debug.Log("CC: " + connectedPlayers[i].uniqueId);
 			if(!connectedPlayers[i].connected && connectedPlayers[i].uniqueId == uniqueId){
 				connectedPlayers[i].connected = true;
 				connectedPlayers[i].connectionId = connectionId;

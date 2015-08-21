@@ -625,6 +625,10 @@ public class SCHand : MonoBehaviour {
 				selectedIndexes[n++] = i;
 			}
 		}
+		if(n < selectedIndexes.Length){
+			Debug.Log("Too few cards selected");
+			return false;
+		}
 		return true;
 	}
 	
