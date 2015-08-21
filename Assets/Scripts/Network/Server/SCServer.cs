@@ -17,7 +17,7 @@ public class SCServer{
 		connectedPlayers = new List<SCPlayerInfo>();
 		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0));
 
-		Debug.Log("Server created.");
+		Debug.Log("SCServer| Server created.");
 
 		turnIndex = 0;
 		turnsSkipped = 0;
@@ -28,8 +28,9 @@ public class SCServer{
 		if(isAnyoneDisconnected()){
 			owner.getCommunicator().sendMessageTo(connectionId, "reconnect");
 		}else{
-			connectedPlayers.Add(new SCPlayerInfo(connectionId, logic.generateUniqueId()));
-			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + logic.generateUniqueId());
+			int uniqueId = logic.generateUniqueId();
+			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId));
+			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
 		}
 	}
 
@@ -37,16 +38,20 @@ public class SCServer{
 		for(int i = 1; i < connectedPlayers.Count; ++i){
 			if(connectedPlayers[i].connectionId == connectionId){
 				connectedPlayers[i].connected = false;
+				Debug.Log("SCServer| Player with Id: " + connectedPlayers[i].uniqueId + " has disconnected.");
 			}
 		}
-		sendMessageToAll("freeze_client");
+		sendMessageToAllAccept(connectionId, "freeze_client");
 	}
 
 	public void processReconnection(int uniqueId, int connectionId){
+		Debug.Log("uid: " + uniqueId + ", cid: " + connectionId);
 		for(int i = 1; i < connectedPlayers.Count; ++i){
+			Debug.Log("CC: " + connectedPlayers[i].uniqueId);
 			if(!connectedPlayers[i].connected && connectedPlayers[i].uniqueId == uniqueId){
 				connectedPlayers[i].connected = true;
 				connectedPlayers[i].connectionId = connectionId;
+				Debug.Log("SCServer| Player with Id: " + uniqueId + " has reconnected.");
 			}
 		}
 		if(!isAnyoneDisconnected()){
@@ -65,7 +70,7 @@ public class SCServer{
 			sendMessageTo(i, "create_hand:" + logic.generateCards(cardsPerPlayer + (cardsRemaining > 0 ? 1 : 0), out turnFound));
 			if(turnFound){
 				turnIndex = i;
-				Debug.Log("First turn: " + turnIndex);
+				Debug.Log("SCServer| First turn: " + turnIndex);
 			}
 			--cardsRemaining;
 		}

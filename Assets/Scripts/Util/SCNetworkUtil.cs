@@ -58,8 +58,8 @@ public class SCNetworkUtil{
 		}
 		
 		if(startIndex == -1){
-			Debug.Log("No info after the command");
-			return null;
+			//Debug.Log("No info after the command");
+			return new SCMessageInfo();
 		}
 		
 		SCMessageInfo messageInfo = new SCMessageInfo();

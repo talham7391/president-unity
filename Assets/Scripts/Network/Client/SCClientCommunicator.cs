@@ -6,6 +6,7 @@ using System;
 public class SCClientCommunicator : MonoBehaviour {
 
 	public bool hasServer = true;
+	public bool automaticallyReconnect = true;
 	
 	private struct ReceivedData{
 		public int hostId;
@@ -54,6 +55,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			PORT = 2461; SERVERPORT = 2462;
 		}
 
+		mUniqueId = -1;
 		clientCreated = false;
 		init();
 	}
@@ -81,6 +83,12 @@ public class SCClientCommunicator : MonoBehaviour {
 		mConnectionId = NetworkTransport.Connect(mHostId, SERVERIP, SERVERPORT, 0, out error);
 		Debug.Log("Client: Trying to connect to the server...");
 	}
+
+	private void disconnectFromServer(){
+		byte error;
+		NetworkTransport.Disconnect(mHostId, mConnectionId, out error);
+		Debug.Log("Disconnected from server.");
+	}
 	
 	void Update(){
 		if(Input.GetKeyDown("c")){
@@ -89,6 +97,11 @@ public class SCClientCommunicator : MonoBehaviour {
 			createClient(true);
 		}else if(Input.GetKeyDown("g")){
 			client.getServer().startGame();
+		}else if(Input.GetKeyDown("1")){
+			disconnectFromServer();
+		}else if(Input.GetKeyDown("2")){
+			onConnectCallback = sendUniqueId;
+			connectToServer();
 		}
 		if(!clientCreated){
 			return;
@@ -118,13 +131,6 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(client.hasServer()){
 			client.getServer().processIncomingConnection(data.connectionId);
 		}else{
-			if(data.hostId == mHostId && data.connectionId == mConnectionId){
-				string message = SCNetworkUtil.getStringFromBuffer(data.buffer);
-				SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
-				info.fromConnectionId = data.connectionId;
-				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
-				Debug.Log("Client: connected with id: " + mUniqueId);
-			}
 			if(onConnectCallback != null){
 				onConnectCallback();
 				onConnectCallback = null;
@@ -140,8 +146,13 @@ public class SCClientCommunicator : MonoBehaviour {
 			string command = SCNetworkUtil.getCommand(message);
 			SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
 			info.fromConnectionId = data.connectionId;
-			Debug.Log(command);
-			client.processMessage(command, info);
+			Debug.Log("Recieved: " + message);
+
+			if(command == "unique_id"){
+				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
+			}else{
+				client.processMessage(command, info);
+			}
 		}
 	}
 
@@ -149,8 +160,12 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(client.hasServer()){
 			client.getServer().processDisconnection(data.connectionId);
 		}else{
-			onConnectCallback = sendUniqueId;
-			connectToServer();
+			Debug.Log("You have been disconnected.");
+			client.processMessage("freeze_client", null);
+			if(automaticallyReconnect){
+				onConnectCallback = sendUniqueId;
+				connectToServer();
+			}
 		}
 	}
 
