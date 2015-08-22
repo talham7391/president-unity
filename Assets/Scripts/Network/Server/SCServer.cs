@@ -179,8 +179,10 @@ public class SCServer{
 			bool x = isEveryoneReady();
 			if(x){
 				sendMessageToAll("unfreeze_client:reason=discard");
+				Debug.Log("SCServer| Unfroze because: " + reason);
 			}else{
 				sendMessageToAll("freeze_client:reason=discard");
+				Debug.Log("SCServer| Froze because: " + reason);
 			}
 		}
 	}

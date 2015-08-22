@@ -635,7 +635,7 @@ public class SCHand : MonoBehaviour {
 			return;
 		}
 		discardsAllowed += SCNetworkUtil.toInt(value);
-		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=false");
+		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=false,reason=discard");
 		Debug.Log("You can discard " + discardsAllowed + " cards.");
 	}
 
@@ -650,7 +650,7 @@ public class SCHand : MonoBehaviour {
 		}
 		removeCards(selectedIndexes, true);
 		discardsAllowed = 0;
-		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=true");
+		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=true,reason=discard");
 	}
 
 	public void skipTurn(){

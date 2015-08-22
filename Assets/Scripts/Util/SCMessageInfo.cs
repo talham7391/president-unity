@@ -19,6 +19,9 @@ public class SCMessageInfo{
 	}
 	
 	public string getValue(string key){
+		if(key == null){
+			return null;
+		}
 		for(int i = 0; i < pairs.Count; ++i){
 			if(pairs[i].key == key){
 				return pairs[i].value;
@@ -28,6 +31,9 @@ public class SCMessageInfo{
 	}
 	
 	public void addPair(string key, string value){
+		if(key == null){
+			return;
+		}
 		if(getValue(key) != null){
 			return;
 		}
@@ -38,6 +44,9 @@ public class SCMessageInfo{
 	}
 
 	public void removePair(string key){
+		if(key == null){
+			return;
+		}
 		for(int i = 0; i < pairs.Count; ++i){
 			if(pairs[i].key == key){
 				pairs.RemoveAt(i);

@@ -186,6 +186,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		}else{
 			string command = SCNetworkUtil.getCommand(message);
 			SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
+			info.fromConnectionId = SCPlayerInfo.LOCAL;
 			client.processMessage(command, info);
 		}
 	}
