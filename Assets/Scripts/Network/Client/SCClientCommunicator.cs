@@ -6,6 +6,7 @@ using System;
 public class SCClientCommunicator : MonoBehaviour {
 
 	public bool hasServer = true;
+	public bool automaticallyConnect = true;
 	public bool automaticallyReconnect = true;
 	
 	private struct ReceivedData{
@@ -58,6 +59,15 @@ public class SCClientCommunicator : MonoBehaviour {
 		mUniqueId = -1;
 		clientCreated = false;
 		init();
+
+		if(automaticallyConnect){
+			if(hasServer){
+				createClient(true);
+			}else{
+				createClient(false);
+				connectToServer();
+			}
+		}
 	}
 	
 	public void createClient(bool createServer){
@@ -95,8 +105,6 @@ public class SCClientCommunicator : MonoBehaviour {
 			createClient(false);
 		}else if(Input.GetKeyDown("s")){
 			createClient(true);
-		}else if(Input.GetKeyDown("g")){
-			client.getServer().startGame();
 		}else if(Input.GetKeyDown("1")){
 			disconnectFromServer();
 		}else if(Input.GetKeyDown("2")){

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class SCServer{
 
+	private int mPlayerLimit;
+	private bool mGameStarted;
+
 	private SCClient owner;
 	private SCLogic logic;
 
@@ -11,7 +14,10 @@ public class SCServer{
 	private int turnIndex;
 	private int turnsSkipped;
 
-	public SCServer(SCClient owner){
+	public SCServer(SCClient owner, int playerLimit){
+		mPlayerLimit = playerLimit;
+		mGameStarted = false;
+
 		this.owner = owner;
 		this.logic = new SCLogic();
 		connectedPlayers = new List<SCPlayerInfo>();
@@ -32,6 +38,7 @@ public class SCServer{
 			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId, connectedPlayers.Count));
 			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
 		}
+		attemptToStartGame();
 	}
 
 	public void processDisconnection(int connectionId){
@@ -55,9 +62,26 @@ public class SCServer{
 		if(!isAnyoneDisconnected()){
 			sendMessageToAll("unfreeze_client");
 		}
+		attemptToStartGame();
+	}
+
+	public void attemptToStartGame(){
+		Debug.Log("SCServer| Attempting to start the game.");
+		if(mGameStarted){
+			return;
+		}
+		if(isAnyoneDisconnected()){
+			return;
+		}
+		if(mPlayerLimit != connectedPlayers.Count){
+			return;
+		}
+		mGameStarted = true;
+		startGame();
 	}
 
 	public void startGame(){
+		Debug.Log("SCServer| Game started.");
 		turnIndex = Random.Range(0, connectedPlayers.Count);
 		int cardsPerPlayer = 52 / connectedPlayers.Count;
 		int cardsRemaining = 52 - cardsPerPlayer * connectedPlayers.Count;

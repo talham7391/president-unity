@@ -28,7 +28,7 @@ public class SCClient{
 		addCommandBehaviours();
 
 		if(createServer){
-			localServer = new SCServer(this);
+			localServer = new SCServer(this, 2);
 		}else{
 			localServer = null;
 		}

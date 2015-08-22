@@ -65,7 +65,6 @@ public class SCAnimator : MonoBehaviour {
 				--i;
 			}
 		}
-		mInProgress = true;
 		if(currentAnimations.Count == 0 && callBack != null){
 			mInProgress = false;
 			callBack();
@@ -91,6 +90,7 @@ public class SCAnimator : MonoBehaviour {
 		data.delay = delay;
 		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
+		mInProgress = true;
 	}
 
 	public void moveBy(Vector3 distance, float time, string ease = LINEAR, float delay = 0){ // factor will be used when easeIn and stuff like that want to be customized
@@ -111,6 +111,7 @@ public class SCAnimator : MonoBehaviour {
 		data.delay = delay;
 		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
+		mInProgress = true;
 	}
 
 	public void rotateToTarget(Vector3 target, float time, string ease = LINEAR, float delay = 0){
@@ -131,6 +132,7 @@ public class SCAnimator : MonoBehaviour {
 		data.delay = delay;
 		data.timeAtStart = Time.realtimeSinceStartup;
 		currentAnimations.Add(data);
+		mInProgress = true;
 	}
 	
 	private Vector3 getClosestRotation(Vector3 rotation){
