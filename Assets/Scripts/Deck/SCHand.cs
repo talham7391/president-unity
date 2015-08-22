@@ -211,7 +211,7 @@ public class SCHand : MonoBehaviour {
 			}
 			if(validIndex == 0){
 				extra = "out";
-				table.scrapPile();
+				table.safeScrapPile();
 			}
 			message += ",extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);

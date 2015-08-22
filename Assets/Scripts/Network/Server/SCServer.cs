@@ -15,7 +15,7 @@ public class SCServer{
 		this.owner = owner;
 		this.logic = new SCLogic();
 		connectedPlayers = new List<SCPlayerInfo>();
-		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0));
+		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0, 0));
 
 		Debug.Log("SCServer| Server created.");
 
@@ -29,7 +29,7 @@ public class SCServer{
 			owner.getCommunicator().sendMessageTo(connectionId, "reconnect");
 		}else{
 			int uniqueId = logic.generateUniqueId();
-			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId));
+			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId, connectedPlayers.Count));
 			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
 		}
 	}
@@ -54,8 +54,6 @@ public class SCServer{
 		}
 		if(!isAnyoneDisconnected()){
 			sendMessageToAll("unfreeze_client");
-		}else{
-			fixTurnOrder();
 		}
 	}
 
@@ -85,12 +83,8 @@ public class SCServer{
 		if(extra == "repeat_turn"){
 			reallowTurn();
 		}else if(extra == "out"){
-			if(turnIndex == 0){
-
-			}else{
-				connectedPlayers[turnIndex - 1].outOfGame = true;
-			}
-			sendMessageToAllAccept(turnIndex, "scrap_pile");
+			connectedPlayers[turnIndex].outOfGame = true;
+			sendMessageToAllAccept(turnIndex, "scrap_pile:safe=true");
 		}else{
 			advanceTurn();
 		}
@@ -99,7 +93,7 @@ public class SCServer{
 	public void userSkippedTurn(){
 		++turnsSkipped;
 		if(turnsSkipped == connectedPlayers.Count - 1){
-			sendMessageToAll("scrap_pile");
+			sendMessageToAll("scrap_pile:safe=false");
 			turnsSkipped = 0;
 		}
 		advanceTurn();
@@ -124,10 +118,6 @@ public class SCServer{
 
 	private void reallowTurn(){
 		sendMessageTo(turnIndex, "allow_card");
-	}
-
-	private void fixTurnOrder(){
-
 	}
 
 	// 0 is local user

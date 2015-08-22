@@ -107,6 +107,17 @@ public class SCTable : MonoBehaviour {
 		playExistingCard(cardsToPlay, false, ref extra);
 	}
 
+	public void safeScrapPile(){
+		SCAnimator anim = cards[cards.Count - 1].GetComponent<SCAnimator>();
+		if(anim.inProgress && anim.callBack == null){
+			Debug.Log("Waiting on animation before scrap");
+			anim.callBack = scrapPile;
+		}else{
+			Debug.Log("Didn't wait for animation");
+			scrapPile();
+		}
+	}
+
 	public void scrapPile(){
 		for(int i = 0; i < pile.Count; ++i){
 			Vector3 targetPosition = cloneVector3(pile[i].transform.localPosition);

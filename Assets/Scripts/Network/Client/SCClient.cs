@@ -153,8 +153,13 @@ public class SCClient{
 	}
 
 	private void onScrapPileCommand(SCMessageInfo info){
+		string safe = info.getValue("safe");
 		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
-		table.scrapPile();
+		if(safe == "true"){
+			table.safeScrapPile();
+		}else{
+			table.scrapPile();
+		}
 	}
 
 	private void onFreezeClientCommand(SCMessageInfo info){

@@ -39,12 +39,21 @@ public class SCRules{
 			return true;
 		}
 
-		if((cards[0].number != 2 || cards[1].number == null) && numberOfCards(topCards) != numberOfCards(cards)){
-			Debug.Log("You must play the same number of cards.");
-			return false;
-		}else if(cards[0].number == 2 && cards[1].number != null && numberOfCards(topCards) != numberOfCards(cards) + 1){
-			Debug.Log("With 2s, you have to play play one less.");
-			return false;
+		int numberOfTopCards = numberOfCards(topCards);
+		int numberOfPlayedCards = numberOfCards(cards);
+		if(cards[0].number == 2){
+			if(numberOfTopCards == 1 && numberOfPlayedCards != 1){
+				Debug.Log("You must play only one 2");
+				return false;
+			}else if(numberOfTopCards > 1 && numberOfPlayedCards != numberOfTopCards - 1){
+				Debug.Log("You must play one less two");
+				return false;
+			}
+		}else{
+			if(numberOfTopCards != numberOfPlayedCards){
+				Debug.Log("You must play the same number of cards.");
+				return false;
+			}
 		}
 
 		if(cardValues[cards[0].number] > cardValues[topCards[0].number]){
@@ -79,6 +88,7 @@ public class SCRules{
 
 		if(trashPrevious){
 			previousTopCards = null;
+			consecutiveCards = 0;
 		}else{
 			previousTopCards = topCards;
 		}

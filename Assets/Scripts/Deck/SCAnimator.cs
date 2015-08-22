@@ -29,9 +29,11 @@ public class SCAnimator : MonoBehaviour {
 	public Action callBack;
 
 	private List<AnimationData> currentAnimations;
+	private bool mInProgress;
 
 	public void init(){
 		currentAnimations = new List<AnimationData>();
+		mInProgress = false;
 	}
 
 	void Update(){
@@ -63,7 +65,9 @@ public class SCAnimator : MonoBehaviour {
 				--i;
 			}
 		}
+		mInProgress = true;
 		if(currentAnimations.Count == 0 && callBack != null){
+			mInProgress = false;
 			callBack();
 			callBack = null;
 		}
@@ -213,6 +217,12 @@ public class SCAnimator : MonoBehaviour {
 			return COMPLETE;
 		}else{
 			return INCOMPLETE;
+		}
+	}
+
+	public bool inProgress{
+		get{
+			return mInProgress;
 		}
 	}
 }
