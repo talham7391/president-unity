@@ -22,7 +22,6 @@ public class SCRules{
 
 		if(topCards == null || topCards[0] == null){
 			if(cards[0].suit == "club" && cards[0].number == 3 && cards[1] == null){
-				Debug.Log("This is the 3 of clubs");
 				return true;
 			}else{
 				Debug.Log("This card is not the 3 of clubs.");
@@ -57,7 +56,6 @@ public class SCRules{
 		}
 
 		if(cardValues[cards[0].number] > cardValues[topCards[0].number]){
-			Debug.Log("The value is greater.");
 			return true;
 		}
 
@@ -103,14 +101,18 @@ public class SCRules{
 		}
 	}
 
+
+
 	public void checkConsecutive(){
-		if(previousTopCards == null || (previousTopCards != null && previousTopCards[0].isAnyCard()) || SCRules.cardValues[previousTopCards[0].number] + 1 == SCRules.cardValues[topCards[0].number]){
-			++consecutiveCards;
-			if(consecutiveCards == 3){
-				SCCommunicator.fireCommand("discard:num=" + numberOfCards(topCards));
-				consecutiveCards = 0;
+		if(consecutiveCards == 0 || SCRules.cardValues[previousTopCards[0].number] + 1 == SCRules.cardValues[topCards[0].number]){
+			if(topCards[0].number != 2){
+				++consecutiveCards;
 			}
 		}else{
+			consecutiveCards = 1;
+		}
+		if(consecutiveCards == 3){
+			SCCommunicator.fireCommand("discard:num=" + numberOfCards(topCards));
 			consecutiveCards = 0;
 		}
 	}

@@ -65,7 +65,6 @@ public class SCClientCommunicator : MonoBehaviour {
 				createClient(true);
 			}else{
 				createClient(false);
-				connectToServer();
 			}
 		}
 	}

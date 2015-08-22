@@ -48,7 +48,7 @@ public class SCServer{
 				Debug.Log("SCServer| Player with Id: " + connectedPlayers[i].uniqueId + " has disconnected.");
 			}
 		}
-		sendMessageToAllAccept(connectionId, "freeze_client");
+		sendMessageToAllAccept(connectionId, "freeze_client:reason=disconnection");
 	}
 
 	public void processReconnection(int uniqueId, int connectionId){
@@ -60,7 +60,7 @@ public class SCServer{
 			}
 		}
 		if(!isAnyoneDisconnected()){
-			sendMessageToAll("unfreeze_client");
+			sendMessageToAll("unfreeze_client:reason=disconnection");
 		}
 		attemptToStartGame();
 	}
@@ -97,6 +97,53 @@ public class SCServer{
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
+	/********************************************************************************************/
+	/** Logic Functions *************************************************************************/
+	/********************************************************************************************/
+
+	private void advanceTurn(){
+		int count = 0;
+	start:
+			++count;
+		++turnIndex;
+		if(turnIndex >= connectedPlayers.Count){
+			turnIndex = 0;
+		}
+		if(connectedPlayers[turnIndex].outOfGame){
+			if(count == connectedPlayers.Count + 1){
+				return;
+			}
+			goto start;
+		}
+		sendMessageTo(turnIndex, "allow_card");
+	}
+	
+	private void reallowTurn(){
+		sendMessageTo(turnIndex, "allow_card");
+	}
+
+	private bool isAnyoneDisconnected(){
+		for(int i = 1; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].connected){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private bool isEveryoneReady(){
+		for(int i = 0; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].ready){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/********************************************************************************************/
+	/** User Input Functions ********************************************************************/
+	/********************************************************************************************/
+
 	public void userPlayed(SCCardInfo[] playedCards, string extra){
 		turnsSkipped = 0;
 		string message = "spawn_card:";
@@ -123,26 +170,24 @@ public class SCServer{
 		advanceTurn();
 	}
 
-	private void advanceTurn(){
-		int count = 0;
-	start:
-		++count;
-		++turnIndex;
-		if(turnIndex >= connectedPlayers.Count){
-			turnIndex = 0;
+	public void userReady(bool ready, string reason, int connectionId){
+		SCPlayerInfo player = getUserWithConnectionId(connectionId);
+		if(player != null){
+			player.ready = ready;
 		}
-		if(connectedPlayers[turnIndex].outOfGame){
-			if(count == connectedPlayers.Count + 1){
-				return;
+		if(reason == "discard"){
+			bool x = isEveryoneReady();
+			if(x){
+				sendMessageToAll("unfreeze_client:reason=discard");
+			}else{
+				sendMessageToAll("freeze_client:reason=discard");
 			}
-			goto start;
 		}
-		sendMessageTo(turnIndex, "allow_card");
 	}
 
-	private void reallowTurn(){
-		sendMessageTo(turnIndex, "allow_card");
-	}
+	/********************************************************************************************/
+	/** Util Functions **************************************************************************/
+	/********************************************************************************************/
 
 	// 0 is local user
 	// 1... are connected users
@@ -168,12 +213,12 @@ public class SCServer{
 		}
 	}
 
-	private bool isAnyoneDisconnected(){
-		for(int i = 1; i < connectedPlayers.Count; ++i){
-			if(!connectedPlayers[i].connected){
-				return true;
+	private SCPlayerInfo getUserWithConnectionId(int connectionId){
+		for(int i = 0; i < connectedPlayers.Count; ++i){
+			if(connectedPlayers[i].connectionId == connectionId){
+				return connectedPlayers[i];
 			}
 		}
-		return false;
+		return null;
 	}
 }

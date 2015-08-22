@@ -37,8 +37,8 @@ public class SCHand : MonoBehaviour {
 	private Vector3 previousMousePosition;
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
-
 	private int discardsAllowed = 0;
+	private SCMessageInfo reasons;
 
 	void Start(){
 		cards = new GameObject[count];
@@ -48,6 +48,7 @@ public class SCHand : MonoBehaviour {
 		inputAllowed = true;
 		inputRecentlyChanged = false;
 		cardAllowed = false;
+		reasons = new SCMessageInfo();
 		SCCommunicator.addCommand("discard", discardListener);
 	}
 	
@@ -55,6 +56,26 @@ public class SCHand : MonoBehaviour {
 		processMouse();
 		processKeys();
 		processKeys2();
+	}
+
+	/********************************************************************************************/
+	/** Input Functions *************************************************************************/
+	/********************************************************************************************/
+
+	public void seizeInput(string reason = null){
+		reasons.addPair(reason, "true");
+		if(reason == null){
+			inputAllowed = false;
+			inputRecentlyChanged = true;
+		}
+	}
+	
+	public void allowInput(string reason = null){
+		reasons.removePair(reason);
+		if(reason == null){
+			inputAllowed = true;
+			inputRecentlyChanged = true;
+		}
 	}
 	
 	private void processMouse(){
@@ -149,97 +170,10 @@ public class SCHand : MonoBehaviour {
 			discard();
 		}
 	}
-	
-	public void addCard(){
-		CardConfig config = generateCard();
-		if(config.original){
-			addCard(config.suit, config.number, validIndex);
-		}
-	}
-	
-	public void addCard(string suit, int number){
-		addCard(suit, number, validIndex);
-	}
-	
-	public void playCard(){
-		if(!cardAllowed){
-			Debug.Log("Its not your turn");
-			return;
-		}
-		if(discardsAllowed != 0){
-			Debug.Log("You must discard before playing any card.");
-			return;
-		}
-		if(table == null){
-			Debug.Log("No access to Table.");
-			return;
-		}
-		int[] selectedIndexes = {-1, -1, -1, -1};
-		int n = 0;
-		SCCard prop = null;
-		for(int i = 0; i < validIndex; ++i){
-			prop = cards[i].GetComponent<SCCard>();
-			if(prop.getSelected()){
-				selectedIndexes[n++] = i;
-			}
-		}
 
-		if(selectedIndexes[0] == -1){
-			Debug.Log("No cards selected.");
-			return;
-		}
-
-		GameObject[] selectedCards = new GameObject[4];
-		n = 0;
-		for(int i = 0; i < selectedCards.Length; ++i){
-			if(selectedIndexes[i] == -1){
-				continue;
-			}
-			selectedCards[n++] = cards[selectedIndexes[i]];
-		}
-		string extra = "nothing";
-		if(table.playExistingCard(selectedCards, true, ref extra)){
-			cardAllowed = false;
-			removeCards(selectedIndexes, false);
-			string message = "play_card:";
-			for(int i = 1; i <= selectedCards.Length; ++i){
-				if(selectedCards[i - 1] == null){
-					continue;
-				}
-				prop = selectedCards[i - 1].GetComponent<SCCard>();
-				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
-			}
-			if(validIndex == 0){
-				extra = "out";
-				table.safeScrapPile();
-			}
-			message += ",extra=" + extra;
-			gameObject.SendMessageUpwards("sendMessageToServer", message);
-		}
-	}
-
-	public void discardListener(SCMessageInfo info){
-		string value = info.getValue("num");
-		if(value == null){
-			Debug.Log("There is no num property");
-			return;
-		}
-		discardsAllowed += SCNetworkUtil.toInt(value);
-		Debug.Log("You can discard " + discardsAllowed + " cards.");
-	}
-	
-	public void discard(){
-		if(discardsAllowed == 0){
-			Debug.Log("You can't discard right now.");
-			return;
-		}
-		int[] selectedIndexes = new int[discardsAllowed];
-		if(!getSelectedIndexes(selectedIndexes)){
-			return;
-		}
-		removeCards(selectedIndexes, true);
-		discardsAllowed = 0;
-	}
+	/********************************************************************************************/
+	/** Deck Functions **************************************************************************/
+	/********************************************************************************************/
 
 	public void createHand(int numOfCards){
 		List<GameObject> premade = new List<GameObject>();
@@ -249,7 +183,7 @@ public class SCHand : MonoBehaviour {
 		}
 		createHand(premade);
 	}
-
+	
 	public void createHand(List<GameObject> premade){
 		seizeInput();
 		for(int i = 0; i < premade.Count; ++i){
@@ -259,7 +193,7 @@ public class SCHand : MonoBehaviour {
 			Vector3 targetPosition = fixYPosition(currentPosition, false);
 			targetPosition = fixZPosition(targetPosition, i);
 			Vector3 targetRotation = fixRotation(targetPosition);
-
+			
 			cards[validIndex++] = premade[i];
 			
 			float factor = 1;
@@ -275,35 +209,21 @@ public class SCHand : MonoBehaviour {
 		}
 	}
 
-	public void pickUpCard(){
-		if(!cardAllowed){
-			Debug.Log("Its not your turn!");
-			return;
+	public void addCard(){
+		CardConfig config = generateCard();
+		if(config.original){
+			addCard(config.suit, config.number, validIndex);
 		}
-		gameObject.SendMessageUpwards("sendMessageToServer", "request_pick_up");
-		Debug.Log("pickup up card");
-		cardAllowed = false;
 	}
-
-	public void skipTurn(){
-		if(!cardAllowed){
-			Debug.Log("Its not your turn");
-			return;
-		}
-		if(table == null){
-			Debug.Log("No access to table");
-		}
-		if(table.getRules().allowedToSkip()){
-			gameObject.SendMessageUpwards("sendMessageToServer", "skip_turn");
-			Debug.Log("Skipped turn");
-			cardAllowed = false;
-		}
+	
+	public void addCard(string suit, int number){
+		addCard(suit, number, validIndex);
 	}
 
 	private GameObject createCard(CardConfig config){
 		return createCard(config.suit, config.number);
 	}
-
+	
 	public GameObject createCard(string suit, int number){
 		GameObject card = Instantiate(cardObject);
 		SCCard prop = card.GetComponent<SCCard>();
@@ -435,7 +355,7 @@ public class SCHand : MonoBehaviour {
 			sum += cards[i].transform.localPosition.x;
 		}
 		float average = sum / validIndex;
-
+		
 		// remove cards
 		for(int i = 0; i < selectedIndexes.Length; ++i){
 			if(selectedIndexes[i] >= 0 && selectedIndexes[i] < validIndex){
@@ -452,7 +372,7 @@ public class SCHand : MonoBehaviour {
 				--validIndex;
 			}
 		}
-
+		
 		// animate cards to target positions and rotations to maintain the average
 		float totalDistance = validIndex * spacing;
 		float start = average - totalDistance / 2;
@@ -460,13 +380,13 @@ public class SCHand : MonoBehaviour {
 		for(int i = 0; i < validIndex; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
 			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
-
+			
 			Vector3 targetPosition = new Vector3(start + spacing * (i + 0.5f), 0, 0);
 			targetPosition = fixZPosition(targetPosition, i);
 			targetPosition = fixYPosition(targetPosition, prop.getSelected());
 			anim.moveTo(targetPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
 			anim.rotateToTarget(fixRotation(targetPosition), animationSpeed * factor);
-
+			
 			if(i == validIndex - 1){
 				cards[i].GetComponent<SCAnimator>().callBack = () => {
 					adjustGhostCard();
@@ -475,7 +395,7 @@ public class SCHand : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	private GameObject removeCard(int index, bool destroy){
 		if(index < 0 || index > validIndex){
 			Debug.Log("Invalid remove index: " + index);
@@ -527,6 +447,10 @@ public class SCHand : MonoBehaviour {
 		adjustGhostCard();
 		return val;
 	}
+
+	/********************************************************************************************/
+	/** Resorting Functions *********************************************************************/
+	/********************************************************************************************/
 	
 	private void setFloater(){
 		for(int i = 0; i < validIndex; ++i){
@@ -586,52 +510,7 @@ public class SCHand : MonoBehaviour {
 		
 		floater = null;
 	}
-	
-	private int getInsertIndex(){
-		if(ghostCard == null){
-			Debug.Log("Theres no ghost card for reference");
-			return -1;
-		}
-		if(validIndex == 0){
-			Debug.Log("There are no cards in the deck");
-			return -1;
-		}
-		if(ghostCard.transform.localPosition.x < cards[0].transform.localPosition.x){
-			return 0;
-		}else if(ghostCard.transform.localPosition.x > cards[validIndex - 1].transform.localPosition.x){
-			return validIndex;
-		}
-		for(int i = 0; i < validIndex - 1; ++i){
-			if(ghostCard.transform.localPosition.x > cards[i].transform.localPosition.x && ghostCard.transform.localPosition.x < cards[i + 1].transform.localPosition.x){
-				return i + 1;
-			}
-		}
-		return 0;
-	}
 
-	private bool getSelectedIndexes(int[] selectedIndexes){
-		if(selectedIndexes == null){
-			Debug.Log("The array is null.");
-			return false;
-		}
-		int n = 0;
-		for(int i = 0; i < validIndex; ++i){
-			SCCard prop = cards[i].GetComponent<SCCard>();
-			if(prop.getSelected()){
-				if(n == selectedIndexes.Length){
-					Debug.Log("Too many cards selected");
-					return false;
-				}
-				selectedIndexes[n++] = i;
-			}
-		}
-		if(n < selectedIndexes.Length){
-			Debug.Log("Too few cards selected");
-			return false;
-		}
-		return true;
-	}
-	
 	private void adjustGhostCard(){
 		if(ghostCard == null){
 			//Debug.Log("thres no ghost card");
@@ -683,6 +562,165 @@ public class SCHand : MonoBehaviour {
 			allowInput();
 		}
 	}
+
+	/********************************************************************************************/
+	/** Server Significant Functions ************************************************************/
+	/********************************************************************************************/
+	
+	public void playCard(){
+		if(!cardAllowed){
+			Debug.Log("Its not your turn");
+			return;
+		}
+		if(discardsAllowed != 0){
+			Debug.Log("You must discard before playing any card.");
+			return;
+		}
+		if(reasons.getValue("discard") == "true"){
+			Debug.Log("Other players still have to discard.");
+			return;
+		}
+		if(table == null){
+			Debug.Log("No access to Table.");
+			return;
+		}
+		int[] selectedIndexes = {-1, -1, -1, -1};
+		int n = 0;
+		SCCard prop = null;
+		for(int i = 0; i < validIndex; ++i){
+			prop = cards[i].GetComponent<SCCard>();
+			if(prop.getSelected()){
+				selectedIndexes[n++] = i;
+			}
+		}
+		
+		if(selectedIndexes[0] == -1){
+			Debug.Log("No cards selected.");
+			return;
+		}
+		
+		GameObject[] selectedCards = new GameObject[4];
+		n = 0;
+		for(int i = 0; i < selectedCards.Length; ++i){
+			if(selectedIndexes[i] == -1){
+				continue;
+			}
+			selectedCards[n++] = cards[selectedIndexes[i]];
+		}
+		string extra = "nothing";
+		if(table.playExistingCard(selectedCards, true, ref extra)){
+			cardAllowed = false;
+			removeCards(selectedIndexes, false);
+			string message = "play_card:";
+			for(int i = 1; i <= selectedCards.Length; ++i){
+				if(selectedCards[i - 1] == null){
+					continue;
+				}
+				prop = selectedCards[i - 1].GetComponent<SCCard>();
+				message += (i == 1 ? "" : ",") + "suit" + i + "=" + prop.suit + ",number" + i + "=" + prop.number;
+			}
+			if(validIndex == 0){
+				extra = "out";
+				table.safeScrapPile();
+			}
+			message += ",extra=" + extra;
+			gameObject.SendMessageUpwards("sendMessageToServer", message);
+		}
+	}
+	
+	public void discardListener(SCMessageInfo info){
+		string value = info.getValue("num");
+		if(value == null){
+			Debug.Log("There is no num property");
+			return;
+		}
+		discardsAllowed += SCNetworkUtil.toInt(value);
+		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=false");
+		Debug.Log("You can discard " + discardsAllowed + " cards.");
+	}
+
+	public void discard(){
+		if(discardsAllowed == 0){
+			Debug.Log("You can't discard right now.");
+			return;
+		}
+		int[] selectedIndexes = new int[discardsAllowed];
+		if(!getSelectedIndexes(selectedIndexes)){
+			return;
+		}
+		removeCards(selectedIndexes, true);
+		discardsAllowed = 0;
+		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=true");
+	}
+
+	public void skipTurn(){
+		if(!cardAllowed){
+			Debug.Log("Its not your turn");
+			return;
+		}
+		if(reasons.getValue("discard") == "true"){
+			Debug.Log("Other players still have to discard.");
+			return;
+		}
+		if(table == null){
+			Debug.Log("No access to table");
+			return;
+		}
+		if(table.getRules().allowedToSkip()){
+			gameObject.SendMessageUpwards("sendMessageToServer", "skip_turn");
+			Debug.Log("Skipped turn");
+			cardAllowed = false;
+		}
+	}
+
+	/********************************************************************************************/
+	/** Util Functions **************************************************************************/
+	/********************************************************************************************/
+
+	private int getInsertIndex(){
+		if(ghostCard == null){
+			Debug.Log("Theres no ghost card for reference");
+			return -1;
+		}
+		if(validIndex == 0){
+			Debug.Log("There are no cards in the deck");
+			return -1;
+		}
+		if(ghostCard.transform.localPosition.x < cards[0].transform.localPosition.x){
+			return 0;
+		}else if(ghostCard.transform.localPosition.x > cards[validIndex - 1].transform.localPosition.x){
+			return validIndex;
+		}
+		for(int i = 0; i < validIndex - 1; ++i){
+			if(ghostCard.transform.localPosition.x > cards[i].transform.localPosition.x && ghostCard.transform.localPosition.x < cards[i + 1].transform.localPosition.x){
+				return i + 1;
+			}
+		}
+		return 0;
+	}
+
+	private bool getSelectedIndexes(int[] selectedIndexes){
+		if(selectedIndexes == null){
+			Debug.Log("The array is null.");
+			return false;
+		}
+		int n = 0;
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			if(prop.getSelected()){
+				if(n == selectedIndexes.Length){
+					Debug.Log("Too many cards selected");
+					return false;
+				}
+				selectedIndexes[n++] = i;
+			}
+		}
+		if(n < selectedIndexes.Length){
+			Debug.Log("Too few cards selected");
+			return false;
+		}
+		return true;
+	}
 	
 	private Vector3 cloneVector3(Vector3 original){
 		return new Vector3(original.x, original.y, original.z);
@@ -723,15 +761,4 @@ public class SCHand : MonoBehaviour {
 		}
 		return false;
 	}
-	
-	public void seizeInput(){
-		inputAllowed = false;
-		inputRecentlyChanged = true;
-	}
-	
-	public void allowInput(){
-		inputAllowed = true;
-		inputRecentlyChanged = true;
-	}
-	
 }

@@ -28,10 +28,22 @@ public class SCMessageInfo{
 	}
 	
 	public void addPair(string key, string value){
+		if(getValue(key) != null){
+			return;
+		}
 		Pair pair = new Pair();
 		pair.key = key;
 		pair.value = value;
 		pairs.Add(pair);
+	}
+
+	public void removePair(string key){
+		for(int i = 0; i < pairs.Count; ++i){
+			if(pairs[i].key == key){
+				pairs.RemoveAt(i);
+				return;
+			}
+		}
 	}
 
 	public int fromConnectionId{

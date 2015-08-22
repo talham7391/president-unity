@@ -49,6 +49,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("freeze_client", onFreezeClientCommand));
 		commandBehaviours.Add(new CommandBehaviour("unfreeze_client", onUnfreezeClientCommand));
 		commandBehaviours.Add(new CommandBehaviour("reconnecting", onReconnectingCommand));
+		commandBehaviours.Add(new CommandBehaviour("ready", onReadyCommand));
 	}
 
 	public void sendToSelf(string message){
@@ -164,12 +165,12 @@ public class SCClient{
 
 	private void onFreezeClientCommand(SCMessageInfo info){
 		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
-		hand.seizeInput();
+		hand.seizeInput(info.getValue("reason"));
 	}
 
 	private void onUnfreezeClientCommand(SCMessageInfo info){
 		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
-		hand.allowInput();
+		hand.allowInput(info.getValue("reason"));
 	}
 
 	private void onReconnectingCommand(SCMessageInfo info){
@@ -178,6 +179,16 @@ public class SCClient{
 			return;
 		}
 		localServer.processReconnection(SCNetworkUtil.toInt(uniqueId), info.fromConnectionId);
+	}
+
+	private void onReadyCommand(SCMessageInfo info){
+		string value = info.getValue("value");
+		string reason = info.getValue("reason");
+		if(value == "true"){
+			localServer.userReady(true, reason, info.fromConnectionId);
+		}else{
+			localServer.userReady(false, reason, info.fromConnectionId);
+		}
 	}
 
 	/********************************************************************************************/
