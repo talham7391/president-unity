@@ -83,8 +83,6 @@ public class SCTable : MonoBehaviour {
 			anim.moveTo(fixZPosition(targetPosition, i), 0.5f, SCAnimator.EASE_OUT);
 		}
 
-		rules.checkConsecutive();
-
 		return true;
 	}
 	
@@ -126,6 +124,9 @@ public class SCTable : MonoBehaviour {
 		}
 
 		for(int i = 0; i < cards.Count; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			prop.setSelectable(false);
+
 			pile.Add(cards[i]);
 
 			SCAnimator anim = cards[i].GetComponent<SCAnimator>();

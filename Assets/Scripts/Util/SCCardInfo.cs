@@ -6,8 +6,9 @@ public class SCCardInfo{
 	public const string ANY_SUIT = "SCCardInfo_any_suit";
 	public const int ANY_NUMBER = -1;
 
-	public string _suit;
-	public int _number;
+	private string _suit;
+	private int _number;
+	private SCPlayerInfo mPlayedBy;
 
 	public SCCardInfo(string suit, int number){
 		_suit = suit;
@@ -38,6 +39,15 @@ public class SCCardInfo{
 		}
 		set{
 			_number = value;
+		}
+	}
+
+	public SCPlayerInfo playedBy{
+		get{
+			return mPlayedBy;
+		}
+		set{
+			mPlayedBy = value;
 		}
 	}
 }

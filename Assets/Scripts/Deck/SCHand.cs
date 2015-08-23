@@ -49,7 +49,6 @@ public class SCHand : MonoBehaviour {
 		inputRecentlyChanged = false;
 		cardAllowed = false;
 		reasons = new SCMessageInfo();
-		SCCommunicator.addCommand("discard", discardListener);
 	}
 	
 	void Update(){
@@ -64,7 +63,7 @@ public class SCHand : MonoBehaviour {
 
 	public void seizeInput(string reason = null){
 		reasons.addPair(reason, "true");
-		if(reason == null){
+		if(reason == "disconnection"){
 			inputAllowed = false;
 			inputRecentlyChanged = true;
 		}
@@ -72,7 +71,7 @@ public class SCHand : MonoBehaviour {
 	
 	public void allowInput(string reason = null){
 		reasons.removePair(reason);
-		if(reason == null){
+		if(reason == "disconnection"){
 			inputAllowed = true;
 			inputRecentlyChanged = true;
 		}
@@ -92,9 +91,9 @@ public class SCHand : MonoBehaviour {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit)){
-				if(hit.transform.gameObject != floater && hit.transform.gameObject != ghostCard){
+				SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
+				if(hit.transform.gameObject != floater && hit.transform.gameObject != ghostCard && prop.getSelectable()){
 					float factor = 1;
-					SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
 					SCAnimator anim = hit.transform.gameObject.GetComponent<SCAnimator>();
 					prop.setSelected(!prop.getSelected());
 					seizeInput();

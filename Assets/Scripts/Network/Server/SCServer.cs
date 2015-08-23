@@ -19,7 +19,7 @@ public class SCServer{
 		mGameStarted = false;
 
 		this.owner = owner;
-		this.logic = new SCLogic();
+		this.logic = new SCLogic(mPlayerLimit);
 		connectedPlayers = new List<SCPlayerInfo>();
 		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0, 0));
 
@@ -122,40 +122,32 @@ public class SCServer{
 		sendMessageTo(turnIndex, "allow_card");
 	}
 
-	private bool isAnyoneDisconnected(){
-		for(int i = 1; i < connectedPlayers.Count; ++i){
-			if(!connectedPlayers[i].connected){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private bool isEveryoneReady(){
-		for(int i = 0; i < connectedPlayers.Count; ++i){
-			if(!connectedPlayers[i].ready){
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/********************************************************************************************/
 	/** User Input Functions ********************************************************************/
 	/********************************************************************************************/
 
 	public void userPlayed(SCCardInfo[] playedCards, string extra){
 		turnsSkipped = 0;
+
 		string message = "spawn_card:";
 		for(int i = 1; i <= playedCards.Length && playedCards[i - 1] != null; ++i){
 			message += (i == 1 ? "" : ",") + "suit" + i + "=" + playedCards[i - 1].suit + ",number" + i + "=" + playedCards[i - 1].number;
 		}
 		sendMessageToAllAccept(turnIndex, message);
+
+
+		logic.userPlayed(playedCards, connectedPlayers[turnIndex]);
+		int discardsAllowed = logic.discardsAllowedForCurrentUser();
+		if(discardsAllowed > 0){
+			sendMessageTo(turnIndex, "discard:num=" + discardsAllowed);
+		}
+
 		if(extra == "repeat_turn"){
 			reallowTurn();
 		}else if(extra == "out"){
 			connectedPlayers[turnIndex].outOfGame = true;
 			sendMessageToAllAccept(turnIndex, "scrap_pile:safe=true");
+			advanceTurn();
 		}else{
 			advanceTurn();
 		}
@@ -163,7 +155,7 @@ public class SCServer{
 
 	public void userSkippedTurn(){
 		++turnsSkipped;
-		if(turnsSkipped == connectedPlayers.Count - 1){
+		if(turnsSkipped == connectedPlayers.Count - 1 - getOutPlayers()){
 			sendMessageToAll("scrap_pile:safe=false");
 			turnsSkipped = 0;
 		}
@@ -222,5 +214,33 @@ public class SCServer{
 			}
 		}
 		return null;
+	}
+
+	private int getOutPlayers(){
+		int val = 0;
+		for(int i = 0; i < connectedPlayers.Count; ++i){
+			if(connectedPlayers[i].outOfGame){
+				++val;
+			}
+		}
+		return val;
+	}
+
+	private bool isAnyoneDisconnected(){
+		for(int i = 1; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].connected){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private bool isEveryoneReady(){
+		for(int i = 0; i < connectedPlayers.Count; ++i){
+			if(!connectedPlayers[i].ready){
+				return false;
+			}
+		}
+		return true;
 	}
 }

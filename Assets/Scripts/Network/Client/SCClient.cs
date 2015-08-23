@@ -28,7 +28,7 @@ public class SCClient{
 		addCommandBehaviours();
 
 		if(createServer){
-			localServer = new SCServer(this, 2);
+			localServer = new SCServer(this, SCClientCommunicator.numberOfPlayers);
 		}else{
 			localServer = null;
 		}
@@ -50,6 +50,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("unfreeze_client", onUnfreezeClientCommand));
 		commandBehaviours.Add(new CommandBehaviour("reconnecting", onReconnectingCommand));
 		commandBehaviours.Add(new CommandBehaviour("ready", onReadyCommand));
+		commandBehaviours.Add(new CommandBehaviour("discard", onDiscardCommand));
 	}
 
 	public void sendToSelf(string message){
@@ -189,6 +190,11 @@ public class SCClient{
 		}else{
 			localServer.userReady(false, reason, info.fromConnectionId);
 		}
+	}
+
+	private void onDiscardCommand(SCMessageInfo info){
+		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
+		hand.discardListener(info);
 	}
 
 	/********************************************************************************************/

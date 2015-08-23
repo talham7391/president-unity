@@ -7,6 +7,7 @@ public class SCPlayerInfo{
 
 	private int mConnectionId;
 	private int mUniqueId;
+	private int mTurnOrder;
 	private bool mConnected;
 	private bool mOutOfGame;
 	private bool mReady;
@@ -14,6 +15,7 @@ public class SCPlayerInfo{
 	public SCPlayerInfo(int connectionId, int uniqueId, int turnOrder){
 		mConnectionId = connectionId;
 		mUniqueId = uniqueId;
+		mTurnOrder = turnOrder;
 		mConnected = true;
 		mOutOfGame = false;
 		mReady = true;
@@ -31,6 +33,15 @@ public class SCPlayerInfo{
 	public int uniqueId{
 		get{
 			return mUniqueId;
+		}
+	}
+
+	public int turnOrder{
+		get{
+			return mTurnOrder;
+		}
+		set{
+			mTurnOrder = value;
 		}
 	}
 

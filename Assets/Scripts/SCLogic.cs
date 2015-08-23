@@ -13,10 +13,14 @@ public class SCLogic{
 		}
 	};
 
+	private int mNumberOfPlayers;
+	private List<SCCardInfo[]> playedCards;
 	private List<Card> generatedCards;
 	private List<int> generatedIds;
 
-	public SCLogic(){
+	public SCLogic(int numberOfPlayers){
+		mNumberOfPlayers = numberOfPlayers;
+		playedCards = new List<SCCardInfo[]>();
 		generatedCards = new List<Card>();
 		generatedIds = new List<int>();
 	}
@@ -86,6 +90,30 @@ public class SCLogic{
 		return rand;
 	}
 
+	public void userPlayed(SCCardInfo[] cards, SCPlayerInfo playedBy){
+		cards[0].playedBy = playedBy;
+		playedCards.Add(cards);
+	}
+	
+	public int discardsAllowedForCurrentUser(){
+		if(playedCards.Count < 3){
+			return 0;
+		}
+		int chainLength = 0;
+		int index = playedCards.Count;
+		do{
+			++chainLength;
+			--index;
+		}while(SCRules.cardValues[playedCards[index - 1][0].number] + 1 == SCRules.cardValues[playedCards[index][0].number] && chainLength < 3);
+
+		chainLength %= mNumberOfPlayers;
+		if(chainLength < 3){
+			return 0;
+		}
+
+		return numberOfCards(playedCards[playedCards.Count - 1]);
+	}
+
 	private bool cardAlreadyExists(string suit, int number){
 		for(int i = 0; i < generatedCards.Count; ++i){
 			if(generatedCards[i].suit == suit && generatedCards[i].number == number){
@@ -93,5 +121,15 @@ public class SCLogic{
 			}
 		}
 		return false;
+	}
+
+	private int numberOfCards(SCCardInfo[] cards){
+		int val = 0;
+		for(int i = 0; i < cards.Length; ++i){
+			if(cards[i] != null){
+				++val;
+			}
+		}
+		return val;
 	}
 }

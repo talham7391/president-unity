@@ -8,6 +8,9 @@ public class SCClientCommunicator : MonoBehaviour {
 	public bool hasServer = true;
 	public bool automaticallyConnect = true;
 	public bool automaticallyReconnect = true;
+
+	[HideInInspector]
+	public static int numberOfPlayers = 3;
 	
 	private struct ReceivedData{
 		public int hostId;
@@ -83,7 +86,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		ConnectionConfig config = new ConnectionConfig();
 		mReliableChannelId = config.AddChannel(QosType.Reliable);
 		
-		HostTopology topology = new HostTopology(config, 1);
+		HostTopology topology = new HostTopology(config, numberOfPlayers);
 		mHostId = NetworkTransport.AddHost(topology, PORT);
 	}
 	
@@ -168,7 +171,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			client.getServer().processDisconnection(data.connectionId);
 		}else{
 			Debug.Log("You have been disconnected.");
-			client.processMessage("freeze_client", null);
+			client.processMessage("freeze_client", new SCMessageInfo());
 			if(automaticallyReconnect){
 				onConnectCallback = sendUniqueId;
 				connectToServer();

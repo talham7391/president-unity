@@ -158,6 +158,10 @@ public class SCCard : MonoBehaviour {
 		isSelectable = x;
 	}
 
+	public bool getSelectable(){
+		return isSelectable;
+	}
+
 	public void setSelected(bool x){
 		if(!isSelectable){
 			return;

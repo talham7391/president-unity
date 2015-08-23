@@ -7,11 +7,9 @@ public class SCRules{
 
 	private SCCardInfo[] topCards;
 	private SCCardInfo[] previousTopCards;
-	private int consecutiveCards;
 
 	public SCRules(){
 		topCards = null;
-		consecutiveCards = 0;
 	}
 
 	public bool allowedToPlay(SCCardInfo[] cards, bool updateIfAllowed){
@@ -86,7 +84,6 @@ public class SCRules{
 
 		if(trashPrevious){
 			previousTopCards = null;
-			consecutiveCards = 0;
 		}else{
 			previousTopCards = topCards;
 		}
@@ -98,22 +95,6 @@ public class SCRules{
 			return false;
 		}else{
 			return true;
-		}
-	}
-
-
-
-	public void checkConsecutive(){
-		if(consecutiveCards == 0 || SCRules.cardValues[previousTopCards[0].number] + 1 == SCRules.cardValues[topCards[0].number]){
-			if(topCards[0].number != 2){
-				++consecutiveCards;
-			}
-		}else{
-			consecutiveCards = 1;
-		}
-		if(consecutiveCards == 3){
-			SCCommunicator.fireCommand("discard:num=" + numberOfCards(topCards));
-			consecutiveCards = 0;
 		}
 	}
 
