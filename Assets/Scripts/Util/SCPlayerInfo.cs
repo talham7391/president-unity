@@ -12,6 +12,8 @@ public class SCPlayerInfo{
 	private bool mOutOfGame;
 	private bool mReady;
 
+	private bool mAlreadyDiscarded;
+
 	public SCPlayerInfo(int connectionId, int uniqueId, int turnOrder){
 		mConnectionId = connectionId;
 		mUniqueId = uniqueId;
@@ -69,6 +71,15 @@ public class SCPlayerInfo{
 		}
 		set{
 			mReady = value;
+		}
+	}
+
+	public bool alreadyDiscarded{
+		get{
+			return mAlreadyDiscarded;
+		}
+		set{
+			mAlreadyDiscarded = value;
 		}
 	}
 }

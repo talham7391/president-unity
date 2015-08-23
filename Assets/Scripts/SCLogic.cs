@@ -17,12 +17,16 @@ public class SCLogic{
 	private List<SCCardInfo[]> playedCards;
 	private List<Card> generatedCards;
 	private List<int> generatedIds;
+	private int consecutiveCards;
+	private List<SCPlayerInfo> partOfChain;
 
 	public SCLogic(int numberOfPlayers){
 		mNumberOfPlayers = numberOfPlayers;
 		playedCards = new List<SCCardInfo[]>();
 		generatedCards = new List<Card>();
 		generatedIds = new List<int>();
+		consecutiveCards = 0;
+		partOfChain = new List<SCPlayerInfo>();
 	}
 
 	public string generateCard(string suffix, out bool firstTurnCard){
@@ -93,25 +97,56 @@ public class SCLogic{
 	public void userPlayed(SCCardInfo[] cards, SCPlayerInfo playedBy){
 		cards[0].playedBy = playedBy;
 		playedCards.Add(cards);
+		if(consecutiveCards == 0){
+			++consecutiveCards;
+		}else if(SCRules.cardValues[playedCards[playedCards.Count - 2][0].number] + 1 == SCRules.cardValues[playedCards[playedCards.Count - 1][0].number]){
+			++consecutiveCards;
+		}else{
+			resetConsecutiveCards();
+		}
 	}
-	
-	public int discardsAllowedForCurrentUser(){
-		if(playedCards.Count < 3){
-			return 0;
-		}
-		int chainLength = 0;
-		int index = playedCards.Count;
-		do{
-			++chainLength;
-			--index;
-		}while(SCRules.cardValues[playedCards[index - 1][0].number] + 1 == SCRules.cardValues[playedCards[index][0].number] && chainLength < 3);
 
-		chainLength %= mNumberOfPlayers;
-		if(chainLength < 3){
-			return 0;
+	public int[] discardsAllowed(){
+		int[] users = new int[mNumberOfPlayers];
+		for(int i = 0; i < users.Length; ++i){
+			users[i] = 0;
 		}
 
-		return numberOfCards(playedCards[playedCards.Count - 1]);
+		Debug.Log("SCLogic| Consecutive cards: " + consecutiveCards);
+		if(consecutiveCards == 3){
+			for(int i = 0; i < 3; ++i){
+				SCPlayerInfo player = playedCards[playedCards.Count - 1 - i][0].playedBy;
+				if(!partOfChain.Contains(player)){
+					Debug.Log("SCLogic| This user will be allowed to discard: " + player.turnOrder);
+					users[player.turnOrder] = numberOfCards(playedCards[playedCards.Count - 1 - i]);
+					partOfChain.Add(player);
+				}
+			}
+		}else if(consecutiveCards > 3){
+			SCPlayerInfo player = playedCards[playedCards.Count - 1][0].playedBy;
+			if(!partOfChain.Contains(player)){
+				Debug.Log("SCLogic| This user will be allowed to discard: " + player.turnOrder);
+				users[player.turnOrder] = numberOfCards(playedCards[playedCards.Count - 1]);
+				partOfChain.Add(player);
+			}else{
+				resetConsecutiveCards();
+			}
+		}
+
+		int num = 0;
+		int numIndex = 0;
+		for(int i = 0; i < users.Length; ++i){
+			if(users[i] > 0){
+				++num;
+				numIndex = i;
+			}
+		}
+		if(num == 1){
+			Debug.Log("SCLogic| This user cannot discard anymore: " + numIndex);
+			users[numIndex] = 0;
+		}
+
+		return users;
 	}
 
 	private bool cardAlreadyExists(string suit, int number){
@@ -131,5 +166,10 @@ public class SCLogic{
 			}
 		}
 		return val;
+	}
+
+	private void resetConsecutiveCards(){
+		consecutiveCards = 1;
+		partOfChain.Clear();
 	}
 }

@@ -137,7 +137,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	}
 	
 	private void onConnectEvent(ref ReceivedData data){
-		Debug.Log("Someone is trying to connect");
+		Debug.Log("SCClientCommunicator| Incoming connection with Id: " + data.connectionId);
 		if(client.hasServer()){
 			client.getServer().processIncomingConnection(data.connectionId);
 		}else{
@@ -156,7 +156,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			string command = SCNetworkUtil.getCommand(message);
 			SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
 			info.fromConnectionId = data.connectionId;
-			Debug.Log("Recieved: " + message);
+			Debug.Log("SCClientCommunicator| Recieved: " + message);
 
 			if(command == "unique_id"){
 				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
@@ -195,7 +195,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	}
 	
 	public void sendMessageTo(int connectionId, string message){
+		Debug.Log("SCClientCommunicator| Sent message: \"" + message + "\" to connection Id: " + connectionId);
 		SCNetworkUtil.sendMessage(mHostId, connectionId, mReliableChannelId, message);
-		Debug.Log("Sent message: " + message);
 	}
 }

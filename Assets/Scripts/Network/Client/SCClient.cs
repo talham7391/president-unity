@@ -54,6 +54,7 @@ public class SCClient{
 	}
 
 	public void sendToSelf(string message){
+		Debug.Log("SCClient| Received: " + message);
 		string command = SCNetworkUtil.getCommand(message);
 		SCMessageInfo info = SCNetworkUtil.decodeMessage(message);
 		processMessage(command, info);

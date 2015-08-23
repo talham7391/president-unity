@@ -22,7 +22,6 @@ public class SCNetworkUtil{
 	}
 
 	public static void sendMessage(int hostId, int connectionId, int channelId, string message){
-		Debug.Log("Sending message to: " + connectionId);
 		byte[] buffer = Encoding.UTF8.GetBytes(message);
 		int bufferSize = message.Length;
 		byte error;

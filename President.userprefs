@@ -1,14 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Network\Server\SCServer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SCLogic.cs">
     <Files>
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="765" Column="1" />
-      <File FileName="Assets\Scripts\Util\SCMessageInfo.cs" Line="14" Column="33" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="31" Column="57" />
-      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="138" Column="28" />
-      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="13" Column="19" />
-      <File FileName="Assets\Scripts\Util\SCConnectionInfo.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Util\SCPlayerInfo.cs" Line="60" Column="19" />
+      <File FileName="Assets\Scripts\SCTable.cs" Line="80" Column="52" />
+      <File FileName="Assets\Scripts\SCRules.cs" Line="4" Column="1" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="642" Column="22" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="192" Column="18" />
+      <File FileName="Assets\Scripts\SCLogic.cs" Line="117" Column="31" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="57" Column="47" />
+      <File FileName="Assets\Scripts\Util\SCCardInfo.cs" Line="45" Column="21" />
+      <File FileName="Assets\Scripts\Util\SCPlayerInfo.cs" Line="17" Column="19" />
+      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="13" Column="39" />
+      <File FileName="Assets\Scripts\Util\SCNetworkUtil.cs" Line="24" Column="94" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

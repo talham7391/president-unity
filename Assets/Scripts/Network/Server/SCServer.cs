@@ -21,7 +21,7 @@ public class SCServer{
 		this.owner = owner;
 		this.logic = new SCLogic(mPlayerLimit);
 		connectedPlayers = new List<SCPlayerInfo>();
-		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, 0, 0));
+		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, SCPlayerInfo.LOCAL, 0));
 
 		Debug.Log("SCServer| Server created.");
 
@@ -137,9 +137,11 @@ public class SCServer{
 
 
 		logic.userPlayed(playedCards, connectedPlayers[turnIndex]);
-		int discardsAllowed = logic.discardsAllowedForCurrentUser();
-		if(discardsAllowed > 0){
-			sendMessageTo(turnIndex, "discard:num=" + discardsAllowed);
+		int[] discardsAllowed = logic.discardsAllowed();
+		for(int i = 0; i < discardsAllowed.Length; ++i){
+			if(discardsAllowed[i] > 0){
+				sendMessageTo(i, "discard:num=" + discardsAllowed[i]);
+			}
 		}
 
 		if(extra == "repeat_turn"){

@@ -635,7 +635,6 @@ public class SCHand : MonoBehaviour {
 		}
 		discardsAllowed += SCNetworkUtil.toInt(value);
 		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=false,reason=discard");
-		Debug.Log("You can discard " + discardsAllowed + " cards.");
 	}
 
 	public void discard(){
