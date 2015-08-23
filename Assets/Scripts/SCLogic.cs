@@ -149,6 +149,11 @@ public class SCLogic{
 		return users;
 	}
 
+	public void resetConsecutiveCards(){
+		consecutiveCards = 1;
+		partOfChain.Clear();
+	}
+
 	private bool cardAlreadyExists(string suit, int number){
 		for(int i = 0; i < generatedCards.Count; ++i){
 			if(generatedCards[i].suit == suit && generatedCards[i].number == number){
@@ -166,10 +171,5 @@ public class SCLogic{
 			}
 		}
 		return val;
-	}
-
-	private void resetConsecutiveCards(){
-		consecutiveCards = 1;
-		partOfChain.Clear();
 	}
 }

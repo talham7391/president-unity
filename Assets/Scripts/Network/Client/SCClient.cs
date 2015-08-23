@@ -186,10 +186,11 @@ public class SCClient{
 	private void onReadyCommand(SCMessageInfo info){
 		string value = info.getValue("value");
 		string reason = info.getValue("reason");
+		string extra = info.getValue("extra");
 		if(value == "true"){
-			localServer.userReady(true, reason, info.fromConnectionId);
+			localServer.userReady(true, reason, extra, info.fromConnectionId);
 		}else{
-			localServer.userReady(false, reason, info.fromConnectionId);
+			localServer.userReady(false, reason, extra, info.fromConnectionId);
 		}
 	}
 

@@ -148,6 +148,7 @@ public class SCServer{
 			reallowTurn();
 		}else if(extra == "out"){
 			connectedPlayers[turnIndex].outOfGame = true;
+			logic.resetConsecutiveCards();
 			sendMessageToAllAccept(turnIndex, "scrap_pile:safe=true");
 			advanceTurn();
 		}else{
@@ -158,17 +159,19 @@ public class SCServer{
 	public void userSkippedTurn(){
 		++turnsSkipped;
 		if(turnsSkipped == connectedPlayers.Count - 1 - getOutPlayers()){
+			logic.resetConsecutiveCards();
 			sendMessageToAll("scrap_pile:safe=false");
 			turnsSkipped = 0;
 		}
 		advanceTurn();
 	}
 
-	public void userReady(bool ready, string reason, int connectionId){
+	public void userReady(bool ready, string reason, string extra, int connectionId){
 		SCPlayerInfo player = getUserWithConnectionId(connectionId);
 		if(player != null){
 			player.ready = ready;
 		}
+
 		if(reason == "discard"){
 			bool x = isEveryoneReady();
 			if(x){
@@ -177,6 +180,13 @@ public class SCServer{
 			}else{
 				sendMessageToAll("freeze_client:reason=discard");
 				Debug.Log("SCServer| Froze because: " + reason);
+			}
+		}
+
+		if(extra == "out"){
+			player.outOfGame = true;
+			if(turnIndex == player.turnOrder){
+				advanceTurn();
 			}
 		}
 	}

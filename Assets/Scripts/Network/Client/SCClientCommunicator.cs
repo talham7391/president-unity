@@ -10,7 +10,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	public bool automaticallyReconnect = true;
 
 	[HideInInspector]
-	public static int numberOfPlayers = 3;
+	public static int numberOfPlayers = 2;
 	
 	private struct ReceivedData{
 		public int hostId;
@@ -185,6 +185,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	
 	public void sendMessageToServer(string message){
 		if(client.getServer() == null){
+			Debug.Log("SCClientCommunicator| Sent message: \"" + message + "\" to server.");
 			SCNetworkUtil.sendMessage(mHostId, mConnectionId, mReliableChannelId, message);
 		}else{
 			string command = SCNetworkUtil.getCommand(message);
