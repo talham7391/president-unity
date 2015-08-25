@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class SCServer{
 
@@ -21,7 +22,7 @@ public class SCServer{
 		this.owner = owner;
 		this.logic = new SCLogic(mPlayerLimit);
 		connectedPlayers = new List<SCPlayerInfo>();
-		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, SCPlayerInfo.LOCAL, 0));
+		connectedPlayers.Add(new SCPlayerInfo(SCPlayerInfo.LOCAL, SCPlayerInfo.LOCAL, 0, removePlayerFromLobby));
 
 		Debug.Log("SCServer| Server created.");
 
@@ -31,15 +32,30 @@ public class SCServer{
 
 	// needs to be redone
 	public void processIncomingConnection(int connectionId){
+		owner.getCommunicator().sendMessageTo(connectionId, "connect:type=password");
+	}
+
+	public void processPassword(string password, int connectionId){
+		if(owner.getCommunicator().password != password){
+			Debug.Log("SCServer| Connection denied due to invalid password by connection Id: " + connectionId);
+			return;
+		}
 		if(isAnyoneDisconnected()){
-			owner.getCommunicator().sendMessageTo(connectionId, "reconnect");
+			Debug.Log("SCServer| Sent verification request to player with connection id: " + connectionId);
+			owner.getCommunicator().sendMessageTo(connectionId, "connect:type=verify");
 		}else{
-			int uniqueId = logic.generateUniqueId();
-			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId, connectedPlayers.Count));
-			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
-			owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
+			owner.getCommunicator().sendMessageTo(connectionId, "connect:type=successful");
+			addPlayer(connectionId);
 		}
 		attemptToStartGame();
+	}
+
+	public void addPlayer(int connectionId){
+		Debug.Log("SCServer| Added player to game with connection id: " + connectionId);
+		int uniqueId = logic.generateUniqueId();
+		connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId, connectedPlayers.Count, removePlayerFromLobby));
+		owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
+		owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
 	}
 
 	public void processDisconnection(int connectionId){
@@ -49,11 +65,14 @@ public class SCServer{
 				Debug.Log("SCServer| Player with Id: " + connectedPlayers[i].uniqueId + " has disconnected.");
 				if(!mGameStarted){
 					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
+					addToUpdater(connectedPlayers[i]);
 				}
 				break;
 			}
 		}
-		sendMessageToAllAccept(connectionId, "freeze_client:reason=disconnection");
+		if(mGameStarted){
+			sendMessageToAllAccept(connectionId, "freeze_client:reason=disconnection");
+		}
 	}
 
 	public void processReconnection(int uniqueId, int connectionId){
@@ -64,11 +83,12 @@ public class SCServer{
 				Debug.Log("SCServer| Player with Id: " + uniqueId + " has reconnected.");
 				if(!mGameStarted){
 					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
+					removeFromUpdater(connectedPlayers[i].update);
 				}
 				break;
 			}
 		}
-		if(!isAnyoneDisconnected()){
+		if(!isAnyoneDisconnected() && mGameStarted){
 			sendMessageToAll("unfreeze_client:reason=disconnection");
 		}
 		attemptToStartGame();
@@ -92,7 +112,7 @@ public class SCServer{
 
 	public void startGame(){
 		Debug.Log("SCServer| Game started.");
-		turnIndex = Random.Range(0, connectedPlayers.Count);
+		turnIndex = UnityEngine.Random.Range(0, connectedPlayers.Count);
 		int cardsPerPlayer = 52 / connectedPlayers.Count;
 		int cardsRemaining = 52 - cardsPerPlayer * connectedPlayers.Count;
 		for(int i = 0; i < connectedPlayers.Count; ++i){
@@ -105,6 +125,13 @@ public class SCServer{
 			--cardsRemaining;
 		}
 		sendMessageTo(turnIndex, "allow_card");
+	}
+
+	public void removePlayerFromLobby(SCPlayerInfo player){
+		Debug.Log("SCServer| Player kicked from lobby with unique id: " + player.uniqueId);
+		logic.freeUniqueId(player.uniqueId);
+		removeFromUpdater(player.update);
+		connectedPlayers.Remove(player);
 	}
 
 	/********************************************************************************************/
@@ -274,5 +301,18 @@ public class SCServer{
 			}
 		}
 		return val;
+	}
+
+	private void addToUpdater(SCPlayerInfo player){
+		player.reset();
+		addToUpdater(player.update);
+	}
+
+	private void addToUpdater(Action<float> func){
+		owner.getCommunicator().updater.Add(func);
+	}
+
+	private void removeFromUpdater(Action<float> func){
+		owner.getCommunicator().updater.Remove(func);
 	}
 }

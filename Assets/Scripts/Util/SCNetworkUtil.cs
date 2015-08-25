@@ -45,6 +45,11 @@ public class SCNetworkUtil{
 		return str;
 	}
 
+	public static string removeIpPrefix(string str){
+		char[] chars = {':', 'f'};
+		return str.Trim(chars);
+	}
+
 	// only positive ints for now
 	public static SCMessageInfo decodeMessage(string message){
 		int startIndex = -1;

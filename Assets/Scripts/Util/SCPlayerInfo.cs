@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class SCPlayerInfo{
 
 	public const int LOCAL = -24;
+	public const int TIME_OUT = 2;
 
 	private int mConnectionId;
 	private int mUniqueId;
@@ -11,16 +13,33 @@ public class SCPlayerInfo{
 	private bool mConnected;
 	private bool mOutOfGame;
 	private bool mReady;
+	private Action<SCPlayerInfo> mOnTimeoutCallback;
 
 	private bool mAlreadyDiscarded;
+	private float timeSinceDisconnect;
 
-	public SCPlayerInfo(int connectionId, int uniqueId, int turnOrder){
+	public SCPlayerInfo(int connectionId, int uniqueId, int turnOrder, Action<SCPlayerInfo> onTimeoutCallback){
 		mConnectionId = connectionId;
 		mUniqueId = uniqueId;
 		mTurnOrder = turnOrder;
 		mConnected = true;
 		mOutOfGame = false;
 		mReady = true;
+		mOnTimeoutCallback = onTimeoutCallback;
+		timeSinceDisconnect = 0;
+	}
+
+	public void update(float deltaTime){
+		timeSinceDisconnect += deltaTime;
+		if(timeSinceDisconnect >= TIME_OUT){
+			if(mOnTimeoutCallback != null){
+				mOnTimeoutCallback(this);
+			}
+		}
+	}
+
+	public void reset(){
+		timeSinceDisconnect = 0;
 	}
 
 	public int connectionId{

@@ -18,6 +18,7 @@ public class SCClient{
 	
 	private SCServer localServer;
 	private bool mHasServer;
+	private bool mFirstTime;
 	
 	private SCClientCommunicator communicator;
 	private List<CommandBehaviour> commandBehaviours;
@@ -33,6 +34,7 @@ public class SCClient{
 			localServer = null;
 		}
 		mHasServer = createServer;
+		mFirstTime = true;
 	}
 	
 	private void addCommandBehaviours(){
@@ -53,6 +55,8 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("discard", onDiscardCommand));
 		commandBehaviours.Add(new CommandBehaviour("connected", onConnectedCommand));
 		commandBehaviours.Add(new CommandBehaviour("request_game_info", onRequestGameInfoCommand));
+		commandBehaviours.Add(new CommandBehaviour("connect", onConnectCommand));
+		commandBehaviours.Add(new CommandBehaviour("password", onPasswordCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -230,9 +234,37 @@ public class SCClient{
 			return;
 		}
 		// show user that the game is available
-		communicator.serverIp = ip;
+		communicator.serverIp = SCNetworkUtil.removeIpPrefix(ip);
 		communicator.serverPort = SCNetworkUtil.toInt(port);
 		communicator.connectToServer();
+	}
+
+	private void onConnectCommand(SCMessageInfo info){
+		string type = info.getValue("type");
+		if(type == null){
+			return;
+		}
+		if(type == "successful"){
+			Debug.Log("SCClient| Successfully connected to server.");
+			mFirstTime = false;
+		}else if(type == "verify"){
+			if(mFirstTime){
+				Debug.Log("SCClient| Sending verification to server.");
+				communicator.sendMessageToServer("verify");
+			}else{
+				communicator.sendMessageToServer("reconnecting:unique_id=" + communicator.uniqueId);
+			}
+		}else if(type == "password"){
+			communicator.sendMessageToServer("password:value=" + communicator.password);
+		}
+	}
+
+	private void onPasswordCommand(SCMessageInfo info){
+		string password = info.getValue("value");
+		if(password == null){
+			return;
+		}
+		localServer.processPassword(password, info.fromConnectionId);
 	}
 	
 	/********************************************************************************************/

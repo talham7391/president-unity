@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class SCClientCommunicator : MonoBehaviour {
@@ -35,7 +36,9 @@ public class SCClientCommunicator : MonoBehaviour {
 	};
 	private const int PORT = 2461;
 	private const int MASTERPORT = 2464;
-	private const string MASTERIP = "192.168.1.224";
+//	private const string MASTERIP = "192.168.1.224"; // Desktop
+	private const string MASTERIP = "192.168.1.185"; // Laptop
+//	private const string MASTERIP = "192.168.1.250"; // Apple
 
 	[HideInInspector]
 	public string serverIp;
@@ -50,6 +53,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	private int mMasterConnectionId;
 	private int mConnectionId;
 	private int mUniqueId;
+	public List<Action<float>> updater;
 	
 	// for non-local users
 	private Action onConnectCallback;
@@ -62,6 +66,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		serverIp = "";
 		serverPort = -1;
 		gameStarted = false;
+		updater = new List<Action<float>>();
 
 		init();
 		
@@ -117,21 +122,9 @@ public class SCClientCommunicator : MonoBehaviour {
 	}
 	
 	void Update(){
-		if(Input.GetKeyDown("c")){
-			createClient(false);
-		}else if(Input.GetKeyDown("s")){
-			createClient(true);
-		}else if(Input.GetKeyDown("1")){
-			disconnectFromMasterServer();
-		}else if(Input.GetKeyDown("2")){
-			connectToMasterServer();
-		}else if(Input.GetKeyDown("3")){
-			++connectedPlayers;
-			sendMessageToMasterServer("update_game:players=" + connectedPlayers);
-		}else if(Input.GetKeyDown("4")){
-			--connectedPlayers;
-			sendMessageToMasterServer("update_game:players=" + connectedPlayers);
-		}
+		processInput();
+		processUpdater();
+
 		if(!clientCreated){
 			return;
 		}
@@ -152,6 +145,30 @@ public class SCClientCommunicator : MonoBehaviour {
 		case NetworkEventType.ConnectEvent: onConnectEvent(ref data); break;
 		case NetworkEventType.DataEvent: onDataEvent(ref data); break;
 		case NetworkEventType.DisconnectEvent: onDisconnectEvent(ref data); break;
+		}
+	}
+
+	private void processInput(){
+		if(Input.GetKeyDown("c")){
+			createClient(false);
+		}else if(Input.GetKeyDown("s")){
+			createClient(true);
+		}else if(Input.GetKeyDown("1")){
+			disconnectFromMasterServer();
+		}else if(Input.GetKeyDown("2")){
+			connectToMasterServer();
+		}else if(Input.GetKeyDown("3")){
+			++connectedPlayers;
+			sendMessageToMasterServer("update_game:players=" + connectedPlayers);
+		}else if(Input.GetKeyDown("4")){
+			--connectedPlayers;
+			sendMessageToMasterServer("update_game:players=" + connectedPlayers);
+		}
+	}
+
+	private void processUpdater(){
+		for(int i = 0; i < updater.Count; ++i){
+			updater[i](Time.deltaTime);
 		}
 	}
 	
@@ -200,7 +217,10 @@ public class SCClientCommunicator : MonoBehaviour {
 					mUniqueId = SCNetworkUtil.toInt(uniqueId);
 				}
 			}else if(command == "unique_id"){
+				Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
 				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
+			}else if(command == "verify"){
+				client.getServer().addPlayer(data.connectionId);
 			}
 			client.processMessage(command, info);
 		}
@@ -216,6 +236,7 @@ public class SCClientCommunicator : MonoBehaviour {
 					mUniqueId = -1;
 				}
 			}
+			mMasterConnectionId = -1;
 		}else{
 			if(client.hasServer()){
 				client.getServer().processDisconnection(data.connectionId);
@@ -223,7 +244,6 @@ public class SCClientCommunicator : MonoBehaviour {
 				Debug.Log("SCClientCommunicator| You have been disconnected.");
 				client.processMessage("freeze_client", new SCMessageInfo());
 				if(automaticallyReconnect){
-					onConnectCallback = sendUniqueId;
 					connectToServer();
 				}
 			}

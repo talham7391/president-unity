@@ -94,6 +94,10 @@ public class SCLogic{
 		return rand;
 	}
 
+	public void freeUniqueId(int uniqueId){
+		generatedIds.Remove(uniqueId);
+	}
+
 	public void userPlayed(SCCardInfo[] cards, SCPlayerInfo playedBy){
 		cards[0].playedBy = playedBy;
 		playedCards.Add(cards);
