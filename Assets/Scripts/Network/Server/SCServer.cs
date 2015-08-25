@@ -37,6 +37,7 @@ public class SCServer{
 			int uniqueId = logic.generateUniqueId();
 			connectedPlayers.Add(new SCPlayerInfo(connectionId, uniqueId, connectedPlayers.Count));
 			owner.getCommunicator().sendMessageTo(connectionId, "unique_id:value=" + uniqueId);
+			owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
 		}
 		attemptToStartGame();
 	}
@@ -46,6 +47,10 @@ public class SCServer{
 			if(connectedPlayers[i].connectionId == connectionId){
 				connectedPlayers[i].connected = false;
 				Debug.Log("SCServer| Player with Id: " + connectedPlayers[i].uniqueId + " has disconnected.");
+				if(!mGameStarted){
+					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
+				}
+				break;
 			}
 		}
 		sendMessageToAllAccept(connectionId, "freeze_client:reason=disconnection");
@@ -57,6 +62,10 @@ public class SCServer{
 				connectedPlayers[i].connected = true;
 				connectedPlayers[i].connectionId = connectionId;
 				Debug.Log("SCServer| Player with Id: " + uniqueId + " has reconnected.");
+				if(!mGameStarted){
+					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
+				}
+				break;
 			}
 		}
 		if(!isAnyoneDisconnected()){
@@ -77,6 +86,7 @@ public class SCServer{
 			return;
 		}
 		mGameStarted = true;
+		owner.getCommunicator().gameStarted = true;
 		startGame();
 	}
 
@@ -254,5 +264,15 @@ public class SCServer{
 			}
 		}
 		return true;
+	}
+
+	private int getNumberOfConnectedPlayers(){
+		int val = 0;
+		for(int i = 0; i < connectedPlayers.Count; ++i){
+			if(connectedPlayers[i].connected){
+				++val;
+			}
+		}
+		return val;
 	}
 }

@@ -52,6 +52,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("ready", onReadyCommand));
 		commandBehaviours.Add(new CommandBehaviour("discard", onDiscardCommand));
 		commandBehaviours.Add(new CommandBehaviour("connected", onConnectedCommand));
+		commandBehaviours.Add(new CommandBehaviour("request_game_info", onRequestGameInfoCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -208,9 +209,30 @@ public class SCClient{
 			                                       "pass=" + (communicator.password == "" ? "false" : "true") + "," +
 			                                       "total=" + communicator.numberOfPlayers);
 		}else{
-			communicator.sendMessageToMasterServer("join_game:" +
+			communicator.sendMessageToMasterServer("request_game:" +
 			                                       "user=" + communicator.userName);
 		}
+	}
+
+	private void onRequestGameInfoCommand(SCMessageInfo info){
+		communicator.disconnectFromMasterServer();
+
+		string user = info.getValue("user");
+		string pass = info.getValue("pass");
+		string players = info.getValue("players");
+		string ip = info.getValue("ip");
+		string port = info.getValue("port");
+		string error = info.getValue("error");
+		if(user == null || pass == null || players == null || ip == null || port == null){
+			if(error == "game_not_found"){
+				
+			}
+			return;
+		}
+		// show user that the game is available
+		communicator.serverIp = ip;
+		communicator.serverPort = SCNetworkUtil.toInt(port);
+		communicator.connectToServer();
 	}
 	
 	/********************************************************************************************/

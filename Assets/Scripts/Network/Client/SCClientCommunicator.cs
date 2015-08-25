@@ -33,11 +33,17 @@ public class SCClientCommunicator : MonoBehaviour {
 			this.command = command;
 		}
 	};
-	
 	private const int PORT = 2461;
 	private const int MASTERPORT = 2464;
 	private const string MASTERIP = "192.168.1.224";
-	
+
+	[HideInInspector]
+	public string serverIp;
+	[HideInInspector]
+	public int serverPort;
+	[HideInInspector]
+	public bool gameStarted;
+
 	private bool clientCreated;
 	private int mHostId;
 	private int mReliableChannelId;
@@ -53,6 +59,10 @@ public class SCClientCommunicator : MonoBehaviour {
 	void Start(){
 		mUniqueId = -1;
 		clientCreated = false;
+		serverIp = "";
+		serverPort = -1;
+		gameStarted = false;
+
 		init();
 		
 		if(automaticallyConnect){
@@ -86,13 +96,16 @@ public class SCClientCommunicator : MonoBehaviour {
 		Debug.Log("SCClientCommunicator| Trying to connect to the master server...");
 	}
 	
-	private void connectToServer(){
+	public void connectToServer(){
+		if(serverIp == "" || serverPort == -1){
+			return;
+		}
 		byte error;
-		mConnectionId = NetworkTransport.Connect(mHostId, MASTERIP, MASTERPORT, 0, out error);
+		mConnectionId = NetworkTransport.Connect(mHostId, serverIp, serverPort, 0, out error);
 		Debug.Log("SCClientCommunicator| Trying to connect to the server...");
 	}
 	
-	private void disconnectFromMasterServer(){
+	public void disconnectFromMasterServer(){
 		byte error;
 		NetworkTransport.Disconnect(mHostId, mMasterConnectionId, out error);
 	}
@@ -155,7 +168,14 @@ public class SCClientCommunicator : MonoBehaviour {
 				client.processMessage("connected", new SCMessageInfo());
 			}
 		}else{
-			client.getServer().processIncomingConnection(data.connectionId);
+			if(hasServer){
+				client.getServer().processIncomingConnection(data.connectionId);
+			}else{
+				if(onConnectCallback != null){
+					onConnectCallback();
+					onConnectCallback = null;
+				}
+			}
 		}
 	}
 	
@@ -179,6 +199,8 @@ public class SCClientCommunicator : MonoBehaviour {
 					Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
 					mUniqueId = SCNetworkUtil.toInt(uniqueId);
 				}
+			}else if(command == "unique_id"){
+				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
 			}
 			client.processMessage(command, info);
 		}
@@ -188,10 +210,21 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(data.connectionId == mMasterConnectionId){
 			Debug.Log("SCClientCommunicator| Disconnected from master server.");
 			if(hasServer){
-				if(connectedPlayers != numberOfPlayers){
+				if(!gameStarted){
 					connectToMasterServer();
 				}else{
 					mUniqueId = -1;
+				}
+			}
+		}else{
+			if(client.hasServer()){
+				client.getServer().processDisconnection(data.connectionId);
+			}else{
+				Debug.Log("SCClientCommunicator| You have been disconnected.");
+				client.processMessage("freeze_client", new SCMessageInfo());
+				if(automaticallyReconnect){
+					onConnectCallback = sendUniqueId;
+					connectToServer();
 				}
 			}
 		}
