@@ -223,8 +223,8 @@ public class SCClientCommunicator : MonoBehaviour {
 					mUniqueId = SCNetworkUtil.toInt(uniqueId);
 				}
 			}else if(command == "unique_id"){
-				Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
 				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
+				Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
 			}else if(command == "verify"){
 				client.getServer().addPlayer(data.connectionId);
 			}
@@ -237,7 +237,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			Debug.Log("SCClientCommunicator| Disconnected from master server.");
 			if(hasServer){
 				if(!gameStarted && automaticallyReconnect){
-					connectToMasterServer();
+//					connectToMasterServer();
 				}else{
 					mUniqueId = -1;
 					mMasterConnectionId = -1;

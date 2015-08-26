@@ -277,11 +277,13 @@ public class SCClient{
 
 		if(on == "reconnecting"){
 			if(extra == "game_not_found"){
+				Debug.Log("SCClient| The game I created on master doesn't exist anymore.");
 				communicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
 			}
 		}else if(on == "password"){
 			if(extra == "wrong"){
+				Debug.Log("SCClient| I entered the wrong password for the server.");
 				communicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
 			}
