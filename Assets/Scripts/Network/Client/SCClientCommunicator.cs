@@ -118,7 +118,13 @@ public class SCClientCommunicator : MonoBehaviour {
 	private void disconnectFromServer(){
 		byte error;
 		NetworkTransport.Disconnect(mHostId, mConnectionId, out error);
-		Debug.Log("Disconnected from server.");
+		Debug.Log("SCClientCommunicator| Disconnected from server.");
+	}
+
+	public void disconnectFrom(int connectionId){
+		byte error;
+		NetworkTransport.Disconnect(mHostId, connectionId, out error);
+		Debug.Log("SCClientCommunicator| Disconnected from: " + connectionId);
 	}
 	
 	void Update(){
@@ -230,13 +236,15 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(data.connectionId == mMasterConnectionId){
 			Debug.Log("SCClientCommunicator| Disconnected from master server.");
 			if(hasServer){
-				if(!gameStarted){
+				if(!gameStarted && automaticallyReconnect){
 					connectToMasterServer();
 				}else{
 					mUniqueId = -1;
+					mMasterConnectionId = -1;
 				}
+			}else{
+				mMasterConnectionId = -1;
 			}
-			mMasterConnectionId = -1;
 		}else{
 			if(client.hasServer()){
 				client.getServer().processDisconnection(data.connectionId);

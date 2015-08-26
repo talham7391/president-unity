@@ -57,6 +57,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("request_game_info", onRequestGameInfoCommand));
 		commandBehaviours.Add(new CommandBehaviour("connect", onConnectCommand));
 		commandBehaviours.Add(new CommandBehaviour("password", onPasswordCommand));
+		commandBehaviours.Add(new CommandBehaviour("error", onErrorCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -265,6 +266,26 @@ public class SCClient{
 			return;
 		}
 		localServer.processPassword(password, info.fromConnectionId);
+	}
+
+	private void onErrorCommand(SCMessageInfo info){
+		string on = info.getValue("on");
+		string extra = info.getValue("extra");
+		if(on == null || extra == null){
+			return;
+		}
+
+		if(on == "reconnecting"){
+			if(extra == "game_not_found"){
+				communicator.automaticallyReconnect = false;
+				communicator.disconnectFrom(info.fromConnectionId);
+			}
+		}else if(on == "password"){
+			if(extra == "wrong"){
+				communicator.automaticallyReconnect = false;
+				communicator.disconnectFrom(info.fromConnectionId);
+			}
+		}
 	}
 	
 	/********************************************************************************************/
