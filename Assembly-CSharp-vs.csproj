@@ -60,10 +60,11 @@
      <Compile Include="Assets\Scripts\SCTable.cs" />
      <Compile Include="Assets\Scripts\Temp\SCLocalServer2.cs" />
      <Compile Include="Assets\Scripts\Temp\SCSource.cs" />
-     <Compile Include="Assets\Scripts\UI\SCBackground.cs" />
+     <Compile Include="Assets\Scripts\UI\SCGUI.cs" />
      <Compile Include="Assets\Scripts\Util\SCCardInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCommandBehaviour.cs" />
      <Compile Include="Assets\Scripts\Util\SCConnectionInfo.cs" />
+     <Compile Include="Assets\Scripts\Util\SCErrorInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCMessageInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCNetworkUtil.cs" />
      <Compile Include="Assets\Scripts\Util\SCPlayerInfo.cs" />

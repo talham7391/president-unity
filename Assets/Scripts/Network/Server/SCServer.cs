@@ -36,7 +36,7 @@ public class SCServer{
 	}
 
 	public void processPassword(string password, int connectionId){
-		if(owner.getCommunicator().password != password){
+		if(SCCommunicator.password != password){
 			Debug.Log("SCServer| Connection denied due to invalid password by connection Id: " + connectionId);
 			owner.getCommunicator().sendMessageTo(connectionId, "error:on=password,extra=wrong");
 			return;

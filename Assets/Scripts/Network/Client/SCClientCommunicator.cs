@@ -5,13 +5,9 @@ using System.Collections.Generic;
 using System;
 
 public class SCClientCommunicator : MonoBehaviour {
-	
-	public bool hasServer = true;
+
 	public bool automaticallyConnect = true;
 	public bool automaticallyReconnect = true;
-	public string userName = "bob";
-	public string password = "hello";
-	public int numberOfPlayers = 6;
 	public int connectedPlayers = 0;
 	
 	private struct ReceivedData{
@@ -59,6 +55,37 @@ public class SCClientCommunicator : MonoBehaviour {
 	private Action onConnectCallback;
 	
 	SCClient client;
+
+	public static bool isInfoProper(out int error){
+		if(SCCommunicator.gameName == ""){
+			error = 0;
+			return false;
+		}
+		for(int i = 0; i < SCCommunicator.gameName.Length; ++i){
+			switch(SCCommunicator.gameName[i]){
+			case ' ':
+			case ',':
+			case '=':
+				error = 1;
+				return false;
+			}
+		}
+		for(int i = 0; i < SCCommunicator.password.Length; ++i){
+			switch(SCCommunicator.password[i]){
+			case ' ':
+			case ',':
+			case '=':
+				error = 2;
+				return false;
+			}
+		}
+		if(SCCommunicator.numberOfPlayers <= 0){
+			error = 3;
+			return false;
+		}
+		error = -1;
+		return true;
+	}
 	
 	void Start(){
 		mUniqueId = -1;
@@ -71,7 +98,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		init();
 		
 		if(automaticallyConnect){
-			if(hasServer){
+			if(SCCommunicator.hasServer){
 				createClient(true);
 			}else{
 				createClient(false);
@@ -91,7 +118,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		ConnectionConfig config = new ConnectionConfig();
 		mReliableChannelId = config.AddChannel(QosType.Reliable);
 		
-		HostTopology topology = new HostTopology(config, numberOfPlayers);
+		HostTopology topology = new HostTopology(config, SCCommunicator.numberOfPlayers);
 		mHostId = NetworkTransport.AddHost(topology, PORT);
 	}
 	
@@ -181,7 +208,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	private void onConnectEvent(ref ReceivedData data){
 		Debug.Log("SCClientCommunicator| Incoming connection with Id: " + data.connectionId);
 		if(data.connectionId == mMasterConnectionId){
-			if(hasServer){
+			if(SCCommunicator.hasServer){
 				if(mUniqueId == -1){
 					sendFirstTimeToMasterServer();
 				}else{
@@ -191,7 +218,7 @@ public class SCClientCommunicator : MonoBehaviour {
 				client.processMessage("connected", new SCMessageInfo());
 			}
 		}else{
-			if(hasServer){
+			if(SCCommunicator.hasServer){
 				client.getServer().processIncomingConnection(data.connectionId);
 			}else{
 				if(onConnectCallback != null){
@@ -235,7 +262,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	private void onDisconnectEvent(ref ReceivedData data){
 		if(data.connectionId == mMasterConnectionId){
 			Debug.Log("SCClientCommunicator| Disconnected from master server.");
-			if(hasServer){
+			if(SCCommunicator.hasServer){
 				if(!gameStarted && automaticallyReconnect){
 //					connectToMasterServer();
 				}else{

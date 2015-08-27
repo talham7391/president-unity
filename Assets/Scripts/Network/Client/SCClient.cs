@@ -29,7 +29,7 @@ public class SCClient{
 		addCommandBehaviours();
 		
 		if(createServer){
-			localServer = new SCServer(this, communicator.numberOfPlayers);
+			localServer = new SCServer(this, SCCommunicator.numberOfPlayers);
 		}else{
 			localServer = null;
 		}
@@ -209,13 +209,13 @@ public class SCClient{
 	private void onConnectedCommand(SCMessageInfo info){
 		if(hasServer()){
 			communicator.sendMessageToMasterServer("create_game:" +
-			                                       "user=" + communicator.userName + "," +
+			                                       "user=" + SCCommunicator.gameName + "," +
 			                                       "uniqueId=" + communicator.uniqueId + "," +
-			                                       "pass=" + (communicator.password == "" ? "false" : "true") + "," +
-			                                       "total=" + communicator.numberOfPlayers);
+			                                       "pass=" + (SCCommunicator.password == "" ? "false" : "true") + "," +
+			                                       "total=" + SCCommunicator.numberOfPlayers);
 		}else{
 			communicator.sendMessageToMasterServer("request_game:" +
-			                                       "user=" + communicator.userName);
+			                                       "user=" + SCCommunicator.gameName);
 		}
 	}
 
@@ -256,7 +256,7 @@ public class SCClient{
 				communicator.sendMessageToServer("reconnecting:unique_id=" + communicator.uniqueId);
 			}
 		}else if(type == "password"){
-			communicator.sendMessageToServer("password:value=" + communicator.password);
+			communicator.sendMessageToServer("password:value=" + SCCommunicator.password);
 		}
 	}
 

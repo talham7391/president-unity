@@ -1,8 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCBackground.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCGUI.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCBackground.cs" Line="20" Column="151" />
+      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="74" Column="5" />
+      <File FileName="Assets\Scripts\SCCommunicator.cs" Line="11" Column="39" />
+      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="79" Column="18" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="238" Column="60" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="32" Column="2" />
+      <File FileName="Assets\Scripts\Util\SCErrorInfo.cs" Line="25" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
