@@ -61,6 +61,15 @@
      <Compile Include="Assets\Scripts\Temp\SCLocalServer2.cs" />
      <Compile Include="Assets\Scripts\Temp\SCSource.cs" />
      <Compile Include="Assets\Scripts\UI\SCGUI.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreen.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreenGameLobby.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreenJoinGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreenMainMenu.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreenPlayWithFriends.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindow.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowCreateGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowError.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowJoinGame.cs" />
      <Compile Include="Assets\Scripts\Util\SCCardInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCommandBehaviour.cs" />
      <Compile Include="Assets\Scripts\Util\SCConnectionInfo.cs" />

@@ -7,7 +7,6 @@ using System;
 public class SCClientCommunicator : MonoBehaviour {
 
 	public bool automaticallyConnect = true;
-	public bool automaticallyReconnect = true;
 	public int connectedPlayers = 0;
 	
 	private struct ReceivedData{
@@ -44,6 +43,7 @@ public class SCClientCommunicator : MonoBehaviour {
 	public bool gameStarted;
 
 	private bool clientCreated;
+	private bool inited;
 	private int mHostId;
 	private int mReliableChannelId;
 	private int mMasterConnectionId;
@@ -57,16 +57,16 @@ public class SCClientCommunicator : MonoBehaviour {
 	SCClient client;
 
 	public static bool isInfoProper(out int error){
-		if(SCCommunicator.gameName == ""){
-			error = 0;
+		if(SCCommunicator.userName == ""){
+			error = 5;
 			return false;
 		}
-		for(int i = 0; i < SCCommunicator.gameName.Length; ++i){
-			switch(SCCommunicator.gameName[i]){
+		for(int i = 0; i < SCCommunicator.userName.Length; ++i){
+			switch(SCCommunicator.userName[i]){
 			case ' ':
 			case ',':
 			case '=':
-				error = 1;
+				error = 2;
 				return false;
 			}
 		}
@@ -75,27 +75,60 @@ public class SCClientCommunicator : MonoBehaviour {
 			case ' ':
 			case ',':
 			case '=':
-				error = 2;
+				error = 3;
 				return false;
 			}
 		}
+		if(!SCCommunicator.hasServer){
+			error = -1;
+			return true;
+		}
+		if(SCCommunicator.gameName == ""){
+			error = 0;
+			return false;
+		}
+		if(!isGameNameProper()){
+			error = 1;
+			return false;
+		}
 		if(SCCommunicator.numberOfPlayers <= 0){
-			error = 3;
+			error = 4;
 			return false;
 		}
 		error = -1;
+		return true;
+	}
+
+	public static bool isGameNameProper(){
+		for(int i = 0; i < SCCommunicator.gameName.Length; ++i){
+			switch(SCCommunicator.gameName[i]){
+			case ' ':
+			case ',':
+			case '=':
+				return false;
+			}
+		}
 		return true;
 	}
 	
 	void Start(){
 		mUniqueId = -1;
 		clientCreated = false;
+		inited = false;
 		serverIp = "";
 		serverPort = -1;
 		gameStarted = false;
 		updater = new List<Action<float>>();
+	}
 
-		init();
+	public void init(){
+		if(inited){
+			connectToMasterServer();
+			return;
+		}
+		inited = true;
+
+		initNetworkTransport();
 		
 		if(automaticallyConnect){
 			if(SCCommunicator.hasServer){
@@ -112,7 +145,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		clientCreated = true;
 	}
 	
-	private void init(){
+	private void initNetworkTransport(){
 		NetworkTransport.Init();
 		
 		ConnectionConfig config = new ConnectionConfig();
@@ -142,7 +175,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		NetworkTransport.Disconnect(mHostId, mMasterConnectionId, out error);
 	}
 	
-	private void disconnectFromServer(){
+	public void disconnectFromServer(){
 		byte error;
 		NetworkTransport.Disconnect(mHostId, mConnectionId, out error);
 		Debug.Log("SCClientCommunicator| Disconnected from server.");
@@ -244,6 +277,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			}
 			
 			if(command == "connected"){
+				SCCommunicator.fireCommand("connected_to_server");
 				string uniqueId = info.getValue("uniqueId");
 				if(uniqueId != null){
 					Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
@@ -253,7 +287,9 @@ public class SCClientCommunicator : MonoBehaviour {
 				mUniqueId = SCNetworkUtil.toInt(info.getValue("value"));
 				Debug.Log("SCClientCommunicator| Unique Id updated to: " + uniqueId);
 			}else if(command == "verify"){
-				client.getServer().addPlayer(data.connectionId);
+				client.getServer().addPlayer(data.connectionId, info.getValue("name"));
+			}else if(command == "lobby_status"){
+				SCCommunicator.fireCommand(message);
 			}
 			client.processMessage(command, info);
 		}
@@ -263,22 +299,25 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(data.connectionId == mMasterConnectionId){
 			Debug.Log("SCClientCommunicator| Disconnected from master server.");
 			if(SCCommunicator.hasServer){
-				if(!gameStarted && automaticallyReconnect){
-//					connectToMasterServer();
+				SCCommunicator.fireCommand("disconnected_from_server");
+				if(!gameStarted && SCCommunicator.automaticallyReconnect){
+					connectToMasterServer();
 				}else{
 					mUniqueId = -1;
 					mMasterConnectionId = -1;
 				}
 			}else{
 				mMasterConnectionId = -1;
+				mUniqueId = -1;
 			}
 		}else{
 			if(client.hasServer()){
 				client.getServer().processDisconnection(data.connectionId);
 			}else{
+				SCCommunicator.fireCommand("disconnected_from_server");
 				Debug.Log("SCClientCommunicator| You have been disconnected.");
 				client.processMessage("freeze_client", new SCMessageInfo());
-				if(automaticallyReconnect){
+				if(SCCommunicator.automaticallyReconnect){
 					connectToServer();
 				}
 			}

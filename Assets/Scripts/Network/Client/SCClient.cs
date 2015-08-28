@@ -17,7 +17,6 @@ public class SCClient{
 	};
 	
 	private SCServer localServer;
-	private bool mHasServer;
 	private bool mFirstTime;
 	
 	private SCClientCommunicator communicator;
@@ -33,7 +32,6 @@ public class SCClient{
 		}else{
 			localServer = null;
 		}
-		mHasServer = createServer;
 		mFirstTime = true;
 	}
 	
@@ -229,15 +227,15 @@ public class SCClient{
 		string port = info.getValue("port");
 		string error = info.getValue("error");
 		if(user == null || pass == null || players == null || ip == null || port == null){
+			SCCommunicator.fireCommand("game_not_found");
 			if(error == "game_not_found"){
 				
 			}
 			return;
 		}
-		// show user that the game is available
+		SCCommunicator.fireCommand("game_found:name=" + user + ",pass=" + pass + ",players=" + players);
 		communicator.serverIp = SCNetworkUtil.removeIpPrefix(ip);
 		communicator.serverPort = SCNetworkUtil.toInt(port);
-		communicator.connectToServer();
 	}
 
 	private void onConnectCommand(SCMessageInfo info){
@@ -246,26 +244,28 @@ public class SCClient{
 			return;
 		}
 		if(type == "successful"){
+			SCCommunicator.fireCommand("connected_to_server");
 			Debug.Log("SCClient| Successfully connected to server.");
 			mFirstTime = false;
 		}else if(type == "verify"){
 			if(mFirstTime){
 				Debug.Log("SCClient| Sending verification to server.");
-				communicator.sendMessageToServer("verify");
+				communicator.sendMessageToServer("verify:name=" + SCCommunicator.userName);
 			}else{
 				communicator.sendMessageToServer("reconnecting:unique_id=" + communicator.uniqueId);
 			}
 		}else if(type == "password"){
-			communicator.sendMessageToServer("password:value=" + SCCommunicator.password);
+			communicator.sendMessageToServer("password:value=" + SCCommunicator.password + ",name=" + SCCommunicator.userName);
 		}
 	}
 
 	private void onPasswordCommand(SCMessageInfo info){
 		string password = info.getValue("value");
-		if(password == null){
+		string name = info.getValue("name");
+		if(password == null || name == null){
 			return;
 		}
-		localServer.processPassword(password, info.fromConnectionId);
+		localServer.processPassword(password, name, info.fromConnectionId);
 	}
 
 	private void onErrorCommand(SCMessageInfo info){
@@ -278,13 +278,13 @@ public class SCClient{
 		if(on == "reconnecting"){
 			if(extra == "game_not_found"){
 				Debug.Log("SCClient| The game I created on master doesn't exist anymore.");
-				communicator.automaticallyReconnect = false;
+				SCCommunicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
 			}
 		}else if(on == "password"){
 			if(extra == "wrong"){
 				Debug.Log("SCClient| I entered the wrong password for the server.");
-				communicator.automaticallyReconnect = false;
+				SCCommunicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
 			}
 		}
@@ -295,7 +295,15 @@ public class SCClient{
 	/********************************************************************************************/
 	
 	public bool hasServer(){
-		return mHasServer;
+		if(SCCommunicator.hasServer){
+			if(localServer != null){
+				localServer = new SCServer(this, SCCommunicator.numberOfPlayers);
+			}
+			return true;
+		}else{
+			localServer = null;
+			return false;
+		}
 	}
 	
 	public SCServer getServer(){

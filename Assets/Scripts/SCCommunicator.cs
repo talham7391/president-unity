@@ -7,9 +7,11 @@ public class SCCommunicator : MonoBehaviour {
 
 	//Global user varaibles
 	public static string gameName = "";
+	public static string userName = "";
 	public static string password = "";
 	public static int numberOfPlayers = 0;
 	public static bool hasServer = false;
+	public static bool automaticallyReconnect = false;
 
 	// Commands
 	public static List<SCCommandBehaviour> commands = new List<SCCommandBehaviour>();
