@@ -126,6 +126,7 @@ public class SCClientCommunicator : MonoBehaviour {
 			connectToMasterServer();
 			return;
 		}
+		Debug.Log("SCClientCommunicator| Inited.");
 		inited = true;
 
 		initNetworkTransport();
@@ -143,9 +144,14 @@ public class SCClientCommunicator : MonoBehaviour {
 		if(!inited){
 			return;
 		}
+		Debug.Log("SCClientCommunicator| Uninited.");
 		inited = false;
+		mUniqueId = -1;
 
-		client.getServer().beingDestroyed();
+		if(SCCommunicator.hasServer){
+			client.getServer().beingDestroyed();
+		}
+
 		NetworkTransport.RemoveHost(mHostId);
 		NetworkTransport.Shutdown();
 

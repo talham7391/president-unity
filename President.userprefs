@@ -1,14 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCGUI.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Network\Client\SCClient.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="28" Column="33" />
-      <File FileName="Assets\Scripts\UI\SCWindowJoinGame.cs" Line="8" Column="28" />
-      <File FileName="Assets\Scripts\UI\SCScreenJoinGame.cs" Line="29" Column="39" />
-      <File FileName="Assets\Scripts\UI\SCWindowCreateGame.cs" Line="48" Column="27" />
-      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="317" Column="60" />
-      <File FileName="Assets\Scripts\UI\SCScreenGameLobby.cs" Line="38" Column="26" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="247" Column="44" />
+      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="312" Column="34" />
+      <File FileName="Assets\Scripts\Network\Client\SCClientCommunicator.cs" Line="147" Column="3" />
+      <File FileName="Assets\Scripts\UI\SCScreenGameLobby.cs" Line="39" Column="4" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="145" Column="45" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

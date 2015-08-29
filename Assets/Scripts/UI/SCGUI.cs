@@ -49,6 +49,7 @@ public class SCGUI : MonoBehaviour {
 			}
 
 			if(mCurrentScreen != null){
+				mCurrentScreen.removeCommands();
 				if(mCurrentScreen.id == value){
 					return;
 				}

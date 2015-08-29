@@ -14,11 +14,14 @@ public class SCScreenGameLobby : SCScreen {
 		playersInLobby.Add(SCCommunicator.userName);
 		mConnected = false;
 
-		SCCommunicator.addCommand("connected_to_server", onConnectedToServer);
-		SCCommunicator.addCommand("disconnected_from_server", onDisconnectedFromServer);
-		SCCommunicator.addCommand("added_player", onAddedPlayerCommand);
-		SCCommunicator.addCommand("lobby_status", onLobbyStatusCommand);
-		SCCommunicator.addCommand("entered_wrong_password", onEnteredWrongPasswordCommand);
+		SCCommunicator.addCommand("connected_to_server", onConnectedToServer, id);
+		SCCommunicator.addCommand("disconnected_from_server", onDisconnectedFromServer, id);
+		SCCommunicator.addCommand("added_player", onAddedPlayerCommand, id);
+		SCCommunicator.addCommand("lobby_status", onLobbyStatusCommand, id);
+		SCCommunicator.addCommand("entered_wrong_password", onEnteredWrongPasswordCommand, id);
+		SCCommunicator.addCommand("game_does_not_exist", onGameDoesNotExistCommand, id);
+		SCCommunicator.addCommand("server_destroyed", onServerDestroyedCommand, id);
+		SCCommunicator.addCommand("game_started", onGameStartedCommand, id);
 	}
 	
 	override public void update(){
@@ -94,5 +97,23 @@ public class SCScreenGameLobby : SCScreen {
 		gui.currentScreen = SCGUI.SCREEN_JOIN_GAME;
 		gui.currentError = new SCErrorInfo("Incorrect password.", 3);
 		gui.currentWindow = SCGUI.WINDOW_ERROR;
+	}
+
+	public void onGameDoesNotExistCommand(SCMessageInfo info){
+		gui.client.unInit();
+		gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
+		gui.currentError = new SCErrorInfo("Game no longer exists", 3);
+		gui.currentWindow = SCGUI.WINDOW_ERROR;
+	}
+
+	public void onServerDestroyedCommand(SCMessageInfo info){
+		gui.client.unInit();
+		gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
+		gui.currentError = new SCErrorInfo("Host has quit the game", 3);
+		gui.currentWindow = SCGUI.WINDOW_ERROR;
+	}
+
+	public void onGameStartedCommand(SCMessageInfo info){
+
 	}
 }

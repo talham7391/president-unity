@@ -113,6 +113,7 @@ public class SCServer{
 		}
 		mGameStarted = true;
 		owner.getCommunicator().gameStarted = true;
+		sendMessageToAll("game_started");
 		startGame();
 	}
 

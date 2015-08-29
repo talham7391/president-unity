@@ -16,7 +16,7 @@ public class SCScreen{
 	virtual public void update(){}
 
 	public void removeCommands(){
-
+		SCCommunicator.removeCommands(mId);
 	}
 
 	public SCGUI gui{

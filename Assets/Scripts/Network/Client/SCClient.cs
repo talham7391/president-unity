@@ -58,6 +58,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("error", onErrorCommand));
 		commandBehaviours.Add(new CommandBehaviour("lobby_status", onLobbyStatusCommand));
 		commandBehaviours.Add(new CommandBehaviour("destroy", onDestroyCommand));
+		commandBehaviours.Add(new CommandBehaviour("game_started", onGameStartedCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -279,6 +280,7 @@ public class SCClient{
 
 		if(on == "reconnecting"){
 			if(extra == "game_not_found"){
+				SCCommunicator.fireCommand("game_does_not_exist");
 				Debug.Log("SCClient| The game I created on master doesn't exist anymore.");
 				SCCommunicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
@@ -309,7 +311,11 @@ public class SCClient{
 	}
 
 	private void onDestroyCommand(SCMessageInfo info){
-		Debug.Log("Server was destroyed");
+		SCCommunicator.fireCommand("server_destroyed");
+	}
+
+	private void onGameStartedCommand(SCMessageInfo info){
+		SCCommunicator.fireCommand("game_started");
 	}
 	
 	/********************************************************************************************/

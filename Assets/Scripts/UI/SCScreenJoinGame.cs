@@ -8,8 +8,8 @@ public class SCScreenJoinGame : SCScreen{
 	public SCScreenJoinGame(SCGUI gui, int id) : base(gui, id){
 		mGameFound = "";
 
-		SCCommunicator.addCommand("game_found", onGameFoundCommand);
-		SCCommunicator.addCommand("game_not_found", onGameNotFoundCommand);
+		SCCommunicator.addCommand("game_found", onGameFoundCommand, id);
+		SCCommunicator.addCommand("game_not_found", onGameNotFoundCommand, id);
 	}
 	
 	override public void update(){

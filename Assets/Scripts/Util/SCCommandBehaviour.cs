@@ -7,15 +7,18 @@ public class SCCommandBehaviour{
 	string mCommand;
 	Action<SCMessageInfo> mCallback1;
 	Action mCallback2;
+	int mId;
 
-	public SCCommandBehaviour(string command, Action callback){
+	public SCCommandBehaviour(string command, Action callback, int id = -1){
 		mCommand = command;
 		mCallback2 = callback;
+		mId = id;
 	}
 
-	public SCCommandBehaviour(string command, Action<SCMessageInfo> callback){
+	public SCCommandBehaviour(string command, Action<SCMessageInfo> callback, int id = -1){
 		mCommand = command;
 		mCallback1 = callback;
+		mId = id;
 	}
 
 	public string command{
@@ -24,6 +27,12 @@ public class SCCommandBehaviour{
 		}
 		set{
 			mCommand = value;
+		}
+	}
+
+	public int id{
+		get{
+			return mId;
 		}
 	}
 

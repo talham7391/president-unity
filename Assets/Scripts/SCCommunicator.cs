@@ -16,16 +16,20 @@ public class SCCommunicator : MonoBehaviour {
 	// Commands
 	public static List<SCCommandBehaviour> commands = new List<SCCommandBehaviour>();
 
-	public static void addCommand(string command, Action info){
-		addCommand(new SCCommandBehaviour(command, info));
+	public static void addCommand(string command, Action info, int id = -1){
+		addCommand(new SCCommandBehaviour(command, info, id));
 	}
 
-	public static void addCommand(string command, Action<SCMessageInfo> info){
-		addCommand(new SCCommandBehaviour(command, info));
+	public static void addCommand(string command, Action<SCMessageInfo> info, int id = -1){
+		addCommand(new SCCommandBehaviour(command, info, id));
 	}
 
 	public static void addCommand(SCCommandBehaviour commandBehaviour){
 		commands.Add(commandBehaviour);
+	}
+
+	public static void removeCommands(int id){
+		commands.RemoveAll(x => x.id == id);
 	}
 
 	public static void fireCommand(string message){
