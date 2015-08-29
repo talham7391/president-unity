@@ -114,6 +114,6 @@ public class SCScreenGameLobby : SCScreen {
 	}
 
 	public void onGameStartedCommand(SCMessageInfo info){
-
+		gui.currentScreen = SCGUI.SCREEN_IN_GAME;
 	}
 }

@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\UI\SCGUI.cs" />
      <Compile Include="Assets\Scripts\UI\SCScreen.cs" />
      <Compile Include="Assets\Scripts\UI\SCScreenGameLobby.cs" />
+     <Compile Include="Assets\Scripts\UI\SCScreenInGame.cs" />
      <Compile Include="Assets\Scripts\UI\SCScreenJoinGame.cs" />
      <Compile Include="Assets\Scripts\UI\SCScreenMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\SCScreenPlayWithFriends.cs" />

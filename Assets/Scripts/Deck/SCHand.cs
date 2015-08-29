@@ -15,6 +15,8 @@ public class SCHand : MonoBehaviour {
 			this.original = original;
 		}
 	};
+
+	public static SCHand handWithFocus;
 	
 	public int count = 52;
 	public float spacing = 6;
@@ -29,7 +31,7 @@ public class SCHand : MonoBehaviour {
 	public SCTable table;
 	[HideInInspector]
 	public bool cardAllowed;
-	
+
 	private GameObject[] cards;
 	private GameObject floater;
 	private GameObject ghostCard;
@@ -49,6 +51,8 @@ public class SCHand : MonoBehaviour {
 		inputRecentlyChanged = false;
 		cardAllowed = false;
 		reasons = new SCMessageInfo();
+
+		handWithFocus = this;
 	}
 	
 	void Update(){
@@ -76,7 +80,7 @@ public class SCHand : MonoBehaviour {
 			inputRecentlyChanged = true;
 		}
 	}
-	
+
 	private void processMouse(){
 		if(!inputAllowed){
 			return;
@@ -524,7 +528,7 @@ public class SCHand : MonoBehaviour {
 		ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, validIndex);
 	}
 	
-	private void autoSort(){
+	public void autoSort(){
 		seizeInput();
 		bool inputWasAllowed = false;
 		Vector3[] originalPositions = new Vector3[validIndex];

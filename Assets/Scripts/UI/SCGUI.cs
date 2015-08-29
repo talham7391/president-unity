@@ -7,13 +7,14 @@ public class SCGUI : MonoBehaviour {
 	public const int SCREEN_PLAY_WITH_FRIENDS = 1;
 	public const int SCREEN_GAME_LOBBY = 2;
 	public const int SCREEN_JOIN_GAME = 3;
+	public const int SCREEN_IN_GAME = 4;
 
 	public const int WINDOW_NOTHING = 100;
 	public const int WINDOW_CREATE_GAME = 101;
 	public const int WINDOW_ERROR = 102;
 	public const int WINDOW_JOIN_GAME = 103;
 
-	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME};
+	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME, SCREEN_IN_GAME};
 	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME};
 
 	private SCScreen mCurrentScreen;
@@ -24,7 +25,7 @@ public class SCGUI : MonoBehaviour {
 	protected SCClientCommunicator mClient;
 
 	void Start(){
-		currentScreen = SCREEN_PLAY_WITH_FRIENDS;
+		currentScreen = SCREEN_MAIN_MENU;
 		currentWindow = WINDOW_NOTHING;
 
 		mClient = GameObject.Find("PRClient").GetComponent<SCClientCommunicator>();
@@ -67,6 +68,9 @@ public class SCGUI : MonoBehaviour {
 				break;
 			case SCREEN_GAME_LOBBY:
 				mCurrentScreen = new SCScreenGameLobby(this, SCREEN_GAME_LOBBY);
+				break;
+			case SCREEN_IN_GAME:
+				mCurrentScreen = new SCScreenInGame(this, SCREEN_IN_GAME);
 				break;
 			}
 		}
