@@ -6,15 +6,19 @@ public class SCScreenGameLobby : SCScreen {
 
 	private string mConnectionStatus;
 	private List<string> playersInLobby;
+	private bool mConnected;
 
 	public SCScreenGameLobby(SCGUI gui, int id):base(gui, id){
 		mConnectionStatus = "Trying to connect to server...";
 		playersInLobby = new List<string>();
+		playersInLobby.Add(SCCommunicator.userName);
+		mConnected = false;
 
 		SCCommunicator.addCommand("connected_to_server", onConnectedToServer);
 		SCCommunicator.addCommand("disconnected_from_server", onDisconnectedFromServer);
 		SCCommunicator.addCommand("added_player", onAddedPlayerCommand);
 		SCCommunicator.addCommand("lobby_status", onLobbyStatusCommand);
+		SCCommunicator.addCommand("entered_wrong_password", onEnteredWrongPasswordCommand);
 	}
 	
 	override public void update(){
@@ -41,12 +45,18 @@ public class SCScreenGameLobby : SCScreen {
 			}else{
 				gui.client.disconnectFromServer();
 			}
+			gui.client.unInit();
 			gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
+		}
+
+		if(Time.realtimeSinceStartup - timeOfCreation >= 5 && !mConnected){
+			mConnectionStatus = "Error: Game no longer exists or no internet connection";
 		}
 	}
 
 	public void onConnectedToServer(){
 		mConnectionStatus = "Connected to server.";
+		mConnected = true;
 	}
 
 	public void onDisconnectedFromServer(){
@@ -76,6 +86,13 @@ public class SCScreenGameLobby : SCScreen {
 				return;
 			}
 			playersInLobby.Add(name);
+			++index;
 		}
+	}
+
+	public void onEnteredWrongPasswordCommand(SCMessageInfo info){
+		gui.currentScreen = SCGUI.SCREEN_JOIN_GAME;
+		gui.currentError = new SCErrorInfo("Incorrect password.", 3);
+		gui.currentWindow = SCGUI.WINDOW_ERROR;
 	}
 }

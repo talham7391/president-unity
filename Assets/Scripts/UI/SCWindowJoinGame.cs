@@ -27,7 +27,7 @@ public class SCWindowJoinGame : SCWindow {
 			int error;
 			if(SCClientCommunicator.isInfoProper(out error)){
 				SCCommunicator.automaticallyReconnect = true;
-				gui.client.init();
+				gui.client.connectToServer();
 				gui.currentWindow = SCGUI.WINDOW_NOTHING;
 				gui.currentScreen = SCGUI.SCREEN_GAME_LOBBY;
 			}else{

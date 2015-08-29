@@ -56,6 +56,8 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("connect", onConnectCommand));
 		commandBehaviours.Add(new CommandBehaviour("password", onPasswordCommand));
 		commandBehaviours.Add(new CommandBehaviour("error", onErrorCommand));
+		commandBehaviours.Add(new CommandBehaviour("lobby_status", onLobbyStatusCommand));
+		commandBehaviours.Add(new CommandBehaviour("destroy", onDestroyCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -283,11 +285,31 @@ public class SCClient{
 			}
 		}else if(on == "password"){
 			if(extra == "wrong"){
+				SCCommunicator.fireCommand("entered_wrong_password");
 				Debug.Log("SCClient| I entered the wrong password for the server.");
 				SCCommunicator.automaticallyReconnect = false;
 				communicator.disconnectFrom(info.fromConnectionId);
 			}
 		}
+	}
+
+	private void onLobbyStatusCommand(SCMessageInfo info){
+		string message = "lobby_status:";
+		int index = 1;
+		while(true){
+			string name = info.getValue("name" + index);
+			if(name == null){
+				SCCommunicator.fireCommand(message);
+				return;
+			}else{
+				message += (index == 1 ? "" : ",") + "name" + index + "=" + name;
+			}
+			++index;
+		}
+	}
+
+	private void onDestroyCommand(SCMessageInfo info){
+		Debug.Log("Server was destroyed");
 	}
 	
 	/********************************************************************************************/
@@ -296,7 +318,7 @@ public class SCClient{
 	
 	public bool hasServer(){
 		if(SCCommunicator.hasServer){
-			if(localServer != null){
+			if(localServer == null){
 				localServer = new SCServer(this, SCCommunicator.numberOfPlayers);
 			}
 			return true;

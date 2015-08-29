@@ -74,9 +74,9 @@ public class SCServer{
 			}
 		}
 		if(mGameStarted){
-			sendMessageToAllAccept(connectionId, "freeze_client:reason=disconnection");
+			sendMessageToAllAccept(getTurnIndexWithConnectionId(connectionId), "freeze_client:reason=disconnection");
 		}else{
-			sendMessageToAll(getLobbyStatus());
+			sendMessageToAllAccept(getTurnIndexWithConnectionId(connectionId), getLobbyStatus());
 		}
 	}
 
@@ -139,6 +139,10 @@ public class SCServer{
 		removeFromUpdater(player.update);
 		connectedPlayers.Remove(player);
 		sendMessageToAll(getLobbyStatus());
+	}
+
+	public void beingDestroyed(){
+		sendMessageToAllAccept(turnIndex, "destroy");
 	}
 
 	/********************************************************************************************/
@@ -329,5 +333,14 @@ public class SCServer{
 			status += (i == 0 ? "" : ",") + "name" + (i + 1) + "=" + connectedPlayers[i].userName;
 		}
 		return status;
+	}
+
+	private int getTurnIndexWithConnectionId(int connectionId){
+		SCPlayerInfo player = connectedPlayers.Find(x => x.connectionId == connectionId);
+		if(player == null){
+			return -1;
+		}else{
+			return player.turnOrder;
+		}
 	}
 }

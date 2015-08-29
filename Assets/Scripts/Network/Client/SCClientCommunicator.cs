@@ -138,11 +138,29 @@ public class SCClientCommunicator : MonoBehaviour {
 			}
 		}
 	}
-	
+
+	public void unInit(){
+		if(!inited){
+			return;
+		}
+		inited = false;
+
+		client.getServer().beingDestroyed();
+		NetworkTransport.RemoveHost(mHostId);
+		NetworkTransport.Shutdown();
+
+		destroyClient();
+	}
+
 	public void createClient(bool createServer){
 		client = new SCClient(this, createServer);
 		connectToMasterServer();
 		clientCreated = true;
+	}
+
+	public void destroyClient(){
+		client = null;
+		clientCreated = false;
 	}
 	
 	private void initNetworkTransport(){
