@@ -26,6 +26,7 @@ public class SCHand : MonoBehaviour {
 	public Vector3 newCardPosition = new Vector3(0, 0, 0);
 	public Vector3 floaterPosition = new Vector3(0, 32, 0);
 	public GameObject cardObject;
+	public GameObject cardReference;
 	
 	[HideInInspector]
 	public SCTable table;
@@ -33,6 +34,7 @@ public class SCHand : MonoBehaviour {
 	public bool cardAllowed;
 
 	private GameObject[] cards;
+	private GameObject[] cardPositions;
 	private GameObject floater;
 	private GameObject ghostCard;
 	private int validIndex;
@@ -44,6 +46,7 @@ public class SCHand : MonoBehaviour {
 
 	void Start(){
 		cards = new GameObject[count];
+		cardPositions = new GameObject[count];
 		floater = null;
 		ghostCard = null;
 		validIndex = 0;
@@ -53,12 +56,20 @@ public class SCHand : MonoBehaviour {
 		reasons = new SCMessageInfo();
 
 		handWithFocus = this;
+
+		createHand(6);
 	}
 	
 	void Update(){
-		processMouse();
-		processKeys();
-		processKeys2();
+		for(int i = 0; i < validIndex; ++i){
+			cards[i].transform.position = cardPositions[i].transform.position;
+			cards[i].transform.eulerAngles = cardPositions[i].transform.eulerAngles;
+		}
+
+		processInput();
+//		processMouse();
+//		processKeys();
+//		processKeys2();
 	}
 
 	/********************************************************************************************/
@@ -81,98 +92,108 @@ public class SCHand : MonoBehaviour {
 		}
 	}
 
-	private void processMouse(){
-		if(!inputAllowed){
-			return;
-		}
-		if(inputRecentlyChanged){
-			previousMousePosition = Input.mousePosition;
-			inputRecentlyChanged = false;
-		}
-		Vector3 delta = Input.mousePosition - previousMousePosition;
-		if(Input.GetMouseButtonDown(0)){
-			delta = Vector3.zero;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if(Physics.Raycast(ray, out hit)){
-				SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
-				if(hit.transform.gameObject != floater && hit.transform.gameObject != ghostCard && prop.getSelectable()){
-					float factor = 1;
-					SCAnimator anim = hit.transform.gameObject.GetComponent<SCAnimator>();
-					prop.setSelected(!prop.getSelected());
-					seizeInput();
-					Vector3 target = fixYPosition(hit.transform.localPosition, prop.getSelected());
-					anim.moveTo(target, animationSpeed * factor, SCAnimator.EASE_OUT);
-					anim.callBack = allowInput;
-				}
-			}
-		}else if(Input.GetMouseButton(0)){
-			for(int i = 0; i < validIndex; ++i){
-				SCCard prop = cards[i].GetComponent<SCCard>();
-				cards[i].transform.Translate(delta.x * movementSpeed, 0, 0, Space.World);
-				cards[i].transform.localPosition = fixYPosition(cards[i].transform.localPosition, prop.getSelected());
-				cards[i].transform.localPosition = fixZPosition(cards[i].transform.localPosition, i);
-				cards[i].transform.eulerAngles = fixRotation(cards[i].transform.localPosition);
-				adjustGhostCard();
-			}
-		}
-		if(Input.GetMouseButtonDown(1)){
-			playCard();
-		}
-		previousMousePosition = Input.mousePosition;
-	}
-	
-	private void processKeys(){
-		if(!inputAllowed){
-			return;
-		}
-		/*
-		if(Input.GetKeyDown("a")){ // adding a card
-			CardConfig config = generateCard();
-			if(config.original){
-				addCard(config.suit, config.number, validIndex);
-			}
-		}else if(Input.GetKeyDown("r")){ // removing a card
-			int[] selectedIndexes = {-1, -1, -1, -1};
-			int n = 0;
-			for(int i = 0; i < validIndex; ++i){
-				SCCard prop = cards[i].GetComponent<SCCard>();
-				if(prop.getSelected()){
-					selectedIndexes[n++] = i;
-				}
-			}
-			removeCards(selectedIndexes, true);
-		}else */
-		if(Input.GetKeyDown("r")){ // floating a card
-			if(floater == null){
-				setFloater();
-			}else{
-				int index = getInsertIndex();
-				if(index != -1){
-					insertFloater(getInsertIndex());
-				}
-			}
-		}else if(Input.GetKeyDown("e")){ // sorting the hand
+	private void processInput(){
+		if(Input.GetKeyDown("a")){
+			addCard(generateCard(), validIndex / 2);
+		}else if(Input.GetKeyDown("r")){
+			removeCard(validIndex / 2, true);
+		}else if(Input.GetKeyDown("s")){
 			autoSort();
 		}
-		/*else if(Input.GetKeyDown("p")){ // playing a card
-			playCard();
-		}else if(Input.GetKeyDown("c")){
-			createHand(6);
-		}
-		*/
 	}
 
-	private void processKeys2(){
-		if(!inputAllowed){
-			return;
-		}
-		if(Input.GetKeyDown("t")){
-			skipTurn();
-		}else if(Input.GetKeyDown("d")){
-			discard();
-		}
-	}
+//	private void processMouse(){
+//		if(!inputAllowed){
+//			return;
+//		}
+//		if(inputRecentlyChanged){
+//			previousMousePosition = Input.mousePosition;
+//			inputRecentlyChanged = false;
+//		}
+//		Vector3 delta = Input.mousePosition - previousMousePosition;
+//		if(Input.GetMouseButtonDown(0)){
+//			delta = Vector3.zero;
+//			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+//			RaycastHit hit;
+//			if(Physics.Raycast(ray, out hit)){
+//				SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
+//				if(hit.transform.gameObject != floater && hit.transform.gameObject != ghostCard && prop.getSelectable()){
+//					float factor = 1;
+//					SCAnimator anim = hit.transform.gameObject.GetComponent<SCAnimator>();
+//					prop.setSelected(!prop.getSelected());
+//					seizeInput();
+//					Vector3 target = fixYPosition(hit.transform.localPosition, prop.getSelected());
+//					anim.moveTo(target, animationSpeed * factor, SCAnimator.EASE_OUT);
+//					anim.callBack = allowInput;
+//				}
+//			}
+//		}else if(Input.GetMouseButton(0)){
+//			for(int i = 0; i < validIndex; ++i){
+//				SCCard prop = cards[i].GetComponent<SCCard>();
+//				cards[i].transform.Translate(delta.x * movementSpeed, 0, 0, Space.World);
+//				cards[i].transform.localPosition = fixYPosition(cards[i].transform.localPosition, prop.getSelected());
+//				cards[i].transform.localPosition = fixZPosition(cards[i].transform.localPosition, i);
+//				cards[i].transform.eulerAngles = fixRotation(cards[i].transform.localPosition);
+//				adjustGhostCard();
+//			}
+//		}
+//		if(Input.GetMouseButtonDown(1)){
+//			playCard();
+//		}
+//		previousMousePosition = Input.mousePosition;
+//	}
+//	
+//	private void processKeys(){
+//		if(!inputAllowed){
+//			return;
+//		}
+//		/*
+//		if(Input.GetKeyDown("a")){ // adding a card
+//			CardConfig config = generateCard();
+//			if(config.original){
+//				addCard(config.suit, config.number, validIndex);
+//			}
+//		}else if(Input.GetKeyDown("r")){ // removing a card
+//			int[] selectedIndexes = {-1, -1, -1, -1};
+//			int n = 0;
+//			for(int i = 0; i < validIndex; ++i){
+//				SCCard prop = cards[i].GetComponent<SCCard>();
+//				if(prop.getSelected()){
+//					selectedIndexes[n++] = i;
+//				}
+//			}
+//			removeCards(selectedIndexes, true);
+//		}else */
+//		if(Input.GetKeyDown("r")){ // floating a card
+//			if(floater == null){
+//				setFloater();
+//			}else{
+//				int index = getInsertIndex();
+//				if(index != -1){
+//					insertFloater(getInsertIndex());
+//				}
+//			}
+//		}else if(Input.GetKeyDown("e")){ // sorting the hand
+//			autoSort();
+//		}
+//		/*else if(Input.GetKeyDown("p")){ // playing a card
+//			playCard();
+//		}else if(Input.GetKeyDown("c")){
+//			createHand(6);
+//		}
+//		*/
+//	}
+//
+//	private void processKeys2(){
+//		if(!inputAllowed){
+//			return;
+//		}
+//		if(Input.GetKeyDown("t")){
+//			skipTurn();
+//		}else if(Input.GetKeyDown("d")){
+//			discard();
+//		}
+//	}
 
 	/********************************************************************************************/
 	/** Deck Functions **************************************************************************/
@@ -196,11 +217,13 @@ public class SCHand : MonoBehaviour {
 			Vector3 targetPosition = fixYPosition(currentPosition, false);
 			targetPosition = fixZPosition(targetPosition, i);
 			Vector3 targetRotation = fixRotation(targetPosition);
-			
+
+			GameObject pos = createCardReference();
+			cardPositions[validIndex] = pos;
 			cards[validIndex++] = premade[i];
 			
 			float factor = 1;
-			SCAnimator anim = premade[i].GetComponent<SCAnimator>();
+			SCAnimator anim = pos.GetComponent<SCAnimator>();
 			anim.moveTo(targetPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
 			anim.rotateToTarget(targetRotation, animationSpeed * factor, SCAnimator.EASE_OUT);
 			
@@ -235,6 +258,13 @@ public class SCHand : MonoBehaviour {
 		prop.createCard();
 		card.transform.localPosition = newCardPosition;
 		return card;
+	}
+
+	public GameObject createCardReference(){
+		GameObject cardRef = Instantiate(cardReference);
+		cardRef.transform.SetParent(transform);
+		cardRef.transform.localPosition = newCardPosition;
+		return cardRef;
 	}
 
 	private CardConfig generateCard(){
@@ -299,24 +329,27 @@ public class SCHand : MonoBehaviour {
 		seizeInput();
 		
 		for(int i = validIndex; i > index; --i){
+			cardPositions[i] = cardPositions[i - 1];
 			cards[i] = cards[i - 1];
 		}
-		
+
+		cardPositions[index] = createCardReference();
+		cardPositions[index].transform.SetParent(transform);
 		cards[index] = obj;
 		cards[index].transform.SetParent(transform);
 		
 		float factor = 1;
-		SCAnimator anim = cards[index].GetComponent<SCAnimator>();
+		SCAnimator anim = cardPositions[index].GetComponent<SCAnimator>();
 		SCCard prop = cards[index].GetComponent<SCCard>();
 		Vector3 targetPosition;
 		if(index == 0){
 			if(validIndex == 0){
 				targetPosition = new Vector3(0, 0, -0.05f * index);
 			}else{
-				targetPosition = new Vector3(cards[index + 1].transform.localPosition.x - spacing / 2, 0, -0.05f * index);
+				targetPosition = new Vector3(cardPositions[index + 1].transform.localPosition.x - spacing / 2, 0, -0.05f * index);
 			}
 		}else if(index == validIndex){
-			targetPosition = new Vector3(cards[index - 1].transform.localPosition.x + spacing / 2, 0, -0.05f * index);
+			targetPosition = new Vector3(cardPositions[index - 1].transform.localPosition.x + spacing / 2, 0, -0.05f * index);
 		}else{
 			targetPosition = new Vector3(getAverage(index), 0, -0.05f * index);
 		}
@@ -326,12 +359,12 @@ public class SCHand : MonoBehaviour {
 		
 		factor = 1.3f;
 		for(int i = 0; i <= validIndex; ++i){
-			anim = cards[i].GetComponent<SCAnimator>();
+			anim = cardPositions[i].GetComponent<SCAnimator>();
 			prop = cards[i].GetComponent<SCCard>();
 			if(i < index){
-				targetPosition = new Vector3(cards[i].transform.localPosition.x - spacing / 2, 0, 0);
+				targetPosition = new Vector3(cardPositions[i].transform.localPosition.x - spacing / 2, 0, 0);
 			}else if(i > index){
-				targetPosition = new Vector3(cards[i].transform.localPosition.x + spacing / 2, 0, 0);
+				targetPosition = new Vector3(cardPositions[i].transform.localPosition.x + spacing / 2, 0, 0);
 			}
 			if(i != index){
 				targetPosition = fixZPosition(targetPosition, i);
@@ -341,7 +374,7 @@ public class SCHand : MonoBehaviour {
 			}
 			if(i == validIndex){
 				anim.callBack = () => {
-					adjustGhostCard();
+//					adjustGhostCard();
 					allowInput();
 				};
 			}
@@ -355,7 +388,7 @@ public class SCHand : MonoBehaviour {
 		// get average
 		float sum = 0;
 		for(int i = 0; i < validIndex; ++i){
-			sum += cards[i].transform.localPosition.x;
+			sum += cardPositions[i].transform.localPosition.x;
 		}
 		float average = sum / validIndex;
 		
@@ -363,10 +396,13 @@ public class SCHand : MonoBehaviour {
 		for(int i = 0; i < selectedIndexes.Length; ++i){
 			if(selectedIndexes[i] >= 0 && selectedIndexes[i] < validIndex){
 				if(destroy){
+					Destroy(cardPositions[selectedIndexes[i]]);
 					Destroy(cards[selectedIndexes[i]]);
 				}
+				cardPositions[selectedIndexes[i]] = null;
 				cards[selectedIndexes[i]] = null;
 				for(int j = selectedIndexes[i]; j < validIndex - 1; ++j){
+					cardPositions[j] = cardPositions[j + 1];
 					cards[j] = cards[j + 1];
 				}
 				for(int j = i; j < selectedIndexes.Length; ++j){
@@ -382,7 +418,7 @@ public class SCHand : MonoBehaviour {
 		float factor = 1;
 		for(int i = 0; i < validIndex; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
-			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
+			SCAnimator anim = cardPositions[i].GetComponent<SCAnimator>();
 			
 			Vector3 targetPosition = new Vector3(start + spacing * (i + 0.5f), 0, 0);
 			targetPosition = fixZPosition(targetPosition, i);
@@ -391,8 +427,8 @@ public class SCHand : MonoBehaviour {
 			anim.rotateToTarget(fixRotation(targetPosition), animationSpeed * factor);
 			
 			if(i == validIndex - 1){
-				cards[i].GetComponent<SCAnimator>().callBack = () => {
-					adjustGhostCard();
+				cardPositions[i].GetComponent<SCAnimator>().callBack = () => {
+//					adjustGhostCard();
 					allowInput();
 				};
 			}
@@ -409,13 +445,13 @@ public class SCHand : MonoBehaviour {
 		float factor = 1;
 		bool inputAssigned = false;
 		for(int i = 0; i < validIndex; ++i){
-			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
+			SCAnimator anim = cardPositions[i].GetComponent<SCAnimator>();
 			SCCard prop = cards[i].GetComponent<SCCard>();
 			Vector3 targetPosition = new Vector3(0, 0, 0);
 			if(i < index){
-				targetPosition = new Vector3(cards[i].transform.localPosition.x + spacing / 2, 0, 0);
+				targetPosition = new Vector3(cardPositions[i].transform.localPosition.x + spacing / 2, 0, 0);
 			}else if(i > index){
-				targetPosition = new Vector3(cards[i].transform.localPosition.x - spacing / 2, 0, 0);
+				targetPosition = new Vector3(cardPositions[i].transform.localPosition.x - spacing / 2, 0, 0);
 			}
 			if(i != index){
 				targetPosition = fixZPosition(targetPosition, i);
@@ -424,30 +460,32 @@ public class SCHand : MonoBehaviour {
 				anim.rotateToTarget(fixRotation(targetPosition), animationSpeed * factor);
 			}
 			if(i == validIndex - 1 && i != index){
-				cards[i].GetComponent<SCAnimator>().callBack = () => {
-					adjustGhostCard();
+				cardPositions[i].GetComponent<SCAnimator>().callBack = () => {
+//					adjustGhostCard();
 					allowInput();
 				};
 				inputAssigned = true;
 			}
 		}
 		if(!inputAssigned){
-			adjustGhostCard();
+//			adjustGhostCard();
 			allowInput();
 		}
 		
 		GameObject val = null;
 		if(destroy){
+			Destroy(cardPositions[index]);
 			Destroy(cards[index]);
 		}else{
 			val = cards[index];
 		}
 		for(int i = index; i < validIndex - 1; ++i){
+			cardPositions[i] = cardPositions[i + 1];
 			cards[i] = cards[i + 1];
 		}
 		
 		--validIndex;
-		adjustGhostCard();
+//		adjustGhostCard();
 		return val;
 	}
 
@@ -455,78 +493,78 @@ public class SCHand : MonoBehaviour {
 	/** Resorting Functions *********************************************************************/
 	/********************************************************************************************/
 	
-	private void setFloater(){
-		for(int i = 0; i < validIndex; ++i){
-			SCCard prop = cards[i].GetComponent<SCCard>();
-			if(prop.getSelected()){
-				setFloater(i);
-				return;
-			}
-		}
-		Debug.Log("No card selected.");
-	}
+//	private void setFloater(){
+//		for(int i = 0; i < validIndex; ++i){
+//			SCCard prop = cards[i].GetComponent<SCCard>();
+//			if(prop.getSelected()){
+//				setFloater(i);
+//				return;
+//			}
+//		}
+//		Debug.Log("No card selected.");
+//	}
 	
-	private void setFloater(int index){
-		if(index < 0 || index > validIndex){
-			Debug.Log("Invalid index for setting floater: " + index);
-			return;
-		}
-		if(floater != null){
-			Debug.Log("Theres already a floater");
-			return;
-		}
-		seizeInput();
-		
-		floater = removeCard(index, false);
-		
-		SCCard prop = floater.GetComponent<SCCard>();
-		prop.setSelected(false);
-		
-		float factor = 1;
-		SCAnimator anim = floater.GetComponent<SCAnimator>();
-		anim.moveTo(floaterPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
-		anim.rotateToTarget(new Vector3(0, 0, 0), animationSpeed * factor);
-		anim.callBack = () => {
-			adjustGhostCard();
-			allowInput();
-		};
-		
-		ghostCard = Instantiate(cardObject);
-		SCCard ghostProp = ghostCard.GetComponent<SCCard>();
-		ghostProp.suit = prop.suit;
-		ghostProp.number = prop.number;
-		ghostProp.createCard();
-		ghostProp.setOpacity(0.5f);
-		ghostProp.transform.SetParent(transform);
-		ghostProp.transform.localPosition = new Vector3(0, 0, 0);
-	}
+//	private void setFloater(int index){
+//		if(index < 0 || index > validIndex){
+//			Debug.Log("Invalid index for setting floater: " + index);
+//			return;
+//		}
+//		if(floater != null){
+//			Debug.Log("Theres already a floater");
+//			return;
+//		}
+//		seizeInput();
+//		
+//		floater = removeCard(index, false);
+//		
+//		SCCard prop = floater.GetComponent<SCCard>();
+//		prop.setSelected(false);
+//		
+//		float factor = 1;
+//		SCAnimator anim = floater.GetComponent<SCAnimator>();
+//		anim.moveTo(floaterPosition, animationSpeed * factor, SCAnimator.EASE_OUT);
+//		anim.rotateToTarget(new Vector3(0, 0, 0), animationSpeed * factor);
+//		anim.callBack = () => {
+//			adjustGhostCard();
+//			allowInput();
+//		};
+//		
+//		ghostCard = Instantiate(cardObject);
+//		SCCard ghostProp = ghostCard.GetComponent<SCCard>();
+//		ghostProp.suit = prop.suit;
+//		ghostProp.number = prop.number;
+//		ghostProp.createCard();
+//		ghostProp.setOpacity(0.5f);
+//		ghostProp.transform.SetParent(transform);
+//		ghostProp.transform.localPosition = new Vector3(0, 0, 0);
+//	}
 	
-	private void insertFloater(int index){
-		if(index < 0 || index > validIndex){
-			Debug.Log("Not a valid index for inserting floater: " + index);
-			return;
-		}
-		
-		Destroy(ghostCard);
-		ghostCard = null;
-		addCard(floater, index, true);
-		
-		floater = null;
-	}
+//	private void insertFloater(int index){
+//		if(index < 0 || index > validIndex){
+//			Debug.Log("Not a valid index for inserting floater: " + index);
+//			return;
+//		}
+//		
+//		Destroy(ghostCard);
+//		ghostCard = null;
+//		addCard(floater, index, true);
+//		
+//		floater = null;
+//	}
 
-	private void adjustGhostCard(){
-		if(ghostCard == null){
-			//Debug.Log("thres no ghost card");
-			return;
-		}
-		for(int i = 0; i < validIndex; ++i){
-			if(cards[i].transform.localPosition.x > 0){
-				ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, i - 0.5f);
-				return;
-			}
-		}
-		ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, validIndex);
-	}
+//	private void adjustGhostCard(){
+//		if(ghostCard == null){
+//			//Debug.Log("thres no ghost card");
+//			return;
+//		}
+//		for(int i = 0; i < validIndex; ++i){
+//			if(cards[i].transform.localPosition.x > 0){
+//				ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, i - 0.5f);
+//				return;
+//			}
+//		}
+//		ghostCard.transform.localPosition = fixZPosition(ghostCard.transform.localPosition, validIndex);
+//	}
 	
 	public void autoSort(){
 		seizeInput();
@@ -534,8 +572,8 @@ public class SCHand : MonoBehaviour {
 		Vector3[] originalPositions = new Vector3[validIndex];
 		Vector3[] originalRotations = new Vector3[validIndex];
 		for(int i = 0; i < originalPositions.Length; ++i){
-			originalPositions[i] = cloneVector3(cards[i].transform.localPosition);
-			originalRotations[i] = cloneVector3(cards[i].transform.eulerAngles);
+			originalPositions[i] = cloneVector3(cardPositions[i].transform.localPosition);
+			originalRotations[i] = cloneVector3(cardPositions[i].transform.eulerAngles);
 		}
 		for(int i = 0; i < validIndex; ++i){
 			SCCard minProp = cards[i].GetComponent<SCCard>();
@@ -549,11 +587,15 @@ public class SCHand : MonoBehaviour {
 					minIndex = j;
 				}
 			}
-			GameObject temp = cards[minIndex];
+			GameObject temp = cardPositions[minIndex];
+			cardPositions[minIndex] = cardPositions[i];
+			cardPositions[i] = temp;
+
+			GameObject temp2 = cards[minIndex];
 			cards[minIndex] = cards[i];
-			cards[i] = temp;
+			cards[i] = temp2;
 			
-			SCAnimator anim = cards[i].GetComponent<SCAnimator>();
+			SCAnimator anim = cardPositions[i].GetComponent<SCAnimator>();
 			anim.moveTo(originalPositions[i], animationSpeed, SCAnimator.EASE_OUT);
 			anim.rotateToTarget(originalRotations[i], animationSpeed);
 			if(i == validIndex - 1){
@@ -737,7 +779,7 @@ public class SCHand : MonoBehaviour {
 	}
 	
 	private float getAverage(int index){
-		return (cards[index - 1].transform.localPosition.x + cards[index + 1].transform.localPosition.x) / 2;
+		return (cardPositions[index - 1].transform.localPosition.x + cardPositions[index + 1].transform.localPosition.x) / 2;
 	}
 	
 	private Vector3 fixYPosition(Vector3 position, bool selected){

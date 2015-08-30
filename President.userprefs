@@ -1,10 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCGUI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCScreenMainMenu.cs" Line="8" Column="26" />
-      <File FileName="Assets\Scripts\SCCommunicator.cs" Line="11" Column="37" />
-      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="94" Column="27" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="66" Column="15" />
+      <File FileName="Assets\Scripts\Deck\SCAnimator.cs" Line="12" Column="56" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
