@@ -71,6 +71,7 @@
      <Compile Include="Assets\Scripts\UI\SCWindowCreateGame.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowError.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowJoinGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowUserName.cs" />
      <Compile Include="Assets\Scripts\Util\SCCardInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCommandBehaviour.cs" />
      <Compile Include="Assets\Scripts\Util\SCConnectionInfo.cs" />

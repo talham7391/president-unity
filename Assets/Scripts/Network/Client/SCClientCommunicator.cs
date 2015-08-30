@@ -110,6 +110,18 @@ public class SCClientCommunicator : MonoBehaviour {
 		}
 		return true;
 	}
+
+	public static bool isUserNameProper(){
+		for(int i = 0; i < SCCommunicator.userName.Length; ++i){
+			switch(SCCommunicator.userName[i]){
+			case ' ':
+			case ',':
+			case '=':
+				return false;
+			}
+		}
+		return SCCommunicator.userName == "" ? false : true;
+	}
 	
 	void Start(){
 		mUniqueId = -1;
@@ -340,7 +352,9 @@ public class SCClientCommunicator : MonoBehaviour {
 			}else{
 				SCCommunicator.fireCommand("disconnected_from_server");
 				Debug.Log("SCClientCommunicator| You have been disconnected.");
-				client.processMessage("freeze_client", new SCMessageInfo());
+				SCMessageInfo info = new SCMessageInfo();
+				info.addPair("reason", "disconnection");
+				client.processMessage("freeze_client", info);
 				if(SCCommunicator.automaticallyReconnect){
 					connectToServer();
 				}

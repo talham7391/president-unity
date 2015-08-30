@@ -18,7 +18,6 @@ public class SCWindowCreateGame : SCWindow {
 		float width = 120;
 		
 		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 0, width, 30), "Game Name:");
-		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 1, width, 30), "User Name:");
 		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 2, width, 30), "Game Password:");
 		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 3, width, 30), "Number of Players:");
 		if(GUI.Button(new Rect(xPadding, yPadding + (30 + spacing) * 4, width, 30), "Back")){
@@ -26,7 +25,6 @@ public class SCWindowCreateGame : SCWindow {
 		}
 		
 		SCCommunicator.gameName = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 0, width, 30), SCCommunicator.gameName);
-		SCCommunicator.userName = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 1, width, 30), SCCommunicator.userName);
 		SCCommunicator.password = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 2, width, 30), SCCommunicator.password);
 		mNumberOfPlayers = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 3, width, 30), mNumberOfPlayers);
 		if(GUI.Button(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 4, width, 30), "Confirm")){

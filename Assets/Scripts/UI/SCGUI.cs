@@ -13,9 +13,10 @@ public class SCGUI : MonoBehaviour {
 	public const int WINDOW_CREATE_GAME = 101;
 	public const int WINDOW_ERROR = 102;
 	public const int WINDOW_JOIN_GAME = 103;
+	public const int WINDOW_USER_NAME = 104;
 
 	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME, SCREEN_IN_GAME};
-	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME};
+	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME};
 
 	private SCScreen mCurrentScreen;
 	private SCWindow mCurrentWindow;
@@ -25,8 +26,8 @@ public class SCGUI : MonoBehaviour {
 	protected SCClientCommunicator mClient;
 
 	void Start(){
+		currentWindow = WINDOW_JOIN_GAME;
 		currentScreen = SCREEN_MAIN_MENU;
-		currentWindow = WINDOW_NOTHING;
 
 		mClient = GameObject.Find("PRClient").GetComponent<SCClientCommunicator>();
 	}
@@ -101,6 +102,9 @@ public class SCGUI : MonoBehaviour {
 			case WINDOW_JOIN_GAME:
 				mCurrentWindow = new SCWindowJoinGame(this, WINDOW_JOIN_GAME);
 				break;
+			case WINDOW_USER_NAME:
+				mCurrentWindow = new SCWindowUserName(this, WINDOW_USER_NAME);
+				break;
 			}
 		}
 	}
@@ -151,7 +155,6 @@ public class SCGUI : MonoBehaviour {
 
 	public void reset(){
 		SCCommunicator.gameName = "";
-		SCCommunicator.userName = "";
 		SCCommunicator.password = "";
 		SCCommunicator.numberOfPlayers = 0;
 	}

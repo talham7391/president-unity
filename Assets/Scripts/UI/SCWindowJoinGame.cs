@@ -15,13 +15,11 @@ public class SCWindowJoinGame : SCWindow {
 		int width = 120;
 		int height = 30;
 
-		GUI.Label(new Rect(xPadding, yPadding + (spacing + height) * 0, width, height), "User Name:");
 		GUI.Label(new Rect(xPadding, yPadding + (spacing + height) * 1, width, height), "Password:");
 		if(GUI.Button(new Rect(xPadding, yPadding + (spacing + height) * 2, width, height), "Back")){
 			gui.currentWindow = SCGUI.WINDOW_NOTHING;
 		}
 
-		SCCommunicator.userName = GUI.TextField(new Rect(xPadding + spacing + width, yPadding + (spacing + height) * 0, width, height), SCCommunicator.userName);
 		SCCommunicator.password = GUI.TextField(new Rect(xPadding + spacing + width, yPadding + (spacing + height) * 1, width, height), SCCommunicator.password);
 		if(GUI.Button(new Rect(xPadding + spacing + width, yPadding + (spacing + height) * 2, width, height), "Confirm")){
 			int error;

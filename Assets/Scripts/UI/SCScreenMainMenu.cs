@@ -4,7 +4,9 @@ using System.Collections;
 public class SCScreenMainMenu : SCScreen{
 
 	public SCScreenMainMenu(SCGUI gui, int id) : base(gui, id){
-
+		if(SCCommunicator.userName == ""){
+			//gui.currentWindow = SCGUI.WINDOW_USER_NAME;
+		}
 	}
 
 	override public void update(){
