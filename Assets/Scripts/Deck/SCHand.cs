@@ -44,6 +44,10 @@ public class SCHand : MonoBehaviour {
 	private int discardsAllowed = 0;
 	private SCMessageInfo reasons;
 
+	private float mVelocity;
+	private float mSpeed = 5.5f;
+	private float mDamping = 0.92f;
+
 	void Start(){
 		cards = new GameObject[count];
 		cardPositions = new GameObject[count];
@@ -57,19 +61,61 @@ public class SCHand : MonoBehaviour {
 
 		handWithFocus = this;
 
-		createHand(6);
+		createHand(12);
 	}
 	
 	void Update(){
 		for(int i = 0; i < validIndex; ++i){
-			cards[i].transform.position = cardPositions[i].transform.position;
-			cards[i].transform.eulerAngles = cardPositions[i].transform.eulerAngles;
+			cards[i].transform.position = applyPositionFunction(cardPositions[i].transform.position);
+			cards[i].transform.eulerAngles = applyRotationFunction(cardPositions[i].transform.position);
+
+			Vector3 pos = cardPositions[i].transform.position;
+			pos.x += mVelocity * Time.deltaTime;
+			cardPositions[i].transform.position = pos;
+		}
+
+		if(Math.Abs(mVelocity) > 0){
+			if(Math.Abs(mVelocity) < 1){
+				mVelocity = 0;
+			}else{
+				mVelocity *= mDamping;
+			}
 		}
 
 		processInput();
 //		processMouse();
 //		processKeys();
 //		processKeys2();
+	}
+
+	private Vector3 applyPositionFunction(Vector3 source){
+		Vector3 val = new Vector3();
+		val.y = source.y;
+		val.z = source.z;
+		val.x = source.x;
+
+		float max = 30;
+		float dec = val.x / 30;
+
+		if(Math.Abs(dec) < 0.94f){
+			if(val.x > 0){
+				val.x = (float)(1 - Math.Pow(-dec + 1, 2)) * max;
+			}else if(val.x < 0){
+				val.x = (float)(-(1 - Math.Pow(dec + 1, 2)) * max);
+			}
+		}else{
+			if(val.x > 0){
+				val.x = (float)(0.06f * dec + 0.94f) * max;
+			}else if(val.x < 0){
+				val.x = (float)(-(-0.06f * dec + 0.94f) * max);
+			}
+		}
+
+		return fixYPosition(val, false);
+	}
+
+	private Vector3 applyRotationFunction(Vector3 source){
+		return fixRotation(source);
 	}
 
 	/********************************************************************************************/
@@ -93,12 +139,16 @@ public class SCHand : MonoBehaviour {
 	}
 
 	private void processInput(){
-		if(Input.GetKeyDown("a")){
-			addCard(generateCard(), validIndex / 2);
-		}else if(Input.GetKeyDown("r")){
-			removeCard(validIndex / 2, true);
-		}else if(Input.GetKeyDown("s")){
-			autoSort();
+		if(Input.touchCount > 0){
+			Touch touch = Input.GetTouch(0);
+			switch(touch.phase){
+			case TouchPhase.Moved:
+				mVelocity = touch.deltaPosition.x * mSpeed;
+				break;
+			case TouchPhase.Stationary:
+				mVelocity = 0;
+				break;
+			}
 		}
 	}
 
@@ -783,10 +833,11 @@ public class SCHand : MonoBehaviour {
 	}
 	
 	private Vector3 fixYPosition(Vector3 position, bool selected){
-		if(selected){
-			return new Vector3(position.x, 12 * Mathf.Cos(graphStretch * position.x) - 6, position.z);
+		float val = -0.01f * (float)Math.Pow(position.x, 2);
+		if(val > -8){
+			return new Vector3(position.x, val, position.z);
 		}else{
-			return new Vector3(position.x, 12 * Mathf.Cos(graphStretch * position.x) - 12, position.z);
+			return new Vector3(position.x, -8, position.z);
 		}
 	}
 	
@@ -796,10 +847,18 @@ public class SCHand : MonoBehaviour {
 	
 	private Vector3 fixRotation(Vector3 position){
 		Vector3 rot;
+		float factor = 1.5f;
+		float limit = 35;
+		float tar = -position.x * factor;
+		if(tar > limit){
+			tar = limit;
+		}else if(tar < -limit){
+			tar = -limit;
+		}
 		if(position.x > 0){
-			rot = new Vector3(0, 0, -position.x + 360);
+			rot = new Vector3(0, 0, tar + 360);
 		}else{
-			rot = new Vector3(0, 0, -position.x);
+			rot = new Vector3(0, 0, tar);
 		}
 		return rot;
 	}

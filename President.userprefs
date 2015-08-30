@@ -1,9 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="66" Column="15" />
-      <File FileName="Assets\Scripts\Deck\SCAnimator.cs" Line="12" Column="56" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="851" Column="19" />
+      <File FileName="Assets\Scripts\Deck\SCAnimator.cs" Line="29" Column="25" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
