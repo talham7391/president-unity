@@ -26,13 +26,14 @@ public class SCGUI : MonoBehaviour {
 	protected SCClientCommunicator mClient;
 
 	void Start(){
-		currentWindow = WINDOW_JOIN_GAME;
+		currentWindow = WINDOW_NOTHING;
 		currentScreen = SCREEN_MAIN_MENU;
 
 		mClient = GameObject.Find("PRClient").GetComponent<SCClientCommunicator>();
 	}
 
 	void OnGUI(){
+		return;
 		mCurrentScreen.update();
 		if(mCurrentWindow != null){
 			mCurrentWindow.update();

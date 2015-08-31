@@ -99,9 +99,9 @@ public class SCHand : MonoBehaviour {
 
 		if(Math.Abs(dec) < 0.94f){
 			if(val.x > 0){
-				val.x = (float)(1 - Math.Pow(-dec + 1, 2)) * max;
+				val.x = (float)(1 - Math.Pow(-dec + 1, 2.5)) * max;
 			}else if(val.x < 0){
-				val.x = (float)(-(1 - Math.Pow(dec + 1, 2)) * max);
+				val.x = (float)(-(1 - Math.Pow(dec + 1, 2.5)) * max);
 			}
 		}else{
 			if(val.x > 0){

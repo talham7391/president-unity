@@ -7,6 +7,10 @@ public class SCCard : MonoBehaviour {
 	public GameObject suitClub;
 	public GameObject suitHeart;
 	public GameObject suitDiamond;
+	public GameObject smallSuitSpade;
+	public GameObject smallSuitClub;
+	public GameObject smallSuitHeart;
+	public GameObject smallSuitDiamond;
 	public GameObject specialAce;
 	public GameObject redJack;
 	public GameObject redQueen;
@@ -42,6 +46,7 @@ public class SCCard : MonoBehaviour {
 
 	public void createCard(){
 		addSuit();
+		addSmallSuit();
 		addNumbers();
 		addSelected();
 	}
@@ -83,7 +88,7 @@ public class SCCard : MonoBehaviour {
 				addSingle(redKing);
 			}
 		}else{
-			suits = new GameObject[number];
+			suits = new GameObject[number + 2];
 			for(int i = 0; i < SCSuitConfigurations.ALL[number - 2].Length; ++i){
 				GameObject inst = Instantiate(obj) as GameObject;
 				inst.transform.parent = transform;
@@ -99,16 +104,45 @@ public class SCCard : MonoBehaviour {
 		inst.transform.SetParent(transform);
 		Vector3 pos = new Vector3(0, 0, -0.01f);
 		inst.transform.localPosition = pos;
-		suits = new GameObject[1];
+		suits = new GameObject[3];
 		suits[0] = inst;
+	}
+
+	public void addSmallSuit(){
+		GameObject topSuit = null, bottomSuit = null;
+		switch(suit){
+		case "club":
+			topSuit = Instantiate(smallSuitClub);
+			bottomSuit = Instantiate(smallSuitClub);
+			break;
+		case "spade":
+			topSuit = Instantiate(smallSuitSpade);
+			bottomSuit = Instantiate(smallSuitSpade);
+			break;
+		case "heart":
+			topSuit = Instantiate(smallSuitHeart);
+			bottomSuit = Instantiate(smallSuitHeart);
+			break;
+		case "diamond":
+			topSuit = Instantiate(smallSuitDiamond);
+			bottomSuit = Instantiate(smallSuitDiamond);
+			break;
+		}
+		topSuit.transform.SetParent(transform);
+		bottomSuit.transform.SetParent(transform);
+		topSuit.transform.localPosition = new Vector3(-8.2f, 9, -0.01f);
+		bottomSuit.transform.localPosition = new Vector3(8.2f, -9, -0.01f);
+		bottomSuit.transform.Rotate(0, 0, 180);
+		suits[suits.Length - 2] = topSuit;
+		suits[suits.Length - 1] = bottomSuit;
 	}
 
 	public void addNumbers(){
 		topNumber = Instantiate(numbers.transform.GetChild(number - 1).gameObject);
-		topNumber.transform.Translate(-8, 11.5f, -0.01f);
+		topNumber.transform.Translate(-8.2f, 12.2f, -0.01f);
 		topNumber.transform.parent = transform;
 		bottomNumber = Instantiate(numbers.transform.GetChild(number - 1).gameObject);
-		bottomNumber.transform.Translate(8, -11.5f, -0.01f);
+		bottomNumber.transform.Translate(8.2f, -12.2f, -0.01f);
 		bottomNumber.transform.parent = transform;
 		bottomNumber.transform.Rotate(0, 0, 180);
 		if(suit == "spade" || suit == "club"){
