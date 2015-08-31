@@ -47,6 +47,8 @@ public class SCHand : MonoBehaviour {
 	private float mVelocity;
 	private float mSpeed = 5.5f;
 	private float mDamping = 0.92f;
+	private bool mDown = false;
+	private float mTimeDown = 0;
 
 	void Start(){
 		cards = new GameObject[count];
@@ -66,12 +68,12 @@ public class SCHand : MonoBehaviour {
 	
 	void Update(){
 		for(int i = 0; i < validIndex; ++i){
-			cards[i].transform.position = applyPositionFunction(cardPositions[i].transform.position);
-			cards[i].transform.eulerAngles = applyRotationFunction(cardPositions[i].transform.position);
+			cards[i].transform.localPosition = applyPositionFunction(cardPositions[i].transform.localPosition);
+			cards[i].transform.eulerAngles = applyRotationFunction(cardPositions[i].transform.localPosition);
 
-			Vector3 pos = cardPositions[i].transform.position;
+			Vector3 pos = cardPositions[i].transform.localPosition;
 			pos.x += mVelocity * Time.deltaTime;
-			cardPositions[i].transform.position = pos;
+			cardPositions[i].transform.localPosition = pos;
 		}
 
 		if(Math.Abs(mVelocity) > 0){
@@ -80,6 +82,10 @@ public class SCHand : MonoBehaviour {
 			}else{
 				mVelocity *= mDamping;
 			}
+		}
+
+		if(mDown){
+			mTimeDown += Time.deltaTime;
 		}
 
 		processInput();
@@ -142,11 +148,28 @@ public class SCHand : MonoBehaviour {
 		if(Input.touchCount > 0){
 			Touch touch = Input.GetTouch(0);
 			switch(touch.phase){
+			case TouchPhase.Began:
+				mDown = true;
+				break;
 			case TouchPhase.Moved:
 				mVelocity = touch.deltaPosition.x * mSpeed;
 				break;
 			case TouchPhase.Stationary:
 				mVelocity = 0;
+				break;
+			case TouchPhase.Ended:
+				if(mTimeDown < 0.06f){
+					Ray ray = Camera.main.ScreenPointToRay(touch.position);
+					RaycastHit hit;
+					if(Physics.Raycast(ray, out hit)){
+						SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
+						prop.setSelected(true);
+						playCard();
+					}
+				}
+
+				mDown = false;
+				mTimeDown = 0;
 				break;
 			}
 		}
@@ -663,22 +686,22 @@ public class SCHand : MonoBehaviour {
 	/********************************************************************************************/
 	
 	public void playCard(){
-		if(!cardAllowed){
-			Debug.Log("Its not your turn");
-			return;
-		}
-		if(discardsAllowed != 0){
-			Debug.Log("You must discard before playing any card.");
-			return;
-		}
-		if(reasons.getValue("discard") == "true"){
-			Debug.Log("Other players still have to discard.");
-			return;
-		}
-		if(table == null){
-			Debug.Log("No access to Table.");
-			return;
-		}
+//		if(!cardAllowed){
+//			Debug.Log("Its not your turn");
+//			return;
+//		}
+//		if(discardsAllowed != 0){
+//			Debug.Log("You must discard before playing any card.");
+//			return;
+//		}
+//		if(reasons.getValue("discard") == "true"){
+//			Debug.Log("Other players still have to discard.");
+//			return;
+//		}
+//		if(table == null){
+//			Debug.Log("No access to Table.");
+//			return;
+//		}
 		int[] selectedIndexes = {-1, -1, -1, -1};
 		int n = 0;
 		SCCard prop = null;

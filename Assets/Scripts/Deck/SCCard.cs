@@ -204,6 +204,7 @@ public class SCCard : MonoBehaviour {
 			return;
 		}
 		isSelected = x;
+		/*
 		Color temp = selected.GetComponent<SpriteRenderer>().color;
 		if(isSelected){
 			temp.a = 1;
@@ -211,6 +212,7 @@ public class SCCard : MonoBehaviour {
 			temp.a = 0;
 		}
 		selected.GetComponent<SpriteRenderer>().color = temp;
+		*/
 	}
 
 	public bool getSelected(){

@@ -20,7 +20,7 @@ public class SCTable : MonoBehaviour {
 		rules = new SCRules();
 		hand = Instantiate(hand);
 		hand.transform.SetParent(transform.parent);
-		hand.transform.localPosition = new Vector3(0, -40, 0);
+		hand.transform.localPosition = new Vector3(0, -30, 0);
 		SCHand cont = hand.GetComponent<SCHand>();
 		cont.table = this;
 	}
@@ -45,7 +45,7 @@ public class SCTable : MonoBehaviour {
 			++cardsAdded;
 		}
 		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
-			return false;
+//			return false;
 		}
 		rules.updateTopCards(cardsToCheck, false);
 		
