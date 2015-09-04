@@ -32,6 +32,8 @@ public class SCHand : MonoBehaviour {
 	public SCTable table;
 	[HideInInspector]
 	public bool cardAllowed;
+	[HideInInspector]
+	public bool guiHand = false;
 
 	private GameObject[] cards;
 	private GameObject[] cardPositions;
@@ -62,8 +64,6 @@ public class SCHand : MonoBehaviour {
 		reasons = new SCMessageInfo();
 
 		handWithFocus = this;
-
-		createHand(12);
 	}
 	
 	void Update(){
@@ -129,7 +129,6 @@ public class SCHand : MonoBehaviour {
 	/********************************************************************************************/
 
 	public void seizeInput(string reason = null){
-		reasons.addPair(reason, "true");
 		if(reason == "disconnection"){
 			inputAllowed = false;
 			inputRecentlyChanged = true;
@@ -158,7 +157,7 @@ public class SCHand : MonoBehaviour {
 				mVelocity = 0;
 				break;
 			case TouchPhase.Ended:
-				if(mTimeDown < 0.06f){
+				if(mTimeDown < 0.1f && touch.deltaPosition.x == 0){
 					Ray ray = Camera.main.ScreenPointToRay(touch.position);
 					RaycastHit hit;
 					if(Physics.Raycast(ray, out hit)){
@@ -286,7 +285,7 @@ public class SCHand : MonoBehaviour {
 		for(int i = 0; i < premade.Count; ++i){
 			premade[i].transform.SetParent(transform);
 			premade[i].transform.localPosition = newCardPosition;
-			Vector3 currentPosition = new Vector3(i * spacing - premade.Count * spacing / 2, 0, 0);
+			Vector3 currentPosition = new Vector3((i + 0.5f) * spacing - premade.Count * spacing / 2, 0, 0);
 			Vector3 targetPosition = fixYPosition(currentPosition, false);
 			targetPosition = fixZPosition(targetPosition, i);
 			Vector3 targetRotation = fixRotation(targetPosition);
@@ -317,6 +316,11 @@ public class SCHand : MonoBehaviour {
 	
 	public void addCard(string suit, int number){
 		addCard(suit, number, validIndex);
+	}
+
+	public void addCard(GameObject obj){
+		obj.transform.localPosition = fixZPosition(newCardPosition, validIndex);
+		addCard(obj, validIndex);
 	}
 
 	private GameObject createCard(CardConfig config){
@@ -398,6 +402,14 @@ public class SCHand : MonoBehaviour {
 			Debug.Log("Hand is already full.");
 			return;
 		}
+
+		SCAnimator anim = cardPositions[0].GetComponent<SCAnimator>();
+		if(anim.inProgress){
+			anim.callBack = () => {
+				addCard(obj, index, addingFloater);
+			};
+			return;
+		}
 		
 		seizeInput();
 		
@@ -412,7 +424,7 @@ public class SCHand : MonoBehaviour {
 		cards[index].transform.SetParent(transform);
 		
 		float factor = 1;
-		SCAnimator anim = cardPositions[index].GetComponent<SCAnimator>();
+		anim = cardPositions[index].GetComponent<SCAnimator>();
 		SCCard prop = cards[index].GetComponent<SCCard>();
 		Vector3 targetPosition;
 		if(index == 0){
@@ -562,6 +574,17 @@ public class SCHand : MonoBehaviour {
 		return val;
 	}
 
+	public void clear(bool destroy){
+		for(int i = 0; i < validIndex; ++i){
+			if(destroy){
+				Destroy(cards[i]);
+			}
+			cards[i] = null;
+			Destroy(cardPositions[i]);
+		}
+		validIndex = 0;
+	}
+
 	/********************************************************************************************/
 	/** Resorting Functions *********************************************************************/
 	/********************************************************************************************/
@@ -686,22 +709,24 @@ public class SCHand : MonoBehaviour {
 	/********************************************************************************************/
 	
 	public void playCard(){
-//		if(!cardAllowed){
-//			Debug.Log("Its not your turn");
-//			return;
-//		}
-//		if(discardsAllowed != 0){
-//			Debug.Log("You must discard before playing any card.");
-//			return;
-//		}
-//		if(reasons.getValue("discard") == "true"){
-//			Debug.Log("Other players still have to discard.");
-//			return;
-//		}
-//		if(table == null){
-//			Debug.Log("No access to Table.");
-//			return;
-//		}
+		if(!guiHand){
+			if(!cardAllowed){
+				Debug.Log("Its not your turn");
+				return;
+			}
+			if(discardsAllowed != 0){
+				Debug.Log("You must discard before playing any card.");
+				return;
+			}
+			if(reasons.getValue("discard") == "true"){
+				Debug.Log("Other players still have to discard.");
+				return;
+			}
+		}
+		if(table == null){
+			Debug.Log("No access to Table.");
+			return;
+		}
 		int[] selectedIndexes = {-1, -1, -1, -1};
 		int n = 0;
 		SCCard prop = null;
@@ -729,6 +754,13 @@ public class SCHand : MonoBehaviour {
 		if(table.playExistingCard(selectedCards, true, ref extra)){
 			cardAllowed = false;
 			removeCards(selectedIndexes, false);
+			if(guiHand){
+				prop = selectedCards[0].GetComponent<SCCard>();
+				if(prop.callback != null){
+					prop.callback();
+				}
+				return;
+			}
 			string message = "play_card:";
 			for(int i = 1; i <= selectedCards.Length; ++i){
 				if(selectedCards[i - 1] == null){

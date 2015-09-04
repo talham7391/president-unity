@@ -8,11 +8,13 @@ public class SCCardInfo{
 
 	private string _suit;
 	private int _number;
+	private bool mGuiCard;
 	private SCPlayerInfo mPlayedBy;
 
-	public SCCardInfo(string suit, int number){
+	public SCCardInfo(string suit, int number, bool guiCard = false){
 		_suit = suit;
 		_number = number;
+		mGuiCard = guiCard;
 	}
 
 	public bool isAnyCard(){
@@ -39,6 +41,15 @@ public class SCCardInfo{
 		}
 		set{
 			_number = value;
+		}
+	}
+
+	public bool guiCard{
+		get{
+			return mGuiCard;
+		}
+		set{
+			mGuiCard = value;
 		}
 	}
 

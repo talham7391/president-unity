@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class SCGUI : MonoBehaviour {
+	
+	public GameObject guiCard;
 
 	public const int SCREEN_MAIN_MENU = 0;
 	public const int SCREEN_PLAY_WITH_FRIENDS = 1;
@@ -24,16 +26,17 @@ public class SCGUI : MonoBehaviour {
 	private float mTimeSinceError;
 
 	protected SCClientCommunicator mClient;
+	protected SCTable mTable;
 
 	void Start(){
+		mTable = transform.FindChild("PRTable").GetComponent<SCTable>();
+		mClient = GameObject.Find("PRClient").GetComponent<SCClientCommunicator>();
+
 		currentWindow = WINDOW_NOTHING;
 		currentScreen = SCREEN_MAIN_MENU;
-
-		mClient = GameObject.Find("PRClient").GetComponent<SCClientCommunicator>();
 	}
 
 	void OnGUI(){
-		return;
 		mCurrentScreen.update();
 		if(mCurrentWindow != null){
 			mCurrentWindow.update();
@@ -129,6 +132,12 @@ public class SCGUI : MonoBehaviour {
 	public SCClientCommunicator client{
 		get{
 			return mClient;
+		}
+	}
+
+	public SCTable table{
+		get{
+			return mTable;
 		}
 	}
 

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SCScreenMainMenu : SCScreen{
 
@@ -9,21 +10,15 @@ public class SCScreenMainMenu : SCScreen{
 		}
 	}
 
-	override public void update(){
-		int xPadding = 20;
-		int yPadding = xPadding;
-		int padding = 5;
-		
-		int standardHeight = 30;
-		int standardWidth = 60;
+	override public void init(){
+		base.init();
+		List<GameObject> premade = new List<GameObject>();
+		premade.Add(SCCard.makeCard(gui.guiCard, "play_with_friends", 0, onPlayWithFriends));
+		hand.createHand(premade);
+	}
 
-		GUI.Label(new Rect(xPadding, yPadding + (padding + standardHeight) * 0, standardWidth, standardHeight), "President");
-		GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 1, standardWidth * 2, standardHeight), "Play Online");
-		if(GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 2, standardWidth * 2, standardHeight), "Play with Friends")){
-			removeCommands();
-			gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
-		}
-		GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 3, standardWidth * 2, standardHeight), "Store");
-		GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 4, standardWidth * 2, standardHeight), "Settings");
+	public void onPlayWithFriends(){
+		hand.clear(true);
+		gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class SCCard : MonoBehaviour {
 
@@ -20,9 +21,18 @@ public class SCCard : MonoBehaviour {
 	public GameObject blackKing;
 	public GameObject numbers;
 	public GameObject selected;
+	public GameObject playOnline;
+	public GameObject playWithFriends;
+	public GameObject back;
+	public GameObject createGame;
+	public GameObject joinGame;
 
 	public string suit;
 	public int number;
+	public bool guiCard;
+
+	[HideInInspector]
+	public Action callback;
 
 	private GameObject[] suits;
 	private GameObject topNumber;
@@ -45,10 +55,30 @@ public class SCCard : MonoBehaviour {
 	*/
 
 	public void createCard(){
-		addSuit();
-		addSmallSuit();
-		addNumbers();
-		addSelected();
+		if(guiCard){
+			switch(suit){
+			case "play_online":
+				addSingle(playOnline);
+				break;
+			case "play_with_friends":
+				addSingle(playWithFriends);
+				break;
+			case "back":
+				addSingle(back);
+				break;
+			case "create_game":
+				addSingle(createGame);
+				break;
+			case "join_game":
+				addSingle(joinGame);
+				break;
+			}
+		}else{
+			addSuit();
+			addSmallSuit();
+			addNumbers();
+			addSelected();
+		}
 	}
 
 	public void addSuit(){
@@ -217,5 +247,15 @@ public class SCCard : MonoBehaviour {
 
 	public bool getSelected(){
 		return isSelected;
+	}
+
+	public static GameObject makeCard(GameObject type, string suit, int number, Action callback){
+		GameObject val = Instantiate(type);
+		SCCard prop = val.GetComponent<SCCard>();
+		prop.suit = suit;
+		prop.number = number;
+		prop.callback = callback;
+		prop.createCard();
+		return val;
 	}
 }

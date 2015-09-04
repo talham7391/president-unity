@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SCScreenPlayWithFriends : SCScreen{
 
@@ -7,25 +8,25 @@ public class SCScreenPlayWithFriends : SCScreen{
 
 	}
 
-	override public void update(){
-		int xPadding = 20;
-		int yPadding = xPadding;
-		int padding = 5;
-		
-		int standardHeight = 30;
-		int standardWidth = 60;
+	override public void init(){
+		base.init();
+		List<GameObject> premade = new List<GameObject>();
+		premade.Add(SCCard.makeCard(gui.guiCard, "back", 0, onBack));
+		premade.Add(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame));
+		premade.Add(SCCard.makeCard(gui.guiCard, "join_game", 0, onJoinGame));
+		hand.createHand(premade);
+	}
 
-		GUI.Label(new Rect(xPadding, yPadding + (padding + standardHeight) * 0, standardWidth, standardHeight), "President");
-		if(GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 1, standardWidth * 2, standardHeight), "Create Game")){
-			gui.reset();
-			gui.currentWindow = SCGUI.WINDOW_CREATE_GAME;
-		}
-		if(GUI.Button(new Rect(xPadding, yPadding + (padding + standardHeight) * 2, standardWidth * 2, standardHeight), "Join Game")){
-			gui.reset();
-			gui.currentScreen = SCGUI.SCREEN_JOIN_GAME;
-		}
-		if(GUI.Button(new Rect(xPadding, Screen.height - yPadding - standardHeight, standardWidth * 2, standardHeight), "Back")){
-			gui.currentScreen = SCGUI.SCREEN_MAIN_MENU;
-		}
+	public void onBack(){
+		hand.clear(true);
+		gui.currentScreen = SCGUI.SCREEN_MAIN_MENU;
+	}
+
+	public void onCreateGame(){
+		hand.addCard(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame));
+	}
+
+	public void onJoinGame(){
+		hand.addCard(SCCard.makeCard(gui.guiCard, "join_game", 0, onJoinGame));
 	}
 }

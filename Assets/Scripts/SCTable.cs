@@ -41,11 +41,11 @@ public class SCTable : MonoBehaviour {
 				continue;
 			}
 			SCCard prop = cards[i].GetComponent<SCCard>();
-			cardsToCheck[i] = new SCCardInfo(prop.suit, prop.number);
+			cardsToCheck[i] = new SCCardInfo(prop.suit, prop.number, prop.guiCard);
 			++cardsAdded;
 		}
-		if(strict && !rules.allowedToPlay(cardsToCheck, false)){
-//			return false;
+		if(!cardsToCheck[0].guiCard && strict && !rules.allowedToPlay(cardsToCheck, false)){
+			return false;
 		}
 		rules.updateTopCards(cardsToCheck, false);
 		
