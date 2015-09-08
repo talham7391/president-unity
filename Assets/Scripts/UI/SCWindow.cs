@@ -9,6 +9,7 @@ public class SCWindow{
 	private Rect mWindowRect;
 	private string mWindowText;
 	private SCHand mHandHolder;
+	protected SCHand mHand;
 
 	public SCWindow(SCGUI gui, int id){
 		mGui = gui;
@@ -19,6 +20,7 @@ public class SCWindow{
 
 		mHandHolder = SCHand.handWithFocus;
 		SCHand.handWithFocus = null;
+		mHand = gui.table.hand.GetComponent<SCHand>();
 	}
 
 	public void update(){
@@ -78,6 +80,12 @@ public class SCWindow{
 	public float timeOfCreation{
 		get{
 			return mTimeOfCreation;
+		}
+	}
+
+	public SCHand hand{
+		get{
+			return mHand;
 		}
 	}
 }

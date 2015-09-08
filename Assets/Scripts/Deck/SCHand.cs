@@ -152,9 +152,9 @@ public class SCHand : MonoBehaviour {
 			switch(touch.phase){
 			case TouchPhase.Began:
 				if(touchBuffer > 0){
+					--touchBuffer;
 					return;
 				}
-				--touchBuffer;
 				mDown = true;
 				break;
 			case TouchPhase.Moved:
@@ -164,7 +164,7 @@ public class SCHand : MonoBehaviour {
 				mVelocity = 0;
 				break;
 			case TouchPhase.Ended:
-				if(mTimeDown < 0.1f && touch.deltaPosition.x == 0){
+				if(mTimeDown < 0.07f && touch.deltaPosition.x == 0){
 					Ray ray = Camera.main.ScreenPointToRay(touch.position);
 					RaycastHit hit;
 					if(Physics.Raycast(ray, out hit)){
@@ -619,6 +619,13 @@ public class SCHand : MonoBehaviour {
 		validIndex = 0;
 	}
 
+	public void deselectAllCards(){
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			prop.setSelected(false);
+		}
+	}
+
 	/********************************************************************************************/
 	/** Resorting Functions *********************************************************************/
 	/********************************************************************************************/
@@ -810,6 +817,7 @@ public class SCHand : MonoBehaviour {
 			message += ",extra=" + extra;
 			gameObject.SendMessageUpwards("sendMessageToServer", message);
 		}
+		deselectAllCards();
 	}
 	
 	public void discardListener(SCMessageInfo info){

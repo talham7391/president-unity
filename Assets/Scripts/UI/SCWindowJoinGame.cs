@@ -26,7 +26,7 @@ public class SCWindowJoinGame : SCWindow {
 		float width = Screen.width * 0.2f;
 		float height = Screen.height * 0.045f;
 
-		GUI.Label(new Rect(xPadding, yPadding + (spacing + height) * 0, width, height), mInstructions);
+		GUI.Label(new Rect(xPadding, yPadding + (spacing + height) * 0, width * 3, height), mInstructions);
 		SCCommunicator.gameName = GUI.TextField(new Rect(xPadding, yPadding + (spacing + height) * 1, width * 4, height), SCCommunicator.gameName);
 		if(GUI.Button(new Rect(xPadding, yPadding + (spacing + height) * 2, width, height), "Search") && !mAlreadySearching){
 			mAlreadySearching = true;

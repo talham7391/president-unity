@@ -140,6 +140,23 @@ public class SCTable : MonoBehaviour {
 		newTopCards[0] = new SCCardInfo(SCCardInfo.ANY_SUIT, SCCardInfo.ANY_NUMBER);
 		rules.updateTopCards(newTopCards, true);
 	}
+
+	public void clear(bool destroy){
+		for(int i = 0; i < cards.Count; ++i){
+			if(destroy){
+				Destroy(cards[i]);
+			}
+			cards[i] = null;
+		}
+		cards.Clear();
+		for(int i = 0; i < pile.Count; ++i){
+			if(destroy){
+				Destroy(pile[i]);
+			}
+			pile[i] = null;
+		}
+		pile.Clear();
+	}
 	
 	private Vector3 cloneVector3(Vector3 x){
 		return new Vector3(x.x, x.y, x.z);

@@ -115,7 +115,9 @@ public class SCWindowGameLobby : SCWindow {
 	}
 
 	public void onGameStartedCommand(SCMessageInfo info){
-		SCHand.handWithFocus = handHolder;
+		hand.clear(true);
+		gui.table.clear(true);
 		gui.currentScreen = SCGUI.SCREEN_IN_GAME;
+		switchToWindow(SCGUI.WINDOW_NOTHING);
 	}
 }

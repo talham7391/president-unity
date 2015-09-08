@@ -104,7 +104,7 @@ public class SCServer{
 
 	public void attemptToStartGame(){
 		Debug.Log("SCServer| Attempting to start the game.");
-		if(currentPhase != Phase.IN_LOBBY){
+		if(currentPhase == Phase.IN_GAME){
 			return;
 		}
 		if(isAnyoneDisconnected()){
@@ -113,17 +113,20 @@ public class SCServer{
 		if(mPlayerLimit != connectedPlayers.Count){
 			return;
 		}
-		if(!isEveryoneReady()){
-			return;
+		if(currentPhase == Phase.IN_LOBBY){
+			currentPhase = Phase.READYING;
+			owner.getCommunicator().gameStarted = true;
+			sendMessageToAll("game_started");
 		}
-		currentPhase = Phase.READYING;
+		if(isEveryoneReady()){
+			startGame();
+		}else{
+			Debug.Log("SCServer| Not everyone is ready yet.");
+		}
 	}
 
 	public void startGame(){
-		owner.getCommunicator().gameStarted = true;
-		sendMessageToAll("game_started");
-		startGame();
-
+		currentPhase = Phase.IN_GAME;
 		Debug.Log("SCServer| Game started.");
 		turnIndex = UnityEngine.Random.Range(0, connectedPlayers.Count);
 		int cardsPerPlayer = 52 / connectedPlayers.Count;
@@ -237,6 +240,7 @@ public class SCServer{
 				Debug.Log("SCServer| Froze because: " + reason);
 			}
 		}else if(reason == "start"){
+			Debug.Log("SCServer| User is ready with unique id: " + player.uniqueId);
 			attemptToStartGame();
 		}
 
