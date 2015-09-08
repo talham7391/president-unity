@@ -5,8 +5,10 @@ using System;
 
 public class SCServer{
 
+	public enum Phase {IN_LOBBY, READYING, IN_GAME};
+
 	private int mPlayerLimit;
-	private bool mGameStarted;
+	private Phase currentPhase;
 
 	private SCClient owner;
 	private SCLogic logic;
@@ -17,7 +19,7 @@ public class SCServer{
 
 	public SCServer(SCClient owner, int playerLimit){
 		mPlayerLimit = playerLimit;
-		mGameStarted = false;
+		currentPhase = Phase.IN_LOBBY;
 
 		this.owner = owner;
 		this.logic = new SCLogic(mPlayerLimit);
@@ -66,16 +68,16 @@ public class SCServer{
 			if(connectedPlayers[i].connectionId == connectionId){
 				connectedPlayers[i].connected = false;
 				Debug.Log("SCServer| Player with Id: " + connectedPlayers[i].uniqueId + " has disconnected.");
-				if(!mGameStarted){
+				if(currentPhase == Phase.IN_LOBBY){
 					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
 					addToUpdater(connectedPlayers[i]);
 				}
 				break;
 			}
 		}
-		if(mGameStarted){
+		if(currentPhase == Phase.IN_GAME){
 			sendMessageToAllAccept(getTurnIndexWithConnectionId(connectionId), "freeze_client:reason=disconnection");
-		}else{
+		}else if(currentPhase == Phase.IN_LOBBY){
 			sendMessageToAllAccept(getTurnIndexWithConnectionId(connectionId), getLobbyStatus());
 		}
 	}
@@ -86,7 +88,7 @@ public class SCServer{
 				connectedPlayers[i].connected = true;
 				connectedPlayers[i].connectionId = connectionId;
 				Debug.Log("SCServer| Player with Id: " + uniqueId + " has reconnected.");
-				if(!mGameStarted){
+				if(currentPhase == Phase.IN_LOBBY){
 					owner.getCommunicator().sendMessageToMasterServer("update_game:players=" + getNumberOfConnectedPlayers());
 					removeFromUpdater(connectedPlayers[i].update);
 					sendMessageToAll(getLobbyStatus());
@@ -94,7 +96,7 @@ public class SCServer{
 				break;
 			}
 		}
-		if(!isAnyoneDisconnected() && mGameStarted){
+		if(!isAnyoneDisconnected() && currentPhase == Phase.IN_GAME){
 			sendMessageToAll("unfreeze_client:reason=disconnection");
 		}
 		attemptToStartGame();
@@ -102,7 +104,7 @@ public class SCServer{
 
 	public void attemptToStartGame(){
 		Debug.Log("SCServer| Attempting to start the game.");
-		if(mGameStarted){
+		if(currentPhase != Phase.IN_LOBBY){
 			return;
 		}
 		if(isAnyoneDisconnected()){
@@ -111,13 +113,17 @@ public class SCServer{
 		if(mPlayerLimit != connectedPlayers.Count){
 			return;
 		}
-		mGameStarted = true;
-		owner.getCommunicator().gameStarted = true;
-		sendMessageToAll("game_started");
-		startGame();
+		if(!isEveryoneReady()){
+			return;
+		}
+		currentPhase = Phase.READYING;
 	}
 
 	public void startGame(){
+		owner.getCommunicator().gameStarted = true;
+		sendMessageToAll("game_started");
+		startGame();
+
 		Debug.Log("SCServer| Game started.");
 		turnIndex = UnityEngine.Random.Range(0, connectedPlayers.Count);
 		int cardsPerPlayer = 52 / connectedPlayers.Count;
@@ -230,6 +236,8 @@ public class SCServer{
 				sendMessageToAll("freeze_client:reason=discard");
 				Debug.Log("SCServer| Froze because: " + reason);
 			}
+		}else if(reason == "start"){
+			attemptToStartGame();
 		}
 
 		if(extra == "out"){

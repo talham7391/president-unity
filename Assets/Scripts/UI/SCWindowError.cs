@@ -15,10 +15,10 @@ public class SCWindowError : SCWindow {
 			return;
 		}
 		float width = Screen.width * 0.8f;
-		float height = 40;
-		GUI.Label(new Rect(10, 25, width, height), gui.currentError.type);
+		float height = Screen.height * 0.05f;
+		GUI.Label(new Rect(Screen.width * 0.04f, Screen.height * 0.04f, width, height), gui.currentError.type);
 		if(gui.currentError.duration <= gui.timeSinceError){
-			gui.currentWindow = SCGUI.WINDOW_NOTHING;
+			switchToWindow(SCGUI.WINDOW_NOTHING);
 			gui.currentError = null;
 		}
 	}

@@ -4,6 +4,7 @@ using System.Collections;
 public class SCGUI : MonoBehaviour {
 	
 	public GameObject guiCard;
+	public Font font;
 
 	public const int SCREEN_MAIN_MENU = 0;
 	public const int SCREEN_PLAY_WITH_FRIENDS = 1;
@@ -16,9 +17,10 @@ public class SCGUI : MonoBehaviour {
 	public const int WINDOW_ERROR = 102;
 	public const int WINDOW_JOIN_GAME = 103;
 	public const int WINDOW_USER_NAME = 104;
+	public const int WINDOW_GAME_LOBBY = 105;
 
 	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME, SCREEN_IN_GAME};
-	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME};
+	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME, WINDOW_GAME_LOBBY};
 
 	private SCScreen mCurrentScreen;
 	private SCWindow mCurrentWindow;
@@ -37,6 +39,8 @@ public class SCGUI : MonoBehaviour {
 	}
 
 	void OnGUI(){
+		GUI.skin.font = font;
+
 		mCurrentScreen.update();
 		if(mCurrentWindow != null){
 			mCurrentWindow.update();
@@ -55,10 +59,10 @@ public class SCGUI : MonoBehaviour {
 			}
 
 			if(mCurrentScreen != null){
-				mCurrentScreen.removeCommands();
 				if(mCurrentScreen.id == value){
 					return;
 				}
+				mCurrentScreen.removeCommands();
 			}
 
 			switch(value){
@@ -91,6 +95,7 @@ public class SCGUI : MonoBehaviour {
 				if(mCurrentWindow.id == value){
 					return;
 				}
+				mCurrentWindow.removeCommands();
 			}
 
 			switch(value){
@@ -108,6 +113,9 @@ public class SCGUI : MonoBehaviour {
 				break;
 			case WINDOW_USER_NAME:
 				mCurrentWindow = new SCWindowUserName(this, WINDOW_USER_NAME);
+				break;
+			case WINDOW_GAME_LOBBY:
+				mCurrentWindow = new SCWindowGameLobby(this, WINDOW_GAME_LOBBY);
 				break;
 			}
 		}

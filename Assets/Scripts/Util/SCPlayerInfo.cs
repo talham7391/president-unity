@@ -26,7 +26,7 @@ public class SCPlayerInfo{
 		mTurnOrder = turnOrder;
 		mConnected = true;
 		mOutOfGame = false;
-		mReady = true;
+		mReady = false;
 		mOnTimeoutCallback = onTimeoutCallback;
 		timeSinceDisconnect = 0;
 	}

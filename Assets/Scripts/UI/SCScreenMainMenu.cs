@@ -15,6 +15,11 @@ public class SCScreenMainMenu : SCScreen{
 		List<GameObject> premade = new List<GameObject>();
 		premade.Add(SCCard.makeCard(gui.guiCard, "play_with_friends", 0, onPlayWithFriends));
 		hand.createHand(premade);
+		SCHand.handWithFocus = hand;
+
+		if(SCCommunicator.userName == ""){
+			gui.currentWindow = SCGUI.WINDOW_USER_NAME;
+		}
 	}
 
 	public void onPlayWithFriends(){

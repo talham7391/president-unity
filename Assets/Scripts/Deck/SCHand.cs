@@ -17,6 +17,7 @@ public class SCHand : MonoBehaviour {
 	};
 
 	public static SCHand handWithFocus;
+	public static int touchBuffer;
 	
 	public int count = 52;
 	public float spacing = 6;
@@ -62,8 +63,6 @@ public class SCHand : MonoBehaviour {
 		inputRecentlyChanged = false;
 		cardAllowed = false;
 		reasons = new SCMessageInfo();
-
-		handWithFocus = this;
 	}
 	
 	void Update(){
@@ -88,7 +87,8 @@ public class SCHand : MonoBehaviour {
 			mTimeDown += Time.deltaTime;
 		}
 
-		processInput();
+//		processInput();
+		processMouseInput();
 //		processMouse();
 //		processKeys();
 //		processKeys2();
@@ -144,10 +144,17 @@ public class SCHand : MonoBehaviour {
 	}
 
 	private void processInput(){
+		if(this != handWithFocus || !inputAllowed){
+			return;
+		}
 		if(Input.touchCount > 0){
 			Touch touch = Input.GetTouch(0);
 			switch(touch.phase){
 			case TouchPhase.Began:
+				if(touchBuffer > 0){
+					return;
+				}
+				--touchBuffer;
 				mDown = true;
 				break;
 			case TouchPhase.Moved:
@@ -171,6 +178,33 @@ public class SCHand : MonoBehaviour {
 				mTimeDown = 0;
 				break;
 			}
+		}
+	}
+	
+	private void processMouseInput(){
+		if(this != handWithFocus || !inputAllowed){
+			return;
+		}
+		Vector3 deltaPosition = Input.mousePosition - previousMousePosition;
+		previousMousePosition = Input.mousePosition;
+
+		if(Input.GetMouseButtonDown(0)){
+			mDown = true;
+		}else if(Input.GetMouseButton(0)){
+			mVelocity = deltaPosition.x * mSpeed;
+		}else if(mDown){
+			if(mTimeDown < 0.1f && deltaPosition.x == 0){
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+				if(Physics.Raycast(ray, out hit)){
+					SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
+					prop.setSelected(true);
+					playCard();
+				}
+			}
+
+			mDown = false;
+			mTimeDown = 0;
 		}
 	}
 
@@ -318,8 +352,8 @@ public class SCHand : MonoBehaviour {
 		addCard(suit, number, validIndex);
 	}
 
-	public void addCard(GameObject obj){
-		obj.transform.localPosition = fixZPosition(newCardPosition, validIndex);
+	public void addCard(GameObject obj, Vector3 position){
+		obj.transform.localPosition = fixZPosition(position, validIndex);
 		addCard(obj, validIndex);
 	}
 

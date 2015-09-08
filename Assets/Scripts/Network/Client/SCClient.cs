@@ -94,6 +94,7 @@ public class SCClient{
 		int suffix = 1;
 		List<GameObject> cards = new List<GameObject>();
 		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
+		SCHand.handWithFocus = hand;
 		while(true){
 			string suit = info.getValue("suit" + suffix);
 			string number = info.getValue("number" + suffix);

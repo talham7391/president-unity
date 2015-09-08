@@ -1,14 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCScreenPlayWithFriends.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCGUI.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="32" Column="9" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="420" Column="3" />
-      <File FileName="Assets\Scripts\Deck\SCCard.cs" Line="74" Column="11" />
-      <File FileName="Assets\Scripts\UI\SCScreenMainMenu.cs" Line="10" Column="4" />
-      <File FileName="Assets\Scripts\UI\SCScreenPlayWithFriends.cs" Line="26" Column="78" />
-      <File FileName="Assets\Scripts\UI\SCScreen.cs" Line="28" Column="18" />
-      <File FileName="Assets\Scripts\Deck\SCAnimator.cs" Line="69" Column="15" />
+      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="83" Column="3" />
+      <File FileName="Assets\Scripts\UI\SCScreenPlayWithFriends.cs" Line="17" Column="28" />
+      <File FileName="Assets\Scripts\UI\SCWindowCreateGame.cs" Line="37" Column="48" />
+      <File FileName="Assets\Scripts\UI\SCWindow.cs" Line="66" Column="23" />
+      <File FileName="Assets\Scripts\UI\SCWindowError.cs" Line="19" Column="41" />
+      <File FileName="Assets\Scripts\UI\SCWindowUserName.cs" Line="10" Column="44" />
+      <File FileName="Assets\Scripts\UI\SCScreenMainMenu.cs" Line="21" Column="47" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

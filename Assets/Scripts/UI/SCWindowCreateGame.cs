@@ -6,35 +6,37 @@ public class SCWindowCreateGame : SCWindow {
 	private string mNumberOfPlayers;
 
 	public SCWindowCreateGame(SCGUI gui, int id):base(gui, id){
-		windowRect = new Rect(Screen.width * 0.1f, Screen.height * (0.5f - 0.2f), Screen.width * 0.8f, Screen.height * 0.4f);
+		windowRect = new Rect(Screen.width * 0.05f, Screen.height * (0.5f - 0.2f), Screen.width * 0.9f, Screen.height * 0.4f);
 		windowText = "Create Game";
 		mNumberOfPlayers = "";
 	}
 
 	override public void windowFunc(int id){
-		float xPadding = 10;
-		float yPadding = 35;
-		float spacing = 10;
-		float width = 120;
+		float xPadding = Screen.width * 0.05f;
+		float yPadding = Screen.height * 0.07f;
+		float spacing = Screen.width * 0.05f;
+		float width = Screen.width * 0.37f;
+		float height = Screen.height * 0.05f;
 		
-		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 0, width, 30), "Game Name:");
-		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 2, width, 30), "Game Password:");
-		GUI.Label(new Rect(xPadding, yPadding + (30 + spacing) * 3, width, 30), "Number of Players:");
-		if(GUI.Button(new Rect(xPadding, yPadding + (30 + spacing) * 4, width, 30), "Back")){
+		GUI.Label(new Rect(xPadding, yPadding + (height + spacing) * 0, width, height), "Game Name:");
+		GUI.Label(new Rect(xPadding, yPadding + (height + spacing) * 1, width, height), "Game Password:");
+		GUI.Label(new Rect(xPadding, yPadding + (height + spacing) * 2, width, height), "Number of Players:");
+		if(GUI.Button(new Rect(xPadding, yPadding + (height + spacing) * 3, width, height), "Back")){
 			gui.currentWindow = SCGUI.WINDOW_NOTHING;
+			SCHand.handWithFocus = handHolder;
 		}
 		
-		SCCommunicator.gameName = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 0, width, 30), SCCommunicator.gameName);
-		SCCommunicator.password = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 2, width, 30), SCCommunicator.password);
-		mNumberOfPlayers = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 3, width, 30), mNumberOfPlayers);
-		if(GUI.Button(new Rect(xPadding + width + spacing, yPadding + (30 + spacing) * 4, width, 30), "Confirm")){
+		SCCommunicator.gameName = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (height + spacing) * 0, width, height), SCCommunicator.gameName);
+		SCCommunicator.password = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (height + spacing) * 1, width, height), SCCommunicator.password);
+		mNumberOfPlayers = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (height + spacing) * 2, width, height), mNumberOfPlayers);
+		if(GUI.Button(new Rect(xPadding + width + spacing, yPadding + (height + spacing) * 3, width, height), "Confirm")){
 			SCCommunicator.hasServer = true;
 			if(onConfirmButton()){
 				SCCommunicator.automaticallyReconnect = true;
 				gui.client.init();
-				gui.currentScreen = SCGUI.SCREEN_GAME_LOBBY;
-				gui.currentWindow = SCGUI.WINDOW_NOTHING;
+				gui.currentWindow = SCGUI.WINDOW_GAME_LOBBY;
 			}else{
+				SCHand.handWithFocus = handHolder;
 				gui.currentWindow = SCGUI.WINDOW_ERROR;
 			}
 		}

@@ -15,6 +15,7 @@ public class SCScreenPlayWithFriends : SCScreen{
 		premade.Add(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame));
 		premade.Add(SCCard.makeCard(gui.guiCard, "join_game", 0, onJoinGame));
 		hand.createHand(premade);
+		SCHand.handWithFocus = hand;
 	}
 
 	public void onBack(){
@@ -23,10 +24,12 @@ public class SCScreenPlayWithFriends : SCScreen{
 	}
 
 	public void onCreateGame(){
-		hand.addCard(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame));
+		hand.addCard(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame), new Vector3(0, -100, 0));
+		gui.currentWindow = SCGUI.WINDOW_CREATE_GAME;
 	}
 
 	public void onJoinGame(){
-		hand.addCard(SCCard.makeCard(gui.guiCard, "join_game", 0, onJoinGame));
+		hand.addCard(SCCard.makeCard(gui.guiCard, "join_game", 0, onJoinGame), new Vector3(0, -100, 0));
+		gui.currentWindow = SCGUI.WINDOW_JOIN_GAME;
 	}
 }
