@@ -1,14 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCScreenInGame.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCWindowGameLobby.cs" Line="98" Column="37" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="198" Column="41" />
-      <File FileName="Assets\Scripts\UI\SCScreen.cs" Line="15" Column="47" />
-      <File FileName="Assets\Scripts\UI\SCWindow.cs" Line="35" Column="10" />
-      <File FileName="Assets\Scripts\SCTable.cs" Line="158" Column="16" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="91" Column="18" />
-      <File FileName="Assets\Scripts\Deck\SCCard.cs" Line="218" Column="36" />
+      <File FileName="Assets\Scripts\UI\SCScreenInGame.cs" Line="10" Column="36" />
+      <File FileName="Assets\Scripts\SCGlobalAnimator.cs" Line="27" Column="18" />
+      <File FileName="Assets\Scripts\Util\SCAnimationInfo.cs" Line="19" Column="3" />
+      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="39" Column="3" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="702" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
