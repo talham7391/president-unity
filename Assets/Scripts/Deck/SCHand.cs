@@ -44,7 +44,7 @@ public class SCHand : MonoBehaviour {
 	private Vector3 previousMousePosition;
 	private bool inputAllowed;
 	private bool inputRecentlyChanged;
-	private int discardsAllowed = 0;
+	public static int discardsAllowed = 0;
 	private SCMessageInfo reasons;
 
 	private float mVelocity;
@@ -129,6 +129,7 @@ public class SCHand : MonoBehaviour {
 	/********************************************************************************************/
 
 	public void seizeInput(string reason = null){
+		reasons.addPair(reason, "true");
 		if(reason == "disconnection"){
 			inputAllowed = false;
 			inputRecentlyChanged = true;
@@ -170,7 +171,11 @@ public class SCHand : MonoBehaviour {
 					if(Physics.Raycast(ray, out hit)){
 						SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
 						prop.setSelected(true);
-						playCard();
+						if(discardsAllowed > 0){
+							discard();
+						}else{
+							playCard();
+						}
 					}
 				}
 
@@ -199,7 +204,11 @@ public class SCHand : MonoBehaviour {
 				if(Physics.Raycast(ray, out hit)){
 					SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
 					prop.setSelected(true);
-					playCard();
+					if(discardsAllowed > 0){
+						discard();
+					}else{
+						playCard();
+					}
 				}
 			}
 
@@ -839,6 +848,28 @@ public class SCHand : MonoBehaviour {
 			Debug.Log("You can't discard right now.");
 			return;
 		}
+		int[] selectedIndexes = new int[1];
+		if(!getSelectedIndexes(selectedIndexes)){
+			return;
+		}
+		removeCards(selectedIndexes, true);
+		--discardsAllowed;
+		string extra = "nothing";
+		if(validIndex == 0){
+			extra = "out";
+		}
+		if(validIndex == 0 || discardsAllowed == 0){
+			gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=true,reason=discard,extra=" + extra);
+		}
+		deselectAllCards();
+	}
+
+	/*
+	public void discard(){
+		if(discardsAllowed == 0){
+			Debug.Log("You can't discard right now.");
+			return;
+		}
 		int[] selectedIndexes = new int[discardsAllowed];
 		if(!getSelectedIndexes(selectedIndexes)){
 			return;
@@ -851,6 +882,7 @@ public class SCHand : MonoBehaviour {
 		}
 		gameObject.SendMessageUpwards("sendMessageToServer", "ready:value=true,reason=discard,extra=" + extra);
 	}
+	*/
 
 	public void skipTurn(){
 		if(!cardAllowed){

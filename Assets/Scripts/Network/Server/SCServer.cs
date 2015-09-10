@@ -141,6 +141,7 @@ public class SCServer{
 			--cardsRemaining;
 		}
 		sendMessageTo(turnIndex, "allow_card");
+		sendMessageToAll("current_turn:name=" + connectedPlayers[turnIndex].userName);
 	}
 
 	public void removePlayerFromLobby(SCPlayerInfo player){
@@ -174,10 +175,12 @@ public class SCServer{
 			goto start;
 		}
 		sendMessageTo(turnIndex, "allow_card");
+		sendMessageToAll("current_turn:name=" + connectedPlayers[turnIndex].userName);
 	}
 	
 	private void reallowTurn(){
 		sendMessageTo(turnIndex, "allow_card");
+		sendMessageToAll("current_turn:name=" + connectedPlayers[turnIndex].userName);
 	}
 
 	/********************************************************************************************/
@@ -250,6 +253,10 @@ public class SCServer{
 				advanceTurn();
 			}
 		}
+	}
+
+	public void userQuit(int connectionId){
+		// send message to everyone accept the connection id to leave the game
 	}
 
 	/********************************************************************************************/

@@ -73,6 +73,7 @@
      <Compile Include="Assets\Scripts\UI\SCWindowError.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowGameLobby.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowJoinGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowPauseGame.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowUserName.cs" />
      <Compile Include="Assets\Scripts\Util\SCAnimationInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCardInfo.cs" />

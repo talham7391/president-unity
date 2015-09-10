@@ -59,6 +59,8 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("lobby_status", onLobbyStatusCommand));
 		commandBehaviours.Add(new CommandBehaviour("destroy", onDestroyCommand));
 		commandBehaviours.Add(new CommandBehaviour("game_started", onGameStartedCommand));
+		commandBehaviours.Add(new CommandBehaviour("current_turn", onCurrentTurnCommand));
+		commandBehaviours.Add(new CommandBehaviour("quit", onQuitCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -317,6 +319,18 @@ public class SCClient{
 
 	private void onGameStartedCommand(SCMessageInfo info){
 		SCCommunicator.fireCommand("game_started");
+	}
+
+	private void onCurrentTurnCommand(SCMessageInfo info){
+		string name = info.getValue("name");
+		if(name == null){
+			return;
+		}
+		SCCommunicator.fireCommand("current_turn:name=" + name);
+	}
+
+	private void onQuitCommand(SCMessageInfo info){
+		localServer.userQuit(info.fromConnectionId);
 	}
 	
 	/********************************************************************************************/

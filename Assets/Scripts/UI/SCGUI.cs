@@ -18,9 +18,10 @@ public class SCGUI : MonoBehaviour {
 	public const int WINDOW_JOIN_GAME = 103;
 	public const int WINDOW_USER_NAME = 104;
 	public const int WINDOW_GAME_LOBBY = 105;
+	public const int WINDOW_PAUSE_GAME = 106;
 
 	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME, SCREEN_IN_GAME};
-	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME, WINDOW_GAME_LOBBY};
+	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME, WINDOW_GAME_LOBBY, WINDOW_PAUSE_GAME};
 
 	private SCScreen mCurrentScreen;
 	private SCWindow mCurrentWindow;
@@ -116,6 +117,9 @@ public class SCGUI : MonoBehaviour {
 				break;
 			case WINDOW_GAME_LOBBY:
 				mCurrentWindow = new SCWindowGameLobby(this, WINDOW_GAME_LOBBY);
+				break;
+			case WINDOW_PAUSE_GAME:
+				mCurrentWindow = new SCWindowPauseGame(this, WINDOW_PAUSE_GAME);
 				break;
 			}
 		}

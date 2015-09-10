@@ -22,8 +22,7 @@ public class SCWindowCreateGame : SCWindow {
 		GUI.Label(new Rect(xPadding, yPadding + (height + spacing) * 1, width, height), "Game Password:");
 		GUI.Label(new Rect(xPadding, yPadding + (height + spacing) * 2, width, height), "Number of Players:");
 		if(GUI.Button(new Rect(xPadding, yPadding + (height + spacing) * 3, width, height), "Back")){
-			gui.currentWindow = SCGUI.WINDOW_NOTHING;
-			SCHand.handWithFocus = handHolder;
+			switchToWindow(SCGUI.WINDOW_NOTHING);
 		}
 		
 		SCCommunicator.gameName = GUI.TextField(new Rect(xPadding + width + spacing, yPadding + (height + spacing) * 0, width, height), SCCommunicator.gameName);
@@ -34,10 +33,9 @@ public class SCWindowCreateGame : SCWindow {
 			if(onConfirmButton()){
 				SCCommunicator.automaticallyReconnect = true;
 				gui.client.init();
-				gui.currentWindow = SCGUI.WINDOW_GAME_LOBBY;
+				switchToWindow(SCGUI.WINDOW_GAME_LOBBY);
 			}else{
-				SCHand.handWithFocus = handHolder;
-				gui.currentWindow = SCGUI.WINDOW_ERROR;
+				switchToWindow(SCGUI.WINDOW_ERROR);
 			}
 		}
 	}
