@@ -1,13 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Network\Server\SCServer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Deck\SCHand.cs">
     <Files>
-      <File FileName="Assets\Scripts\UI\SCScreenInGame.cs" Line="37" Column="40" />
-      <File FileName="Assets\Scripts\UI\SCGUI.cs" Line="39" Column="35" />
-      <File FileName="Assets\Scripts\UI\SCWindowPauseGame.cs" Line="27" Column="52" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="90" Column="14" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="333" Column="45" />
-      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="259" Column="73" />
+      <File FileName="Assets\Scripts\UI\SCScreenInGame.cs" Line="64" Column="43" />
+      <File FileName="Assets\Scripts\UI\SCWindow.cs" Line="34" Column="2" />
+      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="19" Column="36" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

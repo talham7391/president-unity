@@ -16,6 +16,7 @@ public class SCScreenInGame : SCScreen {
 		mCurrentTurn = "";
 
 		SCCommunicator.addCommand("current_turn", onCurrentTurnCommand, id);
+		SCCommunicator.addCommand("quit", onQuitCommand, id);
 	}
 
 	override public void update(){
@@ -35,5 +36,32 @@ public class SCScreenInGame : SCScreen {
 
 	private void onCurrentTurnCommand(SCMessageInfo info){
 		mCurrentTurn = info.getValue("name");
+	}
+
+	private void onQuitCommand(SCMessageInfo info){
+		string first = info.getValue("first");
+		if(first == null){
+			return;
+		}
+
+		Debug.Log("SCScreenInGame| Someone has quit the game");
+		SCCommunicator.automaticallyReconnect = false;
+		if(SCCommunicator.hasServer){
+			gui.client.disconnectFromMasterServer();
+		}else{
+			gui.client.disconnectFromServer();
+		}
+		gui.client.unInit(true);
+		SCHand.handWithFocus.clear(true);
+		gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
+
+		if(first == "false"){
+			string name = info.getValue("name");
+			if(name == null){
+				return;
+			}
+			gui.currentError = new SCErrorInfo("" + name + " has quit the game.", 3);
+			gui.currentWindow = SCGUI.WINDOW_ERROR;
+		}
 	}
 }

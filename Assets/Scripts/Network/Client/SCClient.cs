@@ -330,7 +330,19 @@ public class SCClient{
 	}
 
 	private void onQuitCommand(SCMessageInfo info){
-		localServer.userQuit(info.fromConnectionId);
+		string first = info.getValue("first");
+		if(first == null){
+			return;
+		}
+		if(first == "true"){
+			localServer.userQuit(info.fromConnectionId);
+		}else{
+			string name = info.getValue("name");
+			if(name == null){
+				return;
+			}
+			SCCommunicator.fireCommand("quit:first=false,name=" + name);
+		}
 	}
 	
 	/********************************************************************************************/

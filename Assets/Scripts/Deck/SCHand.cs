@@ -87,8 +87,11 @@ public class SCHand : MonoBehaviour {
 			mTimeDown += Time.deltaTime;
 		}
 
-//		processInput();
-		processMouseInput();
+		if(SCFlags.mobileVersion){
+			processInput();
+		}else{
+			processMouseInput();
+		}
 //		processMouse();
 //		processKeys();
 //		processKeys2();

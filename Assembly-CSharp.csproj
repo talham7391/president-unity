@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\Network\Server\SCServer.cs" />
      <Compile Include="Assets\Scripts\Network\Server\SCServerCommunicator.cs" />
      <Compile Include="Assets\Scripts\SCCommunicator.cs" />
+     <Compile Include="Assets\Scripts\SCFlags.cs" />
      <Compile Include="Assets\Scripts\SCGlobalAnimator.cs" />
      <Compile Include="Assets\Scripts\SCLogic.cs" />
      <Compile Include="Assets\Scripts\SCRules.cs" />

@@ -152,7 +152,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		}
 	}
 
-	public void unInit(){
+	public void unInit(bool quiet = false){
 		if(!inited){
 			return;
 		}
@@ -160,7 +160,7 @@ public class SCClientCommunicator : MonoBehaviour {
 		inited = false;
 		mUniqueId = -1;
 
-		if(SCCommunicator.hasServer){
+		if(SCCommunicator.hasServer && !quiet){
 			client.getServer().beingDestroyed();
 		}
 

@@ -23,7 +23,10 @@ public class SCWindowPauseGame : SCWindow {
 	}
 
 	private void onQuitButton(){
-		gui.client.sendMessageToServer("quit");
-		// make user leave the game and reset the network
+		gui.client.sendMessageToServer("quit:first=true");
+		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
+			switchToWindow(SCGUI.WINDOW_NOTHING);
+			SCCommunicator.fireCommand("quit:first=true");
+		}, 0.5f));
 	}
 }

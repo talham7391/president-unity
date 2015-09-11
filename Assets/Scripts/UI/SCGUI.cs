@@ -4,7 +4,8 @@ using System.Collections;
 public class SCGUI : MonoBehaviour {
 	
 	public GameObject guiCard;
-	public Font font;
+	public Font mobileFont;
+	public Font playerFont;
 
 	public const int SCREEN_MAIN_MENU = 0;
 	public const int SCREEN_PLAY_WITH_FRIENDS = 1;
@@ -40,7 +41,11 @@ public class SCGUI : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		GUI.skin.font = font;
+		if(SCFlags.mobileVersion){
+			GUI.skin.font = mobileFont;
+		}else{
+			GUI.skin.font = playerFont;
+		}
 
 		mCurrentScreen.update();
 		if(mCurrentWindow != null){

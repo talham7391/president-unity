@@ -256,7 +256,8 @@ public class SCServer{
 	}
 
 	public void userQuit(int connectionId){
-		// send message to everyone accept the connection id to leave the game
+		Debug.Log("SCServer| User has quit the game with connection id: " + connectionId);
+		sendMessageToAllAccept(getTurnIndexWithConnectionId(connectionId), "quit:first=false,name=" + getUserWithConnectionId(connectionId).userName);
 	}
 
 	/********************************************************************************************/
