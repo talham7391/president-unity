@@ -8,7 +8,7 @@ public class SCWindowGameLobby : SCWindow {
 	private List<string> mPlayersInLobby;
 	private bool mConnected;
 
-	public SCWindowGameLobby(SCGUI gui, int id):base(gui, id){
+	public SCWindowGameLobby(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowText = "Game Lobby";
 		windowRect = new Rect(Screen.width * 0.05f, Screen.height * 0.05f, Screen.width * 0.9f, Screen.height * 0.9f);
 

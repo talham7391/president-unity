@@ -158,6 +158,13 @@ public class SCLogic{
 		partOfChain.Clear();
 	}
 
+	public void reset(){
+		playedCards.Clear();
+		generatedCards.Clear();
+		consecutiveCards = 0;
+		partOfChain.Clear();
+	}
+
 	private bool cardAlreadyExists(string suit, int number){
 		for(int i = 0; i < generatedCards.Count; ++i){
 			if(generatedCards[i].suit == suit && generatedCards[i].number == number){

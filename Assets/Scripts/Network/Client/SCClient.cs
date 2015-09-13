@@ -61,6 +61,8 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("game_started", onGameStartedCommand));
 		commandBehaviours.Add(new CommandBehaviour("current_turn", onCurrentTurnCommand));
 		commandBehaviours.Add(new CommandBehaviour("quit", onQuitCommand));
+		commandBehaviours.Add(new CommandBehaviour("clear", onClearCommand));
+		commandBehaviours.Add(new CommandBehaviour("new_round", onNewRoundCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -343,6 +345,17 @@ public class SCClient{
 			}
 			SCCommunicator.fireCommand("quit:first=false,name=" + name);
 		}
+	}
+
+	private void onClearCommand(SCMessageInfo info){
+		SCTable table = communicator.gameObject.GetComponentInChildren<SCTable>();
+		SCHand hand = communicator.gameObject.GetComponentInChildren<SCHand>();
+		table.clear(true);
+		hand.clear(true);
+	}
+
+	private void onNewRoundCommand(SCMessageInfo info){
+		SCCommunicator.fireCommand("new_round");
 	}
 	
 	/********************************************************************************************/

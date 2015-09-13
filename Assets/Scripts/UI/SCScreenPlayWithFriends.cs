@@ -10,6 +10,7 @@ public class SCScreenPlayWithFriends : SCScreen{
 
 	override public void init(){
 		base.init();
+
 		List<GameObject> premade = new List<GameObject>();
 		premade.Add(SCCard.makeCard(gui.guiCard, "back", 0, onBack));
 		premade.Add(SCCard.makeCard(gui.guiCard, "create_game", 0, onCreateGame));

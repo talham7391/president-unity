@@ -71,11 +71,14 @@
      <Compile Include="Assets\Scripts\UI\SCScreenPlayWithFriends.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindow.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowCreateGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowDisconnection.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowError.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowGameLobby.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowJoinGame.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowNewRound.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowPauseGame.cs" />
      <Compile Include="Assets\Scripts\UI\SCWindowUserName.cs" />
+     <Compile Include="Assets\Scripts\UI\SCWindowWaiting.cs" />
      <Compile Include="Assets\Scripts\Util\SCAnimationInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCardInfo.cs" />
      <Compile Include="Assets\Scripts\Util\SCCommandBehaviour.cs" />

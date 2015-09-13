@@ -5,7 +5,7 @@ public class SCWindowUserName : SCWindow {
 
 	private string mInstruction;
 
-	public SCWindowUserName(SCGUI gui, int id):base(gui, id){
+	public SCWindowUserName(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowText = "Choose user name";
 		windowRect = new Rect(Screen.width * 0.17f, Screen.height * 0.3f, Screen.width * 0.66f, Screen.height * 0.2f);
 

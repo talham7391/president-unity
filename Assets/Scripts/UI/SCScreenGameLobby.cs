@@ -25,6 +25,8 @@ public class SCScreenGameLobby : SCScreen {
 	}
 	
 	override public void update(){
+		base.update();
+
 		int xPadding = 20;
 		int yPadding = xPadding;
 		int padding = 5;

@@ -13,6 +13,8 @@ public class SCScreenJoinGame : SCScreen{
 	}
 	
 	override public void update(){
+		base.update();
+
 		int xPadding = 20;
 		int yPadding = xPadding;
 		int padding = 5;

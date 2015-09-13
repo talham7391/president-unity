@@ -5,7 +5,7 @@ using System;
 
 public class SCServer{
 
-	public enum Phase {IN_LOBBY, READYING, IN_GAME};
+	public enum Phase {IN_LOBBY, READYING, IN_GAME, NEW_ROUND};
 
 	private int mPlayerLimit;
 	private Phase currentPhase;
@@ -144,6 +144,18 @@ public class SCServer{
 		sendMessageToAll("current_turn:name=" + connectedPlayers[turnIndex].userName);
 	}
 
+	public void newRound(bool delayed = true){
+		if(delayed){
+			SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => newRound(false), 3));
+			return;
+		}
+		sendMessageToAll("clear");
+		sendMessageToAll("new_round");
+		connectedPlayers.ForEach(x => x.ready = false);
+		currentPhase = Phase.NEW_ROUND;
+		logic.reset();
+	}
+
 	public void removePlayerFromLobby(SCPlayerInfo player){
 		Debug.Log("SCServer| Player kicked from lobby with unique id: " + player.uniqueId);
 		logic.freeUniqueId(player.uniqueId);
@@ -163,7 +175,7 @@ public class SCServer{
 	private void advanceTurn(){
 		int count = 0;
 	start:
-			++count;
+		++count;
 		++turnIndex;
 		if(turnIndex >= connectedPlayers.Count){
 			turnIndex = 0;
@@ -211,7 +223,13 @@ public class SCServer{
 			connectedPlayers[turnIndex].outOfGame = true;
 			logic.resetConsecutiveCards();
 			sendMessageToAllAccept(turnIndex, "scrap_pile:safe=true");
-			advanceTurn();
+
+			if(getOutPlayers() == connectedPlayers.Count - 1){
+				newRound();
+			}else{
+				advanceTurn();
+			}
+
 		}else{
 			advanceTurn();
 		}
@@ -245,11 +263,17 @@ public class SCServer{
 		}else if(reason == "start"){
 			Debug.Log("SCServer| User is ready with unique id: " + player.uniqueId);
 			attemptToStartGame();
+		}else if(reason == "new_round"){
+			Debug.Log("SCServer| User is ready with unique id: " + player.uniqueId);
+			attemptToStartGame();
 		}
 
 		if(extra == "out"){
 			player.outOfGame = true;
-			if(turnIndex == player.turnOrder){
+
+			if(getOutPlayers() == connectedPlayers.Count - 1){
+				newRound();
+			}else if(turnIndex == player.turnOrder){
 				advanceTurn();
 			}
 		}

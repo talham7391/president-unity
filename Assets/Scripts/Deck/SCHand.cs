@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System;
 
 public class SCHand : MonoBehaviour {
-	
+
+	public bool focusedHand = false;
+
 	private struct CardConfig{
 		public string suit;
 		public int number;
@@ -66,6 +68,12 @@ public class SCHand : MonoBehaviour {
 	}
 	
 	void Update(){
+		if(handWithFocus == this){
+			focusedHand = true;
+		}else{
+			focusedHand = false;
+		}
+
 		for(int i = 0; i < validIndex; ++i){
 			cards[i].transform.localPosition = applyPositionFunction(cardPositions[i].transform.localPosition);
 			cards[i].transform.eulerAngles = applyRotationFunction(cardPositions[i].transform.localPosition);
@@ -134,6 +142,7 @@ public class SCHand : MonoBehaviour {
 	public void seizeInput(string reason = null){
 		reasons.addPair(reason, "true");
 		if(reason == "disconnection"){
+			SCCommunicator.fireCommand("disconnection_window");
 			inputAllowed = false;
 			inputRecentlyChanged = true;
 		}
@@ -142,6 +151,7 @@ public class SCHand : MonoBehaviour {
 	public void allowInput(string reason = null){
 		reasons.removePair(reason);
 		if(reason == "disconnection"){
+			SCCommunicator.fireCommand("no_disconnection");
 			inputAllowed = true;
 			inputRecentlyChanged = true;
 		}
@@ -155,10 +165,7 @@ public class SCHand : MonoBehaviour {
 			Touch touch = Input.GetTouch(0);
 			switch(touch.phase){
 			case TouchPhase.Began:
-				if(touchBuffer > 0){
-					--touchBuffer;
-					return;
-				}
+				mTimeDown = 0;
 				mDown = true;
 				break;
 			case TouchPhase.Moved:
@@ -168,6 +175,10 @@ public class SCHand : MonoBehaviour {
 				mVelocity = 0;
 				break;
 			case TouchPhase.Ended:
+				if(touchBuffer > 0){
+					--touchBuffer;
+					return;
+				}
 				if(mTimeDown < 0.07f && touch.deltaPosition.x == 0){
 					Ray ray = Camera.main.ScreenPointToRay(touch.position);
 					RaycastHit hit;
@@ -183,7 +194,6 @@ public class SCHand : MonoBehaviour {
 				}
 
 				mDown = false;
-				mTimeDown = 0;
 				break;
 			}
 		}
@@ -197,6 +207,7 @@ public class SCHand : MonoBehaviour {
 		previousMousePosition = Input.mousePosition;
 
 		if(Input.GetMouseButtonDown(0)){
+			mTimeDown = 0;
 			mDown = true;
 		}else if(Input.GetMouseButton(0)){
 			mVelocity = deltaPosition.x * mSpeed;
@@ -216,7 +227,6 @@ public class SCHand : MonoBehaviour {
 			}
 
 			mDown = false;
-			mTimeDown = 0;
 		}
 	}
 
@@ -791,7 +801,7 @@ public class SCHand : MonoBehaviour {
 		}
 		
 		if(selectedIndexes[0] == -1){
-			Debug.Log("No cards selected.");
+			Debug.Log("No cards selected. Total cards: " + validIndex);
 			return;
 		}
 		

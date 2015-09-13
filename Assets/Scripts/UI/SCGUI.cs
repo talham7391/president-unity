@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SCGUI : MonoBehaviour {
 	
@@ -20,9 +21,12 @@ public class SCGUI : MonoBehaviour {
 	public const int WINDOW_USER_NAME = 104;
 	public const int WINDOW_GAME_LOBBY = 105;
 	public const int WINDOW_PAUSE_GAME = 106;
+	public const int WINDOW_DISCONNECTION = 107;
+	public const int WINDOW_NEW_ROUND = 108;
+	public const int WINDOW_WAITING = 109;
 
 	private readonly int[] SCREENS = {SCREEN_MAIN_MENU, SCREEN_PLAY_WITH_FRIENDS, SCREEN_GAME_LOBBY, SCREEN_JOIN_GAME, SCREEN_IN_GAME};
-	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME, WINDOW_GAME_LOBBY, WINDOW_PAUSE_GAME};
+	private readonly int[] WINDOWS = {WINDOW_NOTHING, WINDOW_CREATE_GAME, WINDOW_ERROR, WINDOW_JOIN_GAME, WINDOW_USER_NAME, WINDOW_GAME_LOBBY, WINDOW_PAUSE_GAME, WINDOW_DISCONNECTION, WINDOW_NEW_ROUND, WINDOW_WAITING};
 
 	private SCScreen mCurrentScreen;
 	private SCWindow mCurrentWindow;
@@ -109,22 +113,31 @@ public class SCGUI : MonoBehaviour {
 				mCurrentWindow = null;
 				break;
 			case WINDOW_CREATE_GAME:
-				mCurrentWindow = new SCWindowCreateGame(this, WINDOW_CREATE_GAME);
+				mCurrentWindow = new SCWindowCreateGame(this, WINDOW_CREATE_GAME, mCurrentScreen);
 				break;
 			case WINDOW_ERROR:
-				mCurrentWindow = new SCWindowError(this, WINDOW_ERROR);
+				mCurrentWindow = new SCWindowError(this, WINDOW_ERROR, mCurrentScreen);
 				break;
 			case WINDOW_JOIN_GAME:
-				mCurrentWindow = new SCWindowJoinGame(this, WINDOW_JOIN_GAME);
+				mCurrentWindow = new SCWindowJoinGame(this, WINDOW_JOIN_GAME, mCurrentScreen);
 				break;
 			case WINDOW_USER_NAME:
-				mCurrentWindow = new SCWindowUserName(this, WINDOW_USER_NAME);
+				mCurrentWindow = new SCWindowUserName(this, WINDOW_USER_NAME, mCurrentScreen);
 				break;
 			case WINDOW_GAME_LOBBY:
-				mCurrentWindow = new SCWindowGameLobby(this, WINDOW_GAME_LOBBY);
+				mCurrentWindow = new SCWindowGameLobby(this, WINDOW_GAME_LOBBY, mCurrentScreen);
 				break;
 			case WINDOW_PAUSE_GAME:
-				mCurrentWindow = new SCWindowPauseGame(this, WINDOW_PAUSE_GAME);
+				mCurrentWindow = new SCWindowPauseGame(this, WINDOW_PAUSE_GAME, mCurrentScreen);
+				break;
+			case WINDOW_DISCONNECTION:
+				mCurrentWindow = new SCWindowDisconnection(this, WINDOW_DISCONNECTION, mCurrentScreen);
+				break;
+			case WINDOW_NEW_ROUND:
+				mCurrentWindow = new SCWindowNewRound(this, WINDOW_NEW_ROUND, mCurrentScreen);
+				break;
+			case WINDOW_WAITING:
+				mCurrentWindow = new SCWindowWaiting(this, WINDOW_WAITING, mCurrentScreen);
 				break;
 			}
 		}

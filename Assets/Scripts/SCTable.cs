@@ -156,6 +156,9 @@ public class SCTable : MonoBehaviour {
 			pile[i] = null;
 		}
 		pile.Clear();
+		SCCardInfo[] x = new SCCardInfo[4];
+		x[0] = SCCardInfo.makeAnyCard();
+		rules.updateTopCards(x, true);
 	}
 	
 	private Vector3 cloneVector3(Vector3 x){

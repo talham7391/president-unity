@@ -5,7 +5,7 @@ public class SCWindowError : SCWindow {
 
 	private Rect mWindowRect;
 
-	public SCWindowError(SCGUI gui, int id):base(gui, id){
+	public SCWindowError(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowRect = new Rect(Screen.width * 0.1f, Screen.height * (0.5f - 0.05f), Screen.width * 0.8f, Screen.height * 0.1f);
 		windowText = "Error";
 	}

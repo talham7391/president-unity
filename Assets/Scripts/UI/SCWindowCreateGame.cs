@@ -5,7 +5,7 @@ public class SCWindowCreateGame : SCWindow {
 
 	private string mNumberOfPlayers;
 
-	public SCWindowCreateGame(SCGUI gui, int id):base(gui, id){
+	public SCWindowCreateGame(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowRect = new Rect(Screen.width * 0.05f, Screen.height * (0.5f - 0.2f), Screen.width * 0.9f, Screen.height * 0.4f);
 		windowText = "Create Game";
 		mNumberOfPlayers = "";

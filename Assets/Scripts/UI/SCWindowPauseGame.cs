@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SCWindowPauseGame : SCWindow {
 
-	public SCWindowPauseGame(SCGUI gui, int id):base(gui, id){
+	public SCWindowPauseGame(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowText = "Pause Game";
 		float width = Screen.width * 0.9f;
 		float height = Screen.height * 0.17f;

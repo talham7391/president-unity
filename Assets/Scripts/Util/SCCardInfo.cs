@@ -61,4 +61,8 @@ public class SCCardInfo{
 			mPlayedBy = value;
 		}
 	}
+
+	public static SCCardInfo makeAnyCard(){
+		return new SCCardInfo(ANY_SUIT, ANY_NUMBER);
+	}
 }

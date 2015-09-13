@@ -17,9 +17,13 @@ public class SCScreenInGame : SCScreen {
 
 		SCCommunicator.addCommand("current_turn", onCurrentTurnCommand, id);
 		SCCommunicator.addCommand("quit", onQuitCommand, id);
+		SCCommunicator.addCommand("disconnection_window", onDisconnectionCommand, id);
+		SCCommunicator.addCommand("new_round", onNewRoundCommand, id);
 	}
 
 	override public void update(){
+		base.update();
+
 		float xPadding = Screen.width * 0.05f;
 		float width = Screen.width * 0.45f;
 		float height = Screen.height * 0.1f;
@@ -53,6 +57,7 @@ public class SCScreenInGame : SCScreen {
 		}
 		gui.client.unInit(true);
 		SCHand.handWithFocus.clear(true);
+		SCHand.handWithFocus = hand;
 		gui.currentScreen = SCGUI.SCREEN_PLAY_WITH_FRIENDS;
 
 		if(first == "false"){
@@ -63,5 +68,21 @@ public class SCScreenInGame : SCScreen {
 			gui.currentError = new SCErrorInfo("" + name + " has quit the game.", 3);
 			gui.currentWindow = SCGUI.WINDOW_ERROR;
 		}
+	}
+
+	private void onDisconnectionCommand(){
+		gui.currentWindow = SCGUI.WINDOW_DISCONNECTION;
+	}
+
+	private void onNewRoundCommand(){
+		gui.currentWindow = SCGUI.WINDOW_NEW_ROUND;
+	}
+
+	public void reset(){
+		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
+			SCHand.handWithFocus.autoSort();
+		}, 1));
+		
+		mCurrentTurn = "";
 	}
 }
