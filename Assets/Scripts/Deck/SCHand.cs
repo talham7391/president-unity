@@ -75,7 +75,7 @@ public class SCHand : MonoBehaviour {
 		}
 
 		for(int i = 0; i < validIndex; ++i){
-			cards[i].transform.localPosition = applyPositionFunction(cardPositions[i].transform.localPosition);
+			cards[i].transform.localPosition = applyPositionFunction(cardPositions[i].transform.localPosition, cards[i].GetComponent<SCCard>().higher);
 			cards[i].transform.eulerAngles = applyRotationFunction(cardPositions[i].transform.localPosition);
 
 			Vector3 pos = cardPositions[i].transform.localPosition;
@@ -105,7 +105,7 @@ public class SCHand : MonoBehaviour {
 //		processKeys2();
 	}
 
-	private Vector3 applyPositionFunction(Vector3 source){
+	private Vector3 applyPositionFunction(Vector3 source, bool higher){
 		Vector3 val = new Vector3();
 		val.y = source.y;
 		val.z = source.z;
@@ -128,7 +128,7 @@ public class SCHand : MonoBehaviour {
 			}
 		}
 
-		return fixYPosition(val, false);
+		return fixYPosition(val, higher);
 	}
 
 	private Vector3 applyRotationFunction(Vector3 source){
@@ -184,11 +184,35 @@ public class SCHand : MonoBehaviour {
 					RaycastHit hit;
 					if(Physics.Raycast(ray, out hit)){
 						SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
-						prop.setSelected(true);
-						if(discardsAllowed > 0){
-							discard();
-						}else{
+						if(guiHand){
+							prop.setSelected(true);
 							playCard();
+						}else{
+							int[] indexes = {-1, -1, -1 , -1};
+							if(getSelectedIndexes(indexes, false) && (indexes[0] == -1 || cards[indexes[0]].GetComponent<SCCard>().number == prop.number)){
+								if(discardsAllowed > 0){
+									prop.setSelected(true);
+									discard();
+								}else{
+									if(table.getRules().isAnyCardAllowed()){
+										if(prop.number == 3 && prop.suit == "club"){
+											prop.setSelected(true);
+											playCard();
+										}else if(getNumberOccurences(prop.number) == 1){
+											prop.setSelected(true);
+											playCard();
+										}else if(prop.getSelected()){
+											playCard();
+										}else{
+											prop.setSelected(true);
+											prop.higher = true;
+										}
+									}else{
+										prop.setSelected(true);
+										playCardAssisted();
+									}
+								}
+							}
 						}
 					}
 				}
@@ -217,11 +241,32 @@ public class SCHand : MonoBehaviour {
 				RaycastHit hit;
 				if(Physics.Raycast(ray, out hit)){
 					SCCard prop = hit.transform.gameObject.GetComponent<SCCard>();
-					prop.setSelected(true);
-					if(discardsAllowed > 0){
-						discard();
-					}else{
+					if(guiHand){
+						prop.setSelected(true);
 						playCard();
+					}else{
+						int[] indexes = {-1, -1, -1 , -1};
+						if(getSelectedIndexes(indexes, false) && (indexes[0] == -1 || cards[indexes[0]].GetComponent<SCCard>().number == prop.number)){
+							if(discardsAllowed > 0){
+								prop.setSelected(true);
+								discard();
+							}else{
+								if(table.getRules().isAnyCardAllowed()){
+									if(getNumberOccurences(prop.number) == 1){
+										prop.setSelected(true);
+										playCard();
+									}else if(prop.getSelected()){
+										playCard();
+									}else{
+										prop.setSelected(true);
+										prop.higher = true;
+									}
+								}else{
+									prop.setSelected(true);
+									playCardAssisted();
+								}
+							}
+						}
 					}
 				}
 			}
@@ -398,6 +443,56 @@ public class SCHand : MonoBehaviour {
 		cardRef.transform.SetParent(transform);
 		cardRef.transform.localPosition = newCardPosition;
 		return cardRef;
+	}
+
+	public void updateHeldCards(){
+		if(table.getRules().threeOfClubsOnly()){
+			for(int i = 0; i < validIndex; ++i){
+				SCCard prop = cards[i].GetComponent<SCCard>();
+				if(prop.number == 3 && prop.suit == "club"){
+					prop.active = true;
+				}else{
+					prop.active = false;
+				}
+			}
+			return;
+		}
+
+		List<int> alreadyChecked = new List<int>();
+
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			if(alreadyChecked.Contains(prop.number)){
+				continue;
+			}else{
+				alreadyChecked.Add(prop.number);
+			}
+
+			int amount = 1;
+			for(int j = i + 1; j < validIndex && cards[j].GetComponent<SCCard>().number == prop.number; ++j){
+				++amount;
+			}
+
+			for(int u = 1; u <= amount; ++u){
+				SCCardInfo[] cardsToCheck = new SCCardInfo[4];
+				for(int j = i; j < i + u; ++j){
+					cardsToCheck[j - i] = new SCCardInfo(prop.suit, prop.number);
+				}
+				
+				if(table.getRules().allowedToPlay(cardsToCheck, false)){
+					for(int j = 0; j < amount; ++j){
+						prop = cards[i + j].GetComponent<SCCard>();
+						prop.active = true;
+					}
+					break;
+				}else{
+					for(int j = 0; j < amount; ++j){
+						prop = cards[i + j].GetComponent<SCCard>();
+						prop.active = false;
+					}
+				}
+			}
+		}
 	}
 
 	private CardConfig generateCard(){
@@ -645,6 +740,7 @@ public class SCHand : MonoBehaviour {
 		for(int i = 0; i < validIndex; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
 			prop.setSelected(false);
+			prop.higher = false;
 		}
 	}
 
@@ -770,24 +866,84 @@ public class SCHand : MonoBehaviour {
 	/********************************************************************************************/
 	/** Server Significant Functions ************************************************************/
 	/********************************************************************************************/
-	
+
+	public void playCardAssisted(){
+		if(table.getRules().threeOfClubsOnly()){
+			playCard();
+			return;
+		}
+
+		int target = table.getRules().numberOfCards();
+		int[] selectedIndexes = new int[target];
+		for(int i = 0; i < selectedIndexes.Length; ++i){
+			selectedIndexes[i] = -1;
+		}
+
+		if(!getSelectedIndexes(selectedIndexes, false)){
+			return;
+		}
+
+		int current = 0;
+		for(int i = 0; i < selectedIndexes.Length; ++i){
+			if(selectedIndexes[i] != -1){
+				++current;
+			}
+		}
+
+		SCCard orig = cards[selectedIndexes[0]].GetComponent<SCCard>();
+		float distance = 1;
+		int outOfBounds = 0;
+
+		while(current != target){
+			int check = selectedIndexes[0] + (int)distance;
+			if(check > validIndex || check < 0){
+				++outOfBounds;
+				if(outOfBounds == 9){
+					return;
+				}
+				goto skip;
+			}
+
+			SCCard prop = cards[check].GetComponent<SCCard>();
+			if(prop.number == orig.number){
+				selectedIndexes[current++] = check;
+				prop.setSelected(true);
+			}
+
+		skip:
+
+			if(distance > 0){
+				distance += 0.5f;
+			}else{
+				distance -= 0.5f;
+			}
+			distance *= -1;
+		}
+
+		playCard();
+	}
+
 	public void playCard(){
 		if(!guiHand){
 			if(!cardAllowed){
 				Debug.Log("Its not your turn");
+				deselectAllCards();
 				return;
 			}
 			if(discardsAllowed != 0){
 				Debug.Log("You must discard before playing any card.");
+				deselectAllCards();
 				return;
 			}
 			if(reasons.getValue("discard") == "true"){
 				Debug.Log("Other players still have to discard.");
+				deselectAllCards();
 				return;
 			}
 		}
 		if(table == null){
 			Debug.Log("No access to Table.");
+			deselectAllCards();
 			return;
 		}
 		int[] selectedIndexes = {-1, -1, -1, -1};
@@ -802,6 +958,7 @@ public class SCHand : MonoBehaviour {
 		
 		if(selectedIndexes[0] == -1){
 			Debug.Log("No cards selected. Total cards: " + validIndex);
+			deselectAllCards();
 			return;
 		}
 		
@@ -822,6 +979,7 @@ public class SCHand : MonoBehaviour {
 				if(prop.callback != null){
 					prop.callback();
 				}
+				deselectAllCards();
 				return;
 			}
 			string message = "play_card:";
@@ -859,10 +1017,12 @@ public class SCHand : MonoBehaviour {
 	public void discard(){
 		if(discardsAllowed == 0){
 			Debug.Log("You can't discard right now.");
+			deselectAllCards();
 			return;
 		}
 		int[] selectedIndexes = new int[1];
 		if(!getSelectedIndexes(selectedIndexes)){
+			deselectAllCards();
 			return;
 		}
 		removeCards(selectedIndexes, true);
@@ -943,7 +1103,7 @@ public class SCHand : MonoBehaviour {
 		return 0;
 	}
 
-	private bool getSelectedIndexes(int[] selectedIndexes){
+	private bool getSelectedIndexes(int[] selectedIndexes, bool strict = true){
 		if(selectedIndexes == null){
 			Debug.Log("The array is null.");
 			return false;
@@ -959,9 +1119,11 @@ public class SCHand : MonoBehaviour {
 				selectedIndexes[n++] = i;
 			}
 		}
-		if(n < selectedIndexes.Length){
-			Debug.Log("Too few cards selected");
-			return false;
+		if(strict){
+			if(n < selectedIndexes.Length){
+				Debug.Log("Too few cards selected");
+				return false;
+			}
 		}
 		return true;
 	}
@@ -976,11 +1138,16 @@ public class SCHand : MonoBehaviour {
 	
 	private Vector3 fixYPosition(Vector3 position, bool selected){
 		float val = -0.01f * (float)Math.Pow(position.x, 2);
+		Vector3 ret;
 		if(val > -8){
-			return new Vector3(position.x, val, position.z);
+			ret = new Vector3(position.x, val, position.z);
 		}else{
-			return new Vector3(position.x, -8, position.z);
+			ret = new Vector3(position.x, -8, position.z);
 		}
+		if(selected){
+			ret.y += 5.7f;
+		}
+		return ret;
 	}
 	
 	private Vector3 fixZPosition(Vector3 position, float index){
@@ -1013,5 +1180,16 @@ public class SCHand : MonoBehaviour {
 			}
 		}
 		return false;
+	}
+
+	private int getNumberOccurences(int number){
+		int val = 0;
+		for(int i = 0; i < validIndex; ++i){
+			SCCard prop = cards[i].GetComponent<SCCard>();
+			if(prop.number == number){
+				++val;
+			}
+		}
+		return val;
 	}
 }

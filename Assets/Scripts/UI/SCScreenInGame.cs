@@ -11,6 +11,7 @@ public class SCScreenInGame : SCScreen {
 
 		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
 			SCHand.handWithFocus.autoSort();
+			SCHand.handWithFocus.updateHeldCards();
 		}, 1));
 
 		mCurrentTurn = "";
@@ -29,12 +30,16 @@ public class SCScreenInGame : SCScreen {
 		float height = Screen.height * 0.1f;
 
 		GUI.Label(new Rect(xPadding, Screen.height * 0.56f, width, height), "Current Turn: " + mCurrentTurn);
-		GUI.Label(new Rect(Screen.width - xPadding - width * 0.61f, Screen.height * 0.56f, width * 0.61f, height), "Discards Allowed: " + SCHand.discardsAllowed);
+		GUI.Label(new Rect(Screen.width - xPadding - width * 0.7f, Screen.height * 0.56f, width * 0.7f, height), "Discards Allowed: " + SCHand.discardsAllowed);
 
 		float buttonWidth = Screen.width * 0.12f;
 		float buttonHeight = buttonWidth;
 		if(GUI.Button(new Rect(Screen.width * 0.9f - buttonWidth / 2, Screen.height * 0.3f - buttonHeight / 2, buttonWidth, buttonHeight), "| |")){
 			gui.currentWindow = SCGUI.WINDOW_PAUSE_GAME;
+		}
+
+		if(GUI.Button(new Rect((Screen.width - width / 2) / 2, Screen.height - height * 0.8f - xPadding / 2, width / 2, height * 0.8f), "Skip")){
+			SCHand.handWithFocus.skipTurn();
 		}
 	}
 
@@ -46,6 +51,10 @@ public class SCScreenInGame : SCScreen {
 		string first = info.getValue("first");
 		if(first == null){
 			return;
+		}
+
+		if(child != null){
+			child.switchToWindow(SCGUI.WINDOW_NOTHING);
 		}
 
 		Debug.Log("SCScreenInGame| Someone has quit the game");
@@ -81,6 +90,7 @@ public class SCScreenInGame : SCScreen {
 	public void reset(){
 		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
 			SCHand.handWithFocus.autoSort();
+			SCHand.handWithFocus.updateHeldCards();
 		}, 1));
 		
 		mCurrentTurn = "";

@@ -126,6 +126,9 @@ public class SCServer{
 	}
 
 	public void startGame(){
+		if(currentPhase == Phase.NEW_ROUND){
+			sendMessageToAll("everyone_ready");
+		}
 		currentPhase = Phase.IN_GAME;
 		Debug.Log("SCServer| Game started.");
 		turnIndex = UnityEngine.Random.Range(0, connectedPlayers.Count);
@@ -146,7 +149,7 @@ public class SCServer{
 
 	public void newRound(bool delayed = true){
 		if(delayed){
-			SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => newRound(false), 3));
+			SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => newRound(false), 1.2f));
 			return;
 		}
 		sendMessageToAll("clear");

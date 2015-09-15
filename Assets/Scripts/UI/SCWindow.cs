@@ -23,6 +23,8 @@ public class SCWindow{
 		mHandHolder = SCHand.handWithFocus;
 		SCHand.handWithFocus = null;
 		mHand = gui.table.hand.GetComponent<SCHand>();
+
+		mParent.child = this;
 	}
 
 	public void update(){
@@ -33,9 +35,10 @@ public class SCWindow{
 
 	}
 
-	protected void switchToWindow(int id){
+	public void switchToWindow(int id){
 		SCHand.touchBuffer = 1;
 		SCHand.handWithFocus = handHolder;
+		mParent.child = null;
 		gui.currentWindow = id;
 	}
 

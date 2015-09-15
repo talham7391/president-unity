@@ -61,6 +61,22 @@ public class SCRules{
 		return false;
 	}
 
+	public bool isAnyCardAllowed(){
+		if(topCards != null && topCards[0] != null && topCards[0].isAnyCard()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public bool threeOfClubsOnly(){
+		if(topCards == null || topCards[0] == null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public bool allowedToSkip(){
 
 		if(topCards == null || topCards[0] == null){
@@ -96,6 +112,10 @@ public class SCRules{
 		}else{
 			return true;
 		}
+	}
+
+	public int numberOfCards(){
+		return numberOfCards(topCards);
 	}
 
 	private int numberOfCards(SCCardInfo[] cards){

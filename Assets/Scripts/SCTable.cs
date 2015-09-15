@@ -48,6 +48,11 @@ public class SCTable : MonoBehaviour {
 			return false;
 		}
 		rules.updateTopCards(cardsToCheck, false);
+
+		SCHand h = hand.GetComponent<SCHand>();
+		if(!h.guiHand){
+			h.updateHeldCards();
+		}
 		
 		SCAnimator anim;
 		Vector3 targetPosition;
@@ -64,6 +69,8 @@ public class SCTable : MonoBehaviour {
 			anim = cards[i].GetComponent<SCAnimator>();
 
 			prop.setSelectable(false);
+			prop.active = true;
+			prop.higher = false;
 			targetPosition = cloneVector3(tableCenter);
 			targetPosition.x += Random.Range(-5.0f, 5.0f);
 			targetPosition = fixZPosition(targetPosition, this.cards.Count - (cardsAdded - i));
@@ -126,6 +133,8 @@ public class SCTable : MonoBehaviour {
 		for(int i = 0; i < cards.Count; ++i){
 			SCCard prop = cards[i].GetComponent<SCCard>();
 			prop.setSelectable(false);
+			prop.active = true;
+			prop.higher = false;
 
 			pile.Add(cards[i]);
 
@@ -139,6 +148,11 @@ public class SCTable : MonoBehaviour {
 		SCCardInfo[] newTopCards = new SCCardInfo[4];
 		newTopCards[0] = new SCCardInfo(SCCardInfo.ANY_SUIT, SCCardInfo.ANY_NUMBER);
 		rules.updateTopCards(newTopCards, true);
+
+		SCHand h = hand.GetComponent<SCHand>();
+		if(!h.guiHand){
+			h.updateHeldCards();
+		}
 	}
 
 	public void clear(bool destroy){

@@ -40,6 +40,8 @@ public class SCCard : MonoBehaviour {
 
 	private bool isSelectable = true;
 	private bool isSelected = false;
+	private bool mActive = true;
+	private bool mHigher = false;
 
 	/*
 	void Start(){
@@ -257,5 +259,56 @@ public class SCCard : MonoBehaviour {
 		prop.callback = callback;
 		prop.createCard();
 		return val;
+	}
+
+	public bool active{
+		get{
+			return mActive;
+		}
+		set{
+			mActive = value;
+			Color color;
+			if(mActive){
+				color = new Color(1, 1, 1, 1);
+			}else{
+				float x = 0.8f;
+				color = new Color(x, x, x, 0.7f);
+			}
+			SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+			renderer.color = color;
+			if(suits != null){
+				for(int i = 0; i < suits.Length; ++i){
+					if(suits[i] != null){
+						renderer = suits[i].GetComponent<SpriteRenderer>();
+						if(renderer != null){
+							renderer.color = color;
+						}
+					}
+				}
+			}
+			if(suit != "club" && suit != "spade"){
+				if(topNumber != null){
+					renderer = topNumber.GetComponent<SpriteRenderer>();
+					if(renderer != null){
+						renderer.color = color;
+					}
+				}
+				if(bottomNumber){
+					renderer = bottomNumber.GetComponent<SpriteRenderer>();
+					if(renderer != null){
+						renderer.color = color;
+					}
+				}
+			}
+		}
+	}
+
+	public bool higher{
+		get{
+			return mHigher;
+		}
+		set{
+			mHigher = value;
+		}
 	}
 }

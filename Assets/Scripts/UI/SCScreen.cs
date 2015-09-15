@@ -8,6 +8,7 @@ public class SCScreen{
 	private float mTimeOfCreation;
 	protected SCHand mHand;
 	protected bool inited;
+	public SCWindow child;
 
 	public SCScreen(SCGUI gui, int id){
 		mGui = gui;

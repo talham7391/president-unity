@@ -5,16 +5,21 @@ public class SCWindowWaiting : SCWindow {
 
 	public SCWindowWaiting(SCGUI gui, int id, SCScreen parent):base(gui, id, parent){
 		windowText = "Waiting";
-		windowRect = new Rect();
+		float width = Screen.width * 0.8f;
+		float height = Screen.height * 0.07f;
+		windowRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
 
-		// add command that is called when everyone is ready
+		SCCommunicator.addCommand("everyone_ready", onEveryoneReadyCommand);
 	}
 
-	override public void windowFunc(){
-		// display to user that he/she is waiting for others
+	override public void windowFunc(int id){
+		float padding = Screen.width * 0.05f;
+		float width = Screen.width * 0.6f;
+		float height = Screen.height * 0.1f;
+		GUI.Label(new Rect(padding, padding, width, height), "Waiting for others to be ready...");
 	}
 
-	private void onCommand(){
+	private void onEveryoneReadyCommand(){
 		switchToWindow(SCGUI.WINDOW_NOTHING);
 		if(parent is SCScreenInGame){
 			(parent as SCScreenInGame).reset();

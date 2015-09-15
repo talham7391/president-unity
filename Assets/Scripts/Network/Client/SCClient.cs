@@ -63,6 +63,7 @@ public class SCClient{
 		commandBehaviours.Add(new CommandBehaviour("quit", onQuitCommand));
 		commandBehaviours.Add(new CommandBehaviour("clear", onClearCommand));
 		commandBehaviours.Add(new CommandBehaviour("new_round", onNewRoundCommand));
+		commandBehaviours.Add(new CommandBehaviour("everyone_ready", onEveryoneReadyCommand));
 	}
 	
 	public void sendToSelf(string message){
@@ -356,6 +357,10 @@ public class SCClient{
 
 	private void onNewRoundCommand(SCMessageInfo info){
 		SCCommunicator.fireCommand("new_round");
+	}
+
+	private void onEveryoneReadyCommand(SCMessageInfo info){
+		SCCommunicator.fireCommand("everyone_ready");
 	}
 	
 	/********************************************************************************************/
