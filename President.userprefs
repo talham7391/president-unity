@@ -1,13 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SCFlags.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\SCWindow.cs">
     <Files>
-      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="104" Column="1" />
-      <File FileName="Assets\Scripts\UI\SCWindowWaiting.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Network\Client\SCClient.cs" Line="347" Column="43" />
-      <File FileName="Assets\Scripts\Deck\SCHand.cs" Line="975" Column="24" />
-      <File FileName="Assets\Scripts\SCFlags.cs" Line="8" Column="43" />
-      <File FileName="Assets\Scripts\UI\SCScreenInGame.cs" Line="93" Column="43" />
+      <File FileName="Assets\Scripts\Network\Server\SCServer.cs" Line="141" Column="19" />
+      <File FileName="Assets\Scripts\UI\SCScreenInGame.cs" Line="80" Column="3" />
+      <File FileName="Assets\Scripts\UI\SCWindowWaiting.cs" Line="23" Column="6" />
+      <File FileName="Assets\Scripts\UI\SCWindow.cs" Line="38" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

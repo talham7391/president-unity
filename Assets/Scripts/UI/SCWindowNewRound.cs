@@ -25,11 +25,14 @@ public class SCWindowNewRound : SCWindow {
 
 	private void onQuitButton(){
 		switchToWindow(SCGUI.WINDOW_NOTHING);
-		SCCommunicator.fireCommand("quit:first=true");
+		gui.client.sendMessageToServer("quit:first=true");
+		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
+			SCCommunicator.fireCommand("quit:first=true");
+		}, 0.2f));
 	}
 
 	private void onPlayButton(){
-		gui.client.sendMessageToServer("ready:value=true,reason=new_round");
 		switchToWindow(SCGUI.WINDOW_WAITING);
+		gui.client.sendMessageToServer("ready:value=true,reason=new_round");
 	}
 }

@@ -118,6 +118,10 @@ public class SCRules{
 		return numberOfCards(topCards);
 	}
 
+	public void resetTopCards(){
+		topCards = null;
+	}
+
 	private int numberOfCards(SCCardInfo[] cards){
 		for(int i = 0; i < cards.Length; ++i){
 			if(cards[i] == null){

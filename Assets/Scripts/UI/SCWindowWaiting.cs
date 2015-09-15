@@ -9,7 +9,7 @@ public class SCWindowWaiting : SCWindow {
 		float height = Screen.height * 0.07f;
 		windowRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
 
-		SCCommunicator.addCommand("everyone_ready", onEveryoneReadyCommand);
+		SCCommunicator.addCommand("everyone_ready", onEveryoneReadyCommand, id);
 	}
 
 	override public void windowFunc(int id){

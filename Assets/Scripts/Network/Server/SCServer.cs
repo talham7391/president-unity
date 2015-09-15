@@ -130,6 +130,9 @@ public class SCServer{
 			sendMessageToAll("everyone_ready");
 		}
 		currentPhase = Phase.IN_GAME;
+
+		resetPlayerStats();
+
 		Debug.Log("SCServer| Game started.");
 		turnIndex = UnityEngine.Random.Range(0, connectedPlayers.Count);
 		int cardsPerPlayer = 52 / connectedPlayers.Count;
@@ -196,6 +199,10 @@ public class SCServer{
 	private void reallowTurn(){
 		sendMessageTo(turnIndex, "allow_card");
 		sendMessageToAll("current_turn:name=" + connectedPlayers[turnIndex].userName);
+	}
+
+	private void resetPlayerStats(){
+		connectedPlayers.ForEach(x => x.outOfGame = false);
 	}
 
 	/********************************************************************************************/

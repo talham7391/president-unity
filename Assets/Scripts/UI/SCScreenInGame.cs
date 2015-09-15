@@ -89,8 +89,10 @@ public class SCScreenInGame : SCScreen {
 
 	public void reset(){
 		SCGlobalAnimator.addAnimation(new SCAnimationInfo(() => {
-			SCHand.handWithFocus.autoSort();
-			SCHand.handWithFocus.updateHeldCards();
+			if(SCHand.handWithFocus != null){
+				SCHand.handWithFocus.autoSort();
+				SCHand.handWithFocus.updateHeldCards();
+			}
 		}, 1));
 		
 		mCurrentTurn = "";
